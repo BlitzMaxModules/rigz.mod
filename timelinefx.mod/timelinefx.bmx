@@ -32,7 +32,9 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
-ModuleInfo "History v1.05: 18th August 2009 - Fixed a but causing large angle changes to tween incorrectly"
+ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place"
+ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where locking the angle of a particle reversed the direction it was going in"
+ModuleInfo "History v1.05: 18th August 2009 - Fixed a bug causing large angle changes to tween incorrectly"
 ModuleInfo "History v1.05: 18th August 2009 - Added a Global Stretch attribute to tlEffects"
 ModuleInfo "History v1.04: 15th August 2009 - Emitters that spawn particles with a random frame, now have the correct range of frames to choose from"
 ModuleInfo "History v1.03: 8th August 2009 - Particle manager now sets oktorender to false for the particles it renders, see SetOKToRender in entity.mod"
@@ -3770,7 +3772,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
+									e.angle = getdirection(e.speedvec.x, -e.speedvec.y, 0, 0)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -4217,7 +4219,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
+									e.angle = getdirection(e.speedvec.x, -e.speedvec.y, 0, 0)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -4321,7 +4323,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								e.angle = getdirection(e.wx, e.wy, e.oldwx, e.oldwy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -4478,7 +4480,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								e.angle = getdirection(e.wx, e.wy, e.oldwx, e.oldwy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If

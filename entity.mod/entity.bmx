@@ -30,7 +30,7 @@ Module rigz.entity
 ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: A base entity class"
-ModuleInfo "Version: v1"
+ModuleInfo "Version: v1.04"
 
 ModuleInfo "History v1.03: 8th August 2009 - Added new variables for storing the bounding boxes of the entity"
 ModuleInfo "History v1.03: 8th August 2009 - Render method now only renders if avatar is not null and OKToRender is true"
@@ -500,9 +500,6 @@ Type tlEntity
 		Return y
 	End Method
 	rem
-		bbdoc: Set the current zoom level of the entity
-	endrem
-	rem
 		bbdoc: The the x and y position of the entity
 		about: This will be relative to the parent if relative is set to true
 	end rem
@@ -734,7 +731,7 @@ Type tlEntity
 		Return wx
 	End Method
 	Rem
-		bbdoc: Get the wx value in this tlEntity object.
+		bbdoc: Get the wy value in this tlEntity object.
 		about: WY represents the current Y world coordinate of the entity. This may differ to y, which will contain the Y coordinate relative 
 		to the parent entity
 	End Rem
