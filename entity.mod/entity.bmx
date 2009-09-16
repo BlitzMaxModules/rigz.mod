@@ -32,6 +32,8 @@ ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: A base entity class"
 ModuleInfo "Version: v1.04"
 
+ModuleInfo "History v1.04: 7th September 2009 - Added a few more Getters and Setters"
+ModuleInfo "History v1.04: 7th September 2009 - Fixed a bug with animated entities causing a crash"
 ModuleInfo "History v1.03: 8th August 2009 - Added new variables for storing the bounding boxes of the entity"
 ModuleInfo "History v1.03: 8th August 2009 - Render method now only renders if avatar is not null and OKToRender is true"
 ModuleInfo "History v1.03: 8th August 2009 - Added OKToRender field so you can control wheter entities are actually rendered"
@@ -45,7 +47,7 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import rigz.singlesurface
+Import wxrigz.wxsinglesurface
 Import "consts.bmx"
 
 rem
@@ -595,6 +597,45 @@ Type tlEntity
 	Method GetSpeed:Float()
 		Return speed
 	End Method
+	Rem
+		bbdoc: Get the framerate value in this tlEntity object.
+		about: see #SetFrameRate for more info.
+	End Rem
+	Method GetFrameRate:Float()
+		Return framerate
+	End Method
+	Rem
+		bbdoc: Set the framerate value for this tlEntity object.
+		about: the frame rate dicates how fast the entity animates if it has more then 1 frame
+		of animation. The framerate is measured in frames per second.
+	End Rem
+	Method SetFrameRate(Value:Float)
+		framerate = Value
+	End Method
+	Rem
+		bbdoc: Returns true if the entity is animating 
+	End Rem
+	Method GetAnimating:Int()
+		Return animating
+	End Method
+	Rem
+		bbdoc: Set to true to make the entity animate
+	End Rem
+	Method SetAnimating(Value:Int)
+		animating = Value
+	End Method
+	Rem
+		bbdoc: Get the currentframe of the entity sprite animation
+	End Rem
+	Method GetCurrentFrame:Float()
+		Return currentframe
+	End Method
+	Rem
+		bbdoc: Set the currentframe of the entity sprite animation
+	End Rem
+	Method SetCurrentFrame(Value:Float)
+		currentframe = Value
+	End Method
 	rem
 		bbdoc: Set the sprite (tAnimImage) that the entity uses when it draws to the screen
 		about: tAnimImage is defined in singlesurface.mod, and is a type that draws animated images using a single surface for extra speed.
@@ -807,8 +848,16 @@ Type tlEntity
 			Local ty:Float = TweenValues(oldscaley, scaley, tween)
 			SetScale tx, ty
 			SetColor red, green, blue
-			SetAlpha alpha
-			DrawSprite(avatar, TweenValues(oldwx, wx, tween), TweenValues(oldwy, wy, tween), currentframe)
+			SetAlpha Alpha
+			If animating
+				tv = TweenValues(oldcurrentframe, currentframe, tween) Mod avatar.frames
+				If tv < 0
+					tv = avatar.frames - Abs(tv)
+				End If
+			Else
+				tv = currentframe
+			End If
+			DrawSprite(avatar, TweenValues(oldwx, wx, tween), TweenValues(oldwy, wy, tween), tv Mod avatar.frames)
 		End If
 		For Local e:tlEntity = EachIn children
 			e.render(tween)

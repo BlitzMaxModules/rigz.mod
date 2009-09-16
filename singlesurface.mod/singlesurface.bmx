@@ -167,9 +167,6 @@ end rem
 Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, frames:Int = 1)
 	
 	If width = 0
-		If String(url)
-			DebugLog String(url)
-		End If
 		Local i:TImage = LoadImage(url, FILTEREDIMAGE)
 		width = i.width
 		height = i.height
