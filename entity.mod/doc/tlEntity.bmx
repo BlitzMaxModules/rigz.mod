@@ -86,8 +86,7 @@ While Not KeyDown(KEY_ESCAPE)
 	
 	'draw them all to the screen
 	sun.render(tweener.getTween())
-	
-	
+
 	Flip 0
 	
 Wend

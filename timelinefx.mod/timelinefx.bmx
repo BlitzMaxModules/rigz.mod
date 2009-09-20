@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on effects (changes the overal scale of an effect)"
 ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place"
 ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where locking the angle of a particle reversed the direction it was going in"
 ModuleInfo "History v1.05: 18th August 2009 - Fixed a bug causing large angle changes to tween incorrectly"
@@ -3324,10 +3325,16 @@ Type tlEmitter Extends tlEntity
 		matrix.set(Cos(angle), Sin(angle), -Sin(angle), Cos(angle))
 		
 		If parent And relative
+			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
 			rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
-			wx = parent.wx + rotvec.x
-			wy = parent.wy + rotvec.y
+			If z <> 1
+				wx = parent.wx + rotvec.x * z
+				wy = parent.wy + rotvec.y * z
+			Else
+				wx = parent.wx + rotvec.x
+				wy = parent.wy + rotvec.y
+			End If
 			relativeangle = parent.relativeangle + angle
 		Else
 			wx = x
@@ -3630,6 +3637,8 @@ Type tlEmitter Extends tlEntity
 										e.y = parent.wy + rotvec.y
 									End If
 							End Select
+							'Set the zoom level
+							e.setz(z)
 							'-----Set up the image----------
 							e.avatar = image
 							e.handlex = handlex
@@ -6633,6 +6642,7 @@ Type tlParticle Extends tlEntity
 		age = 0
 		wx = 0
 		wy = 0
+		z = 1
 		dead = False
 		clearchildren()
 		childcount = 0
@@ -6683,7 +6693,7 @@ Type tlParticle Extends tlEntity
 	endrem
 	Method setz(v:Float)
 		If age
-			oldz = y
+			oldz = z
 		Else
 			oldz = v
 		End If
@@ -6819,6 +6829,7 @@ Type tlParticleManager
 	Field tv:Float
 	Field tx:Float
 	Field ty:Float
+	Field tz:Float
 	Field px:Float
 	Field py:Float
 	Field angletweened:Float
@@ -6955,8 +6966,13 @@ Type tlParticleManager
 							End If
 							tx = TweenValues(e.oldscalex, e.scalex, tween)
 							ty = TweenValues(e.oldscaley, e.scaley, tween)
-							SetScale tx * camtz, ty * camtz
-							SetColor e.red, e.green, e.blue
+							tz = TweenValues(e.oldz, e.z, tween)
+							If tz <> 1
+								SetScale tx * tz * camtz, ty * tz * camtz
+							Else
+								SetScale tx * tz, ty * tz
+							End If
+							SetColor e.Red, e.Green, e.Blue
 							SetAlpha e.alpha
 							If e.animating
 								tv = tweenvalues(e.oldcurrentframe, e.currentframe, tween) Mod e.avatar.frames

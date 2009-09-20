@@ -38,9 +38,11 @@ While Not KeyDown(KEY_ESCAPE) Or AppTerminate()
 		'for which is used to create effects you draw on screen.
 		Local tempeffect:tlEffect = CopyEffect(myeffect, MyParticleManager)
 		'Set the temp effect to the mouse coords
-		tempeffect.setx(MouseX())
-		tempeffect.sety(MouseY())
-		'add the effect the the particle manager. Important, otherwise the particle manager would have nothing to update
+		tempeffect.SetX(MouseX())
+		tempeffect.SetY(MouseY())
+		'give it a random zoom level which will affect the overal size of the effect
+		tempeffect.SetZ(Rnd(0.5, 1.5))
+		'add the effect to the particle manager. Important, otherwise the particle manager would have nothing to update
 		MyParticleManager.addeffect(tempeffect)
 	End If
 	

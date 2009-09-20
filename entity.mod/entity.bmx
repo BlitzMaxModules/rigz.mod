@@ -32,6 +32,7 @@ ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: A base entity class"
 ModuleInfo "Version: v1.04"
 
+ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on entities (changes the overal scale of an entity and its children)"
 ModuleInfo "History v1.04: 7th September 2009 - Added a few more Getters and Setters"
 ModuleInfo "History v1.04: 7th September 2009 - Fixed a bug with animated entities causing a crash"
 ModuleInfo "History v1.03: 8th August 2009 - Added new variables for storing the bounding boxes of the entity"
@@ -47,7 +48,7 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import wxrigz.wxsinglesurface
+Import rigz.singlesurface
 Import "consts.bmx"
 
 rem
@@ -77,8 +78,8 @@ Type tlEntity
 	Field oldx:Float, oldy:Float							'old x and y coords for tweening
 	Field wx:Float, wy:Float								'World Coords
 	Field oldwx:Float, oldwy:Float							'Old world coords for tweening
-	Field z:Float											'z height off ground
-	Field oldz:Float										'old z coords for tweening
+	Field z:Float = 1										'z height off ground
+	Field oldz:Float = 1									'old z coords for tweening
 	Field relative:Int = 1									'whether the entity remains relative to it's parent. Relative is the default.
 	'---------------------------------
 	Field matrix:tMatrix2 = New tMatrix2.Create()			'A matrix to calculate entity rotation relative to the parent
@@ -208,12 +209,19 @@ Type tlEntity
 		
 		'calculate where the entity is in the world
 		If parent And relative
+			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
 			rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
-			wx = parent.wx + rotvec.x
-			wy = parent.wy + rotvec.y
+			If z <> 1
+				wx = parent.wx + rotvec.x * z
+				wy = parent.wy + rotvec.y * z
+			Else
+				wx = parent.wx + rotvec.x
+				wy = parent.wy + rotvec.y
+			End If
 			relativeangle = parent.relativeangle + angle
 		Else
+			If parent setz(parent.z)
 			wx = x
 			wy = y
 		End If
@@ -253,11 +261,18 @@ Type tlEntity
 		matrix.set(Cos(angle), Sin(angle), - Sin(angle), Cos(angle))
 		
 		If parent And relative
+			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
 			Local rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
-			wx = parent.wx + rotvec.x
-			wy = parent.wy + rotvec.y
+			If z <> 1
+				wx = parent.wx + rotvec.x * z
+				wy = parent.wy + rotvec.y * z
+			Else
+				wx = parent.wx + rotvec.x
+				wy = parent.wy + rotvec.y
+			End If
 		Else
+			If parent setz(parent.z)
 			wx = x
 			wy = y
 		End If
@@ -280,6 +295,7 @@ Type tlEntity
 		can use the tweener.mod to implement fixed rate timing. See the tweener.mod for more info.
 	endrem
 	Method Capture()
+		oldz = z
 		oldwx = wx
 		oldwy = wy
 		oldangle = angle
@@ -303,10 +319,17 @@ Type tlEntity
 	end rem
 	Method UpdateBoundingBox()
 	
-		Collision_xmin = AABB_MinWidth * scalex
-		Collision_ymin = AABB_MinHeight * scaley
-		Collision_xmax = AABB_MaxWidth * scalex
-		Collision_ymax = AABB_MaxHeight * scaley
+		If z <> 1
+			Collision_xmin = AABB_MinWidth * scalex * z
+			Collision_ymin = AABB_MinHeight * scaley * z
+			Collision_xmax = AABB_MaxWidth * scalex * z
+			Collision_ymax = AABB_MaxHeight * scaley * z
+		Else
+			Collision_xmin = AABB_MinWidth * scalex
+			Collision_ymin = AABB_MinHeight * scaley
+			Collision_xmax = AABB_MaxWidth * scalex
+			Collision_ymax = AABB_MaxHeight * scaley
+		End If
 	
 		AABB_xmin = Collision_xmin
 		AABB_ymin = Collision_ymin
@@ -846,7 +869,12 @@ Type tlEntity
 			SetRotation tv
 			Local tx:Float = TweenValues(oldscalex, scalex, tween)
 			Local ty:Float = TweenValues(oldscaley, scaley, tween)
-			SetScale tx, ty
+			Local tz:Float = TweenValues(oldz, z, tween)
+			If tz <> 1
+				SetScale tx * tz, ty * tz
+			Else
+				SetScale tx * tz, ty * tz
+			End If
 			SetColor red, green, blue
 			SetAlpha Alpha
 			If animating

@@ -1,4 +1,16 @@
 What's new in the TimelineFX Module?
+24.09.09
+timelinefx
+- Initial implementation of Z on effects (changes the overal scale of an effect)
+
+entity.mod
+- Initial implementation of Z on entities (changes the overal scale of an entity and its children)
+
+07.09.09
+entity.mod
+- History v1.04: 7th September 2009 - Added a few more Getters and Setters
+- History v1.04: 7th September 2009 - Fixed a bug with animated entities causing a crash
+
 24.08.09
 TimelineFX
 - Fixed a but causing large angle changes to tween incorrectly
