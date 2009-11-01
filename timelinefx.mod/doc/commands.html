@@ -285,6 +285,9 @@ Add a size y attribute node.
 <tr><td class=docleft width=1%><a href=#addspin>addspin</a></td><td class=docright>
 Add a spin attribute node.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#addstretch>addstretch</a></td><td class=docright>
+Add an angle attribute node.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#addvelocity>addvelocity</a></td><td class=docright>
 Add a velocity attribute node.
 </td></tr>
@@ -633,6 +636,13 @@ the lifetime as they are spawned and will not extend or reduce the lifetime of p
 <tr><td class=docleft width=1%>Information</td><td class=docright><p>Pass the method the time in millisecs (f) and the value (v)</p>
 <p>Global spin scales each particle's spin attribute within the effect thus controlling how fast the particle spins.
 Note that this attribute will instantly effect all particles within the effect.</p></td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=addstretch>
+<tr><td class=doctop colspan=2>Method addstretch:tlAttributeNode(f:Float, v:Float)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Add an angle attribute node.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><p>Pass the method the time in millisecs (f) and the value (v)</p>
+<p>This will scale the stretch overtime attribute of all particles within the effect.</p></td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=addvelocity>
 <tr><td class=doctop colspan=2>Method addvelocity:tlAttributeNode(f:Float, v:Float)</td></tr>
@@ -2250,9 +2260,11 @@ While Not KeyDown(KEY_ESCAPE) Or AppTerminate()
 		'for which is used to create effects you draw on screen.
 		Local tempeffect:tlEffect = CopyEffect(myeffect, MyParticleManager)
 		'Set the temp effect to the mouse coords
-		tempeffect.setx(MouseX())
-		tempeffect.sety(MouseY())
-		'add the effect the the particle manager. Important, otherwise the particle manager would have nothing to update
+		tempeffect.SetX(MouseX())
+		tempeffect.SetY(MouseY())
+		'give it a random zoom level which will affect the overal size of the effect
+		tempeffect.SetZ(Rnd(0.5, 1.5))
+		'add the effect to the particle manager. Important, otherwise the particle manager would have nothing to update
 		MyParticleManager.addeffect(tempeffect)
 	End If
 	
@@ -2490,9 +2502,14 @@ is compiled mode.</td></tr>
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
 <tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
 <tr><th width=1%>Purpose</th><td>To add rich particle effects to games and applications, quickly and easily</td></tr>
-<tr><th width=1%>Version</th><td>v1</td></tr>
-<tr><th width=1%>History v1.03</th><td>8th August2009 - Particle manager now sets oktorender to false for the particles it renders, see SetOKToRender in entity.mod</td></tr>
-<tr><th width=1%>History v1.03</th><td>8th August2009 - Added new method SetEffectParticleSize, which rolls SetSizeX and Y into one method</td></tr>
+<tr><th width=1%>History v1.06</th><td>20th September 2009 - Initial implementation of Z on effects (changes the overal scale of an effect)</td></tr>
+<tr><th width=1%>History v1.06</th><td>4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place</td></tr>
+<tr><th width=1%>History v1.06</th><td>4th August 2009 - Fixed a bug where locking the angle of a particle reversed the direction it was going in</td></tr>
+<tr><th width=1%>History v1.05</th><td>18th August 2009 - Fixed a bug causing large angle changes to tween incorrectly</td></tr>
+<tr><th width=1%>History v1.05</th><td>18th August 2009 - Added a Global Stretch attribute to tlEffects</td></tr>
+<tr><th width=1%>History v1.04</th><td>15th August 2009 - Emitters that spawn particles with a random frame, now have the correct range of frames to choose from</td></tr>
+<tr><th width=1%>History v1.03</th><td>8th August 2009 - Particle manager now sets oktorender to false for the particles it renders, see SetOKToRender in entity.mod</td></tr>
+<tr><th width=1%>History v1.03</th><td>8th August 2009 - Added new method SetEffectParticleSize, which rolls SetSizeX and Y into one method</td></tr>
 <tr><th width=1%>History v1.02</th><td>19th July 2009 - Single particles will now playout their graphs in a loop providing more oppertunities for animated sprites</td></tr>
 <tr><th width=1%>History v1.02</th><td>18th July 2009 - When lockedangle is used, particles will now take into account gravity when aligning themselves</td></tr>
 <tr><th width=1%>History v1.02</th><td>18th July 2009 - Fixed a bug where the speed of new particles being spawned was not the correct value</td></tr>

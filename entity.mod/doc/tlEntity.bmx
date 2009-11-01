@@ -28,11 +28,15 @@ Local Earth:tAstralBody = New tAstralBody
 Local Moon:tAstralBody = New tAstralBody
 Local Moonlet:tAstralBody = New tAstralBody
 
-sun.setsprite(LoadSprite("sun.png"))
-earth.setsprite(LoadSprite("earth.png"))
-moon.setsprite(LoadSprite("moon.png"))
-moonlet.setsprite(LoadSprite("moon.png"))
-
+sun.setsprite(LoadSprite("sun.png",,, , True))
+earth.setsprite(LoadSprite("earth.png",,, , True))
+moon.setsprite(LoadSprite("moon.png",,, , True))
+moonlet.setsprite(LoadSprite("moon.png",,, , True))
+sun.SetHandleX(-100)
+sun.SetHandleY(-100)
+sun.SetentityScale(0.75, 0.75)
+sun.SetAutoCenter(False)
+sun.SetZ(0.75)
 'add the earth to the sun as a child
 sun.addchild(earth)
 'set the suns postion
@@ -48,6 +52,10 @@ earth.setx(250)
 'scale the earth sprite down by half
 earth.SetentityScale(0.5, 0.5)
 earth.capture()
+earth.SetHandleX(-100)
+earth.SetHandleY(100)
+earth.name = "earth"
+earth.SetAutoCenter(False)
 
 moon.AddChild(moonlet)
 'set the moon 75 pixels to the right of the earth
@@ -60,6 +68,7 @@ moonlet.SetX(25)
 moonlet.SetEntityScale(0.1, 0.1)
 moonlet.Capture
 
+sun.SetRadiusCalculate(True)
 
 'set up a tweener using the tweener module
 Local tweener:tTweener = New tTweener.Create(30)
@@ -85,8 +94,13 @@ While Not KeyDown(KEY_ESCAPE)
 	Next
 	
 	'draw them all to the screen
-	sun.render(tweener.getTween())
-
+	sun.render(1)
+	'sun.DrawBoundingBox()
+	sun.DrawEntityBoundary()
+	earth.DrawentityBoundary()
+	moon.DrawEntityBoundary()
+	moonlet.DrawEntityBoundary()
+	
 	Flip 0
 	
 Wend

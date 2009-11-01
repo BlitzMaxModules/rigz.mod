@@ -33,11 +33,19 @@ Function GetTexSize(w:Int, h:Int, frames:Int, powersof2:Int = True, texwidth:Int
                 
         texheight=h 
         
-        While area>texheight*texwidth 
-        
-                texheight:+h 
-                
-        Wend 
+		If texwidth Mod w
+	        While area >= texheight * texwidth
+	        
+	                texheight:+h 
+	                
+	        Wend
+		Else
+	        While area > texheight * texwidth
+	        
+	                texheight:+h 
+	                
+	        Wend
+		End If
         
         rows=texheight/h 
 

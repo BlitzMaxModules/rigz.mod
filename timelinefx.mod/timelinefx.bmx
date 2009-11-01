@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.07: 29th October 2009 - Added Destroy method to tlParticleManager. Use to avoid memory leaks."
 ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on effects (changes the overal scale of an effect)"
 ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place"
 ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where locking the angle of a particle reversed the direction it was going in"
@@ -56,8 +57,8 @@ Import gman.zipengine
 Import rigz.entity
 Import brl.pngloader
 Import rigz.graphbeziers
+Import rigz.math
 Import "globals.bmx"
-Include "math.bmx"
 
 ?Debug
 Global tlParticlesCreated:Int
@@ -3349,6 +3350,10 @@ Type tlEmitter Extends tlEntity
 		dying = parenteffect.dying
 		
 		Super.UpdateBoundingBox()
+		
+		If radius_calculate
+			Super.UpdateEntityRadius()
+		End If
 		
 		updatechildren()
 				
@@ -6970,7 +6975,7 @@ Type tlParticleManager
 							If tz <> 1
 								SetScale tx * tz * camtz, ty * tz * camtz
 							Else
-								SetScale tx * tz, ty * tz
+								SetScale tx * camtz, ty * camtz
 							End If
 							SetColor e.Red, e.Green, e.Blue
 							SetAlpha e.alpha
@@ -7153,6 +7158,16 @@ Type tlParticleManager
 				p.reset()
 			Next
 		Next
+	End Method
+	rem
+	bbdoc: Destroy the particle manager
+	about: This will destroy the particle, clearing all effects and particles. Use only when you are finished with the particle manager and want it removed
+	to avoid any memory leaks.
+	endrem
+	Method destroy()
+		Self.ClearAll()
+		Self.ClearInUse()
+		Self.UnUsed.Clear()
 	End Method
 	rem
 	bbdoc: Remove all effects and clear all particles in use
@@ -7923,6 +7938,7 @@ Function loadeffectxmltree:tlEffect(effectschild:TxmlNode, sprites:TList, parent
 	e.traverseedge = effectschild.getAttribute("TRAVERSE_EDGE").ToInt()
 	e.endbehaviour = effectschild.getAttribute("END_BEHAVIOUR").ToInt()
 	e.distancesetbylife = effectschild.getAttribute("DISTANCE_SET_BY_LIFE").ToInt()
+	e.reversespawn = effectschild.getAttribute("REVERSE_SPAWN_DIRECTION").ToInt()
 	e.setparentemitter parent
 	If e.parentEmitter
 		e.path = e.parentEmitter.path + "/" + e.name

@@ -26,6 +26,7 @@
 	extrn	_brl_polledinput_MouseHit
 	extrn	_brl_polledinput_MouseX
 	extrn	_brl_polledinput_MouseY
+	extrn	_brl_random_Rnd
 	extrn	_rigz_entity_SetUpdateFrequency
 	extrn	_rigz_timelinefx_CopyEffect
 	extrn	_rigz_timelinefx_CreateParticleManager
@@ -39,16 +40,16 @@ __bb_main:
 	sub	esp,28
 	push	ebx
 	push	esi
-	cmp	dword [_112],0
-	je	_113
+	cmp	dword [_115],0
+	je	_116
 	mov	eax,0
 	pop	esi
 	pop	ebx
 	mov	esp,ebp
 	pop	ebp
 	ret
-_113:
-	mov	dword [_112],1
+_116:
+	mov	dword [_115],1
 	mov	dword [ebp-4],_bbNullObject
 	mov	dword [ebp-8],_bbNullObject
 	mov	dword [ebp-12],_bbNullObject
@@ -56,7 +57,7 @@ _113:
 	mov	dword [ebp-20],_bbNullObject
 	mov	dword [ebp-24],0
 	push	ebp
-	push	_103
+	push	_106
 	call	dword [_bbOnDebugEnterScope]
 	add	esp,8
 	call	___bb_blitz_blitz
@@ -123,7 +124,7 @@ _43:
 	push	eax
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+92]
+	call	dword [eax+96]
 	add	esp,12
 	push	_44
 	call	dword [_bbOnDebugEnterStm]
@@ -154,7 +155,7 @@ _46:
 	fstp	dword [esp]
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+68]
+	call	dword [eax+72]
 	add	esp,16
 	push	_47
 	call	dword [_bbOnDebugEnterStm]
@@ -185,7 +186,7 @@ _50:
 	jmp	_22
 _24:
 	push	ebp
-	push	_102
+	push	_105
 	call	dword [_bbOnDebugEnterScope]
 	add	esp,8
 	push	_55
@@ -201,7 +202,7 @@ _24:
 	cmp	eax,0
 	je	_57
 	push	ebp
-	push	_69
+	push	_72
 	call	dword [_bbOnDebugEnterScope]
 	add	esp,8
 	push	_58
@@ -228,7 +229,7 @@ _62:
 	fstp	dword [esp]
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+96]
+	call	dword [eax+148]
 	add	esp,8
 	push	_63
 	call	dword [_bbOnDebugEnterStm]
@@ -245,72 +246,94 @@ _65:
 	fstp	dword [esp]
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+100]
+	call	dword [eax+152]
 	add	esp,8
 	push	_66
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
-	mov	ebx,dword [ebp-12]
+	mov	ebx,dword [ebp-20]
 	cmp	ebx,_bbNullObject
 	jne	_68
 	call	_brl_blitz_NullObjectError
 _68:
+	fld	qword [_117]
+	sub	esp,8
+	fstp	qword [esp]
+	fld	qword [_118]
+	sub	esp,8
+	fstp	qword [esp]
+	call	_brl_random_Rnd
+	add	esp,16
+	sub	esp,4
+	fstp	dword [esp]
+	push	ebx
+	mov	eax,dword [ebx]
+	call	dword [eax+156]
+	add	esp,8
+	push	_69
+	call	dword [_bbOnDebugEnterStm]
+	add	esp,4
+	mov	ebx,dword [ebp-12]
+	cmp	ebx,_bbNullObject
+	jne	_71
+	call	_brl_blitz_NullObjectError
+_71:
 	push	dword [ebp-20]
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+124]
+	call	dword [eax+132]
 	add	esp,8
 	call	dword [_bbOnDebugLeaveScope]
 _57:
-	push	_72
+	push	_75
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	ebx,dword [ebp-16]
 	cmp	ebx,_bbNullObject
-	jne	_74
+	jne	_77
 	call	_brl_blitz_NullObjectError
-_74:
+_77:
 	push	ebx
 	mov	eax,dword [ebx]
 	call	dword [eax+56]
 	add	esp,4
-	push	_75
+	push	_78
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	dword [ebp-24],0
 	mov	dword [ebp-24],1
 	mov	ebx,dword [ebp-16]
 	cmp	ebx,_bbNullObject
-	jne	_78
+	jne	_81
 	call	_brl_blitz_NullObjectError
-_78:
+_81:
 	mov	ebx,dword [ebx+32]
-	jmp	_79
+	jmp	_82
 _27:
 	push	ebp
-	push	_87
+	push	_90
 	call	dword [_bbOnDebugEnterScope]
 	add	esp,8
-	push	_81
+	push	_84
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	esi,dword [ebp-16]
 	cmp	esi,_bbNullObject
-	jne	_83
+	jne	_86
 	call	_brl_blitz_NullObjectError
-_83:
+_86:
 	push	esi
 	mov	eax,dword [esi]
 	call	dword [eax+52]
 	add	esp,4
-	push	_84
+	push	_87
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	esi,dword [ebp-12]
 	cmp	esi,_bbNullObject
-	jne	_86
+	jne	_89
 	call	_brl_blitz_NullObjectError
-_86:
+_89:
 	push	esi
 	mov	eax,dword [esi]
 	call	dword [eax+48]
@@ -318,23 +341,23 @@ _86:
 	call	dword [_bbOnDebugLeaveScope]
 _25:
 	add	dword [ebp-24],1
-_79:
+_82:
 	cmp	dword [ebp-24],ebx
 	jle	_27
 _26:
-	push	_90
+	push	_93
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	esi,dword [ebp-12]
 	cmp	esi,_bbNullObject
-	jne	_92
+	jne	_95
 	call	_brl_blitz_NullObjectError
-_92:
+_95:
 	mov	ebx,dword [ebp-16]
 	cmp	ebx,_bbNullObject
-	jne	_94
+	jne	_97
 	call	_brl_blitz_NullObjectError
-_94:
+_97:
 	fld	qword [ebx+40]
 	sub	esp,4
 	fstp	dword [esp]
@@ -342,38 +365,38 @@ _94:
 	mov	eax,dword [esi]
 	call	dword [eax+64]
 	add	esp,8
-	push	_95
+	push	_98
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	push	0
 	call	_brl_max2d_SetRotation
 	add	esp,4
-	push	_96
+	push	_99
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	push	1065353216
 	push	1065353216
 	call	_brl_max2d_SetScale
 	add	esp,8
-	push	_97
+	push	_100
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	push	1065353216
 	call	_brl_max2d_SetAlpha
 	add	esp,4
-	push	_98
+	push	_101
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	mov	ebx,dword [ebp-12]
 	cmp	ebx,_bbNullObject
-	jne	_100
+	jne	_103
 	call	_brl_blitz_NullObjectError
-_100:
+_103:
 	push	1092616192
 	push	1092616192
 	push	ebx
 	mov	eax,dword [ebx]
-	call	dword [eax+116]
+	call	dword [eax+120]
 	add	esp,4
 	push	eax
 	call	_bbStringFromInt
@@ -381,7 +404,7 @@ _100:
 	push	eax
 	call	_brl_max2d_DrawText
 	add	esp,12
-	push	_101
+	push	_104
 	call	dword [_bbOnDebugEnterStm]
 	add	esp,4
 	push	0
@@ -414,45 +437,45 @@ _28:
 	ret
 	section	"data" data writeable align 8
 	align	4
-_112:
+_115:
 	dd	0
-_104:
-	db	"tlParticleManager",0
-_105:
-	db	"MyEffectsLib",0
-_106:
-	db	":rigz.timelinefx.tlEffectsLibrary",0
 _107:
-	db	"MyEffect",0
-_71:
-	db	":rigz.timelinefx.tlEffect",0
+	db	"tlParticleManager",0
 _108:
-	db	"MyParticleManager",0
+	db	"MyEffectsLib",0
 _109:
-	db	":rigz.timelinefx.tlParticleManager",0
+	db	":rigz.timelinefx.tlEffectsLibrary",0
 _110:
-	db	"Tweener",0
+	db	"MyEffect",0
+_74:
+	db	":rigz.timelinefx.tlEffect",0
 _111:
+	db	"MyParticleManager",0
+_112:
+	db	":rigz.timelinefx.tlParticleManager",0
+_113:
+	db	"Tweener",0
+_114:
 	db	":rigz.tweener.tTweener",0
 	align	4
-_103:
+_106:
 	dd	1
-	dd	_104
-	dd	2
-	dd	_105
-	dd	_106
-	dd	-4
-	dd	2
 	dd	_107
-	dd	_71
-	dd	-8
 	dd	2
 	dd	_108
 	dd	_109
-	dd	-12
+	dd	-4
 	dd	2
 	dd	_110
+	dd	_74
+	dd	-8
+	dd	2
 	dd	_111
+	dd	_112
+	dd	-12
+	dd	2
+	dd	_113
+	dd	_114
 	dd	-16
 	dd	0
 _31:
@@ -522,7 +545,7 @@ _52:
 	dd	31
 	dd	1
 	align	4
-_102:
+_105:
 	dd	3
 	dd	0
 	dd	0
@@ -536,15 +559,15 @@ _56:
 	dd	_31
 	dd	35
 	dd	2
-_70:
+_73:
 	db	"tempeffect",0
 	align	4
-_69:
+_72:
 	dd	3
 	dd	0
 	dd	2
-	dd	_70
-	dd	_71
+	dd	_73
+	dd	_74
 	dd	-20
 	dd	0
 	align	4
@@ -567,66 +590,77 @@ _66:
 	dd	_31
 	dd	44
 	dd	3
+	align	8
+_117:
+	dd	0x0,0x3ff80000
+	align	8
+_118:
+	dd	0x0,0x3fe00000
 	align	4
-_72:
+_69:
 	dd	_31
-	dd	48
-	dd	2
+	dd	46
+	dd	3
 	align	4
 _75:
 	dd	_31
 	dd	50
 	dd	2
-_88:
+	align	4
+_78:
+	dd	_31
+	dd	52
+	dd	2
+_91:
 	db	"Ticks",0
-_89:
+_92:
 	db	"i",0
 	align	4
-_87:
+_90:
 	dd	3
 	dd	0
 	dd	2
-	dd	_88
-	dd	_89
+	dd	_91
+	dd	_92
 	dd	-24
 	dd	0
-	align	4
-_81:
-	dd	_31
-	dd	52
-	dd	3
 	align	4
 _84:
 	dd	_31
 	dd	54
 	dd	3
 	align	4
-_90:
+_87:
 	dd	_31
-	dd	58
-	dd	2
+	dd	56
+	dd	3
 	align	4
-_95:
+_93:
 	dd	_31
 	dd	60
 	dd	2
 	align	4
-_96:
-	dd	_31
-	dd	61
-	dd	2
-	align	4
-_97:
+_98:
 	dd	_31
 	dd	62
 	dd	2
 	align	4
-_98:
+_99:
 	dd	_31
 	dd	63
+	dd	2
+	align	4
+_100:
+	dd	_31
+	dd	64
 	dd	2
 	align	4
 _101:
 	dd	_31
 	dd	65
+	dd	2
+	align	4
+_104:
+	dd	_31
+	dd	67
 	dd	2

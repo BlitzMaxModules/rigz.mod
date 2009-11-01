@@ -150,8 +150,7 @@ While Not KeyDown(KEY_ESCAPE)
 	
 	'draw them all to the screen
 	sun.render(tweener.getTween())
-	
-	
+
 	Flip 0
 	
 Wend</pre></td></tr>
@@ -187,6 +186,9 @@ Get the age value in this tlEntity object.
 <tr><td class=docleft width=1%><a href=#GetAngle>GetAngle</a></td><td class=docright>
 Get the current angle of rotation.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#GetAnimating>GetAnimating</a></td><td class=docright>
+Returns true if the entity is animating.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#GetBlendMode>GetBlendMode</a></td><td class=docright>
 Get the current blendmode.
 </td></tr>
@@ -196,6 +198,9 @@ Get the blue value in this tlEntity object.
 <tr><td class=docleft width=1%><a href=#GetChildren>GetChildren</a></td><td class=docright>
 Get the children that this entity has.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#GetCurrentFrame>GetCurrentFrame</a></td><td class=docright>
+Get the currentframe of the entity sprite animation.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#GetEntityAlpha>GetEntityAlpha</a></td><td class=docright>
 Get the alpha value in this tlEntity object.
 </td></tr>
@@ -204,6 +209,9 @@ Get the direction value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetEntityScale>GetEntityScale</a></td><td class=docright>
 Gets the x and y scale of the entity.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#GetFrameRate>GetFrameRate</a></td><td class=docright>
+Get the framerate value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetGreen>GetGreen</a></td><td class=docright>
 Get the green value in this tlEntity object.
@@ -242,7 +250,7 @@ Get the current sprite (tAnimImage) that the entity uses when it draws to the sc
 Get the wx value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetWY>GetWY</a></td><td class=docright>
-Get the wx value in this tlEntity object.
+Get the wy value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetX>GetX</a></td><td class=docright>
 Get the current x coordinate of the entity.
@@ -280,6 +288,9 @@ Set the current angle of rotation of the entity.
 <tr><td class=docleft width=1%><a href=#SetAnimateOnce>SetAnimateOnce</a></td><td class=docright>
 Set to true to make the entity animate just once.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetAnimating>SetAnimating</a></td><td class=docright>
+Set to true to make the entity animate.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#SetAutoCenter>SetAutoCenter</a></td><td class=docright>
 Set to true to position the handle of the entity at the center.
 </td></tr>
@@ -288,6 +299,9 @@ Set the current blendmode of the entity ie., ALPHABLEND/LIGHTBLEND.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetBlue>SetBlue</a></td><td class=docright>
 Set the blue value for this tlEntity object.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetCurrentFrame>SetCurrentFrame</a></td><td class=docright>
+Set the currentframe of the entity sprite animation.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetEntityAlpha>SetEntityAlpha</a></td><td class=docright>
 Set the alpha value for this tlEntity object.
@@ -300,6 +314,9 @@ Set the direction value for this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetEntityScale>SetEntityScale</a></td><td class=docright>
 Sets the scale of the entity.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetFrameRate>SetFrameRate</a></td><td class=docright>
+Set the framerate value for this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetGreen>SetGreen</a></td><td class=docright>
 Set the green value for this tlEntity object.
@@ -321,6 +338,9 @@ Set the oktorender value for this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetParent>SetParent</a></td><td class=docright>
 Set the parent of the entity.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetPosition>SetPosition</a></td><td class=docright>
+The the x and y position of the entity.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetRed>SetRed</a></td><td class=docright>
 Set the red value for this tlEntity object.
@@ -423,6 +443,10 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <tr><td class=doctop colspan=2>Method GetAngle:Float()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the current angle of rotation.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=GetAnimating>
+<tr><td class=doctop colspan=2>Method GetAnimating:Int()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Returns true if the entity is animating.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=GetBlendMode>
 <tr><td class=doctop colspan=2>Method GetBlendMode:Int()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the current blendmode.</td></tr>
@@ -436,6 +460,10 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the children that this entity has.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This will return a list of children that the entity currently has.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=GetCurrentFrame>
+<tr><td class=doctop colspan=2>Method GetCurrentFrame:Float()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the currentframe of the entity sprite animation.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=GetEntityAlpha>
 <tr><td class=doctop colspan=2>Method GetEntityAlpha:Float()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the alpha value in this tlEntity object.</td></tr>
@@ -448,6 +476,11 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <table class=doc width=100% cellspacing=3 id=GetEntityScale>
 <tr><td class=doctop colspan=2>Method GetEntityScale(sx:Float Var, sy:Float Var)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Gets the x and y scale of the entity.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=GetFrameRate>
+<tr><td class=doctop colspan=2>Method GetFrameRate:Float()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the framerate value in this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>see <a href=#SetFrameRate>SetFrameRate</a> for more info.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=GetGreen>
 <tr><td class=doctop colspan=2>Method GetGreen:Int()</td></tr>
@@ -505,7 +538,7 @@ to the parent entity.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=GetWY>
 <tr><td class=doctop colspan=2>Method GetWY:Float()</td></tr>
-<tr><td class=docleft width=1%>Description</td><td class=docright>Get the wx value in this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the wy value in this tlEntity object.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>WY represents the current Y world coordinate of the entity. This may differ to y, which will contain the Y coordinate relative
 to the parent entity.</td></tr>
 </table>
@@ -568,6 +601,10 @@ See <a href=#Decay>Decay</a> to increase the age by a given amount.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set to true to make the entity animate just once.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Once the entity as reached the end of the animation cycle it will stop animating.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetAnimating>
+<tr><td class=doctop colspan=2>Method SetAnimating(Value:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set to true to make the entity animate.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=SetAutoCenter>
 <tr><td class=doctop colspan=2>Method SetAutoCenter(v:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set to true to position the handle of the entity at the center.</td></tr>
@@ -579,6 +616,10 @@ See <a href=#Decay>Decay</a> to increase the age by a given amount.</td></tr>
 <table class=doc width=100% cellspacing=3 id=SetBlue>
 <tr><td class=doctop colspan=2>Method SetBlue(Value:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the blue value for this tlEntity object.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetCurrentFrame>
+<tr><td class=doctop colspan=2>Method SetCurrentFrame(Value:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the currentframe of the entity sprite animation.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=SetEntityAlpha>
 <tr><td class=doctop colspan=2>Method SetEntityAlpha(Value:Float)</td></tr>
@@ -597,6 +638,12 @@ See <a href=#Decay>Decay</a> to increase the age by a given amount.</td></tr>
 <tr><td class=doctop colspan=2>Method SetEntityScale(sx:Float, sy:Float)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Sets the scale of the entity.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This will set both the x and y scale of the entity based on the values you pass it.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetFrameRate>
+<tr><td class=doctop colspan=2>Method SetFrameRate(Value:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the framerate value for this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>the frame rate dicates how fast the entity animates if it has more then 1 frame
+of animation. The framerate is measured in frames per second.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=SetGreen>
 <tr><td class=doctop colspan=2>Method SetGreen(Value:Int)</td></tr>
@@ -635,6 +682,11 @@ to false to avoid them being rendered.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Entities can have parents and children. Entities are drawn relative to their parents if the relative flag is set to true.
 Using this command and <a href=#addchild>addchild</a> you can create a hierarchy of entities. There's no need to call <a href=#addchild>addchild</a> as well as <a href=#setparent>setparent</a>
 because both commands will automatically set both accordingly.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetPosition>
+<tr><td class=doctop colspan=2>Method SetPosition(_x:Float, _y:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>The the x and y position of the entity.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This will be relative to the parent if relative is set to true.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=SetRed>
 <tr><td class=doctop colspan=2>Method SetRed(Value:Int)</td></tr>
@@ -718,7 +770,10 @@ it's parent entities. Update also updates the entity's children so only a single
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
 <tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
 <tr><th width=1%>Purpose</th><td>A base entity class</td></tr>
-<tr><th width=1%>Version</th><td>v1</td></tr>
+<tr><th width=1%>Version</th><td>v1.04</td></tr>
+<tr><th width=1%>History v1.06</th><td>20th September 2009 - Initial implementation of Z on entities (changes the overal scale of an entity and its children)</td></tr>
+<tr><th width=1%>History v1.04</th><td>7th September 2009 - Added a few more Getters and Setters</td></tr>
+<tr><th width=1%>History v1.04</th><td>7th September 2009 - Fixed a bug with animated entities causing a crash</td></tr>
 <tr><th width=1%>History v1.03</th><td>8th August 2009 - Added new variables for storing the bounding boxes of the entity</td></tr>
 <tr><th width=1%>History v1.03</th><td>8th August 2009 - Render method now only renders if avatar is not null and OKToRender is true</td></tr>
 <tr><th width=1%>History v1.03</th><td>8th August 2009 - Added OKToRender field so you can control wheter entities are actually rendered</td></tr>

@@ -30,8 +30,9 @@ Module rigz.entity
 ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: A base entity class"
-ModuleInfo "Version: v1.04"
+ModuleInfo "Version: v1.07"
 
+ModuleInfo "History v1.07: 1st November 2009 - You can now SetRadiusCalculate Which starts calculating the entity's area of influence. See SetRadiusCalculate"
 ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on entities (changes the overal scale of an entity and its children)"
 ModuleInfo "History v1.04: 7th September 2009 - Added a few more Getters and Setters"
 ModuleInfo "History v1.04: 7th September 2009 - Fixed a bug with animated entities causing a crash"
@@ -48,8 +49,9 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import rigz.singlesurface
+Import wxrigz.wxsinglesurface
 Import "consts.bmx"
+Import rigz.math
 
 rem
 	bbdoc: Entity type for basic object information
@@ -164,6 +166,9 @@ Type tlEntity
 	Field AABB_MaxHeight:Float
 	Field AABB_MinWidth:Float
 	Field AABB_MinHeight:Float
+	Field Radius_Calculate:Int
+	Field Image_Radius:Float								'This is the radius of which the image can be drawn within
+	Field Entity_Radius:Float								'This is the radius that encompasses the whole wntity, including children
 	'---------------------------------
 	'Ownerships-----------------------
 	Field parent:tlEntity									'parent of the entity, for example bullet fired by the entity
@@ -245,6 +250,11 @@ Type tlEntity
 		'update the Axis Aligned Bounding Box
 		If AABB_Calculate
 			UpdateBoundingBox()
+		End If
+		
+		'update the radius of influence
+		If Radius_Calculate
+			UpdateEntityRadius()
 		End If
 		
 		'update the children		
@@ -341,6 +351,48 @@ Type tlEntity
 		End If
 	End Method
 	rem
+		bbdoc: Update the entity's radius of influence
+		about: The radius of influence is the area around the entity that could possibly be drawn to. This is used in the timelinefx editor where
+		it's used to autofit the effect to the animation frame
+	end rem
+	Method UpdateEntityRadius()
+		If autocenter
+			If avatar
+				If avatar.Max_Radius
+					Image_Radius = Max(avatar.Max_Radius * scalex * z, avatar.Max_Radius * scaley * z)
+				Else
+					Image_Radius = GetDistance(avatar.width / 2 * scalex * z, avatar.height / 2 * scaley * z, avatar.width * scalex * z, avatar.height * scaley * z)
+				End If
+			Else
+				Image_Radius = 0
+			End If
+		Else
+			If avatar.Max_Radius
+				Image_Radius = getdistance(handlex * scalex * z, handley * scaley * z, avatar.width / 2 * scalex * z, avatar.height / 2 * scaley * z) ..
+				+ Max(avatar.Max_Radius * scalex * z, avatar.Max_Radius * scaley * z)
+			Else
+				Image_Radius = GetDistance(handlex * scalex * z, handley * scaley * z, avatar.width * scalex * z, avatar.height * scaley * z)
+			End If
+		End If
+		entity_radius = image_radius
+		If Not childcount
+			UpdateParentEntityRadius()
+		End If
+	End Method
+	rem
+		bbdoc: Update the entity's parent radius of influence
+	end rem
+	Method UpdateParentEntityRadius()
+		If parent
+			If childcount
+				parent.entity_radius:+Max(0, GetDistance(wx, wy, parent.wx, parent.wy) + entity_radius - parent.Entity_Radius)
+			Else
+				parent.entity_radius:+Max(0, GetDistance(wx, wy, parent.wx, parent.wy) + image_radius - parent.Entity_Radius)
+			End If
+			parent.UpdateParentEntityRadius()
+		End If
+	End Method
+	rem
 		bbdoc: Update the entity's parent bounding box
 	end rem
 	Method UpdateParentBoundingBox()
@@ -363,6 +415,26 @@ Type tlEntity
 		DrawRect wx + AABB_xmin, wy + AABB_ymin, AABB_xmax - AABB_xmin, AABB_ymax - AABB_ymin
 	End Method
 	rem
+		bbdoc: Draw the image boundary of the entity
+	end rem
+	Method DrawImageBoundary()
+		SetScale 1, 1
+		SetRotation 0
+		SetAlpha 0.5
+		SetColor 255, 0, 255
+		DrawOval wx - image_radius, wy - image_radius, image_radius * 2, image_radius * 2
+	End Method
+	rem
+		bbdoc: Draw the whole boundary of the entity including children
+	end rem
+	Method DrawEntityBoundary()
+		SetScale 1, 1
+		SetRotation 0
+		SetAlpha 0.5
+		SetColor 255, 0, 255
+		DrawOval wx - entity_radius, wy - entity_radius, entity_radius * 2, entity_radius * 2
+	End Method
+	rem
 		bbdoc: Change the level of zoom for the particle.
 	endrem
 	Method Zoom(v:Float)
@@ -376,6 +448,7 @@ Type tlEntity
 	Method AddChild(e:tlEntity)
 		children.AddLast(e)
 		e.parent = Self
+		e.Radius_Calculate = radius_calculate
 		childcount:+1
 	End Method
 	rem
@@ -483,6 +556,22 @@ Type tlEntity
 	End Rem
 	Method GetEntityAlpha:Float()
 		Return alpha
+	End Method
+	Rem
+		bbdoc: Get the Image Radius value in this tlEntity object.
+		about: The image radius is the area that the entity could possible be drawn to. This takes into account scale and more importantly, the handle
+		of the image. Radius_Calculate needs to be set to true for this value to be kept updated.
+	End Rem
+	Method GetImageRadius:Float()
+		Return Image_Radius
+	End Method
+	Rem
+		bbdoc: Get the Entity Radius value in this tlEntity object.
+		about: The entity radius is similar to the Image_Radius except that it also takes into account all the children of the entity as well.
+		Radius_Calculate needs to be set to true for this value to be kept updated.
+	End Rem
+	Method GetEntityRadius:Float()
+		Return Entity_Radius
 	End Method
 	Rem
 		bbdoc: Set the alpha value for this tlEntity object.
@@ -619,6 +708,25 @@ Type tlEntity
 	end rem
 	Method GetSpeed:Float()
 		Return speed
+	End Method
+	Rem
+		bbdoc: Get the Radius Calculate value in this tlEntity object.
+		about: see #SetRadiusCalculate for more info
+	End Rem
+	Method GetRadiusCalculate:Int()
+		Return Radius_Calculate
+	End Method
+	Rem
+		bbdoc: Set the Radius Calculate value for this tlEntity object.
+		about: Radius is the radius of the entity where it could possible be drawn to. This includes all of it's children as well. 
+		This will also propagate to all children, so it's best to set this to true before adding children to the entity, that way, the children will acquire
+		the same value as the parent. By default this is false. 
+	End Rem
+	Method SetRadiusCalculate(Value:Int)
+		Radius_Calculate = Value
+		For Local e:tlEntity = EachIn children
+			e.SetRadiusCalculate(Value)
+		Next
 	End Method
 	Rem
 		bbdoc: Get the framerate value in this tlEntity object.

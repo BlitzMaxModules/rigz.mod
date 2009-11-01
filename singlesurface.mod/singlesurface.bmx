@@ -14,6 +14,7 @@ ModuleInfo "Version: v1"
 ModuleInfo "Added DX 9 compatibility using DStastny mod."
 ModuleInfo "Added drawsprite and load sprite helper functions"
 ModuleInfo "Now returns null if the given dimensions don't fit the animation being loaded"
+ModuleInfo ""
 
 Import brl.max2d
 ?Win32
@@ -21,6 +22,7 @@ Import brl.max2d
 	Import dbs.d3d9max2d
 ?
 Import brl.glmax2d
+Import rigz.math
 
 rem
 	bbdoc: Type for creating single surface animations
@@ -46,6 +48,7 @@ Type TAnimImage
 	Field largeindex:Int
 	Field selected:Int
 	Field freshsave:Int = False
+	Field Max_Radius:Float
 	?Win32
 		Field DX7Frame:TD3D7ImageFrame
 		Field DX9Frame:TDX9ImageFrame		'Rem this if you dont use dx9
@@ -79,11 +82,31 @@ Type TAnimImage
 				t.u1[f] = Float(tx + cell_width * xdelta) / Float(t.Image.Width) 
 				t.v1[f] = Float(ty + cell_Height * ydelta) / Float(t.Image.Height) 
 			Next
+			
 			Return t
 		Else
 			Return Null
 		End If
 	End Function
+	
+	Method FindImageMax:Float()
+		If image
+			For Local frame:Int = 0 To frames - 1
+				Local pixmap:TPixmap = LockImage(image)
+				pixmap = PixmapWindow(pixmap, u0[frame] * image.width, v0[frame] * image.height, getwidth(), getheight())
+				For Local x:Int = 0 To pixmap.width - 1
+					For Local y:Int = 0 To pixmap.height - 1
+						Local RGBA:Int = pixmap.ReadPixel(x, y)
+						Local a:Int = (RGBA Shr 24) & $ff
+						If a > 0
+							max_radius = Max(max_radius, getdistance(Abs(width / 2), Abs(height / 2), x, y))
+						End If
+					Next
+				Next
+			Next
+		End If
+		return max_radius
+	End Method
 	
 	Function Pow2Size:Float(n:Int) 
 		Local t:Int = 1
@@ -164,7 +187,7 @@ rem
 	<li><b>frames: </b>The number of frames of the aniamtion. If you're loading a single frame image then you can omit this</li>
 	</ul>
 end rem
-Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, frames:Int = 1)
+Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, frames:Int = 1, FindRadius:Int = False)
 	
 	If width = 0
 		Local i:TImage = LoadImage(url, FILTEREDIMAGE)
@@ -177,6 +200,9 @@ Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, fr
 		s.height = height
 		If String(url)
 			s.url = url.ToString()
+		End If
+		If FindRadius
+			s.FindImageMax()
 		End If
 		Return s
 	Else
