@@ -51,7 +51,7 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import wxrigz.wxsinglesurface
+Import rigz.singlesurface
 Import "consts.bmx"
 Import rigz.math
 
