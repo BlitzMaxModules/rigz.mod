@@ -1,6 +1,21 @@
 What's new in the TimelineFX Module?
+
+08.11.09
+entity.mod
+- Tidied up the behaviour of entities that have a z value other then 1
+- New field: RootParent. This is the absolute root parent of the entity. Set when you add the entity as a child. see AssignRootParent
+- You can now SetRadiusCalculate Which starts calculating the entity's area of influence. This is used in the editor to auto fit the effect to the animation frame size
+
+TimelineFX.mod
+- Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute
+- Particle manager now restores the GFX states (alpha, scale etc.) after drawing particles
+- Added Destroy method to tlParticleManager. Use to avoid memory leaks
+
+Tweener.mod
+- Fixed a bug in the example program
+
 24.09.09
-timelinefx
+timelinefx.mod
 - Initial implementation of Z on effects (changes the overal scale of an effect)
 
 entity.mod
@@ -26,7 +41,7 @@ entity.mod
 - Added UpdateSpeed flag to tlEntity so you can override the updating of the entity speed and movement
 - Added new variables for storing the bounding boxes of the entity
 
-TimelineFX
+TimelineFX.mod
 - Added new method SetEffectParticleSize, which rolls SetSizeX and Y into one method
 - Particle manager now sets oktorender to false for the particles it renders, see SetOKToRender in entity.mod
 

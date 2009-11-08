@@ -32,6 +32,8 @@ ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: A base entity class"
 ModuleInfo "Version: v1.07"
 
+ModuleInfo "History v1.07: 8th November 2009 - Tidied up the behaviour of entities that have a z value other then 1"
+ModuleInfo "History v1.07: 7th November 2009 - New field: RootParent. This is the absolute root parent of the entity. Set when you add the entity as a child. see AssignRootParent"
 ModuleInfo "History v1.07: 1st November 2009 - You can now SetRadiusCalculate Which starts calculating the entity's area of influence. See SetRadiusCalculate"
 ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on entities (changes the overal scale of an entity and its children)"
 ModuleInfo "History v1.04: 7th September 2009 - Added a few more Getters and Setters"
@@ -49,7 +51,7 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import rigz.singlesurface
+Import wxrigz.wxsinglesurface
 Import "consts.bmx"
 Import rigz.math
 
@@ -166,12 +168,13 @@ Type tlEntity
 	Field AABB_MaxHeight:Float
 	Field AABB_MinWidth:Float
 	Field AABB_MinHeight:Float
-	Field Radius_Calculate:Int
+	Field Radius_Calculate:Int = True
 	Field Image_Radius:Float								'This is the radius of which the image can be drawn within
 	Field Entity_Radius:Float								'This is the radius that encompasses the whole wntity, including children
 	'---------------------------------
 	'Ownerships-----------------------
 	Field parent:tlEntity									'parent of the entity, for example bullet fired by the entity
+	Field rootparent:tlEntity								'The root parent of the entity
 	'Children
 	Field children:TList = CreateList()						'list of child entities
 	Field childcount:Int									'count of children
@@ -199,14 +202,34 @@ Type tlEntity
 			pixelspersecond = speed / tp_CURRENT_UPDATE_TIME
 			speedvec.x = Sin(direction) * pixelspersecond
 			speedvec.y = Cos(direction) * pixelspersecond
-			x:+speedvec.x
-			y:-speedvec.y
+			If relative
+					x:+speedvec.x
+					y:-speedvec.y
+			Else
+				If z <> 1
+					x:+speedvec.x * z
+					y:-speedvec.y * z
+				Else
+					x:+speedvec.x
+					y:-speedvec.y				
+				End If
+			End If
 		End If
 		
 		'update the gravity
 		If weight
-			gravity:+weight / tp_CURRENT_UPDATE_TIME
-			y:+gravity / tp_CURRENT_UPDATE_TIME
+			If relative
+				gravity:+weight / tp_CURRENT_UPDATE_TIME
+				y:+gravity / tp_CURRENT_UPDATE_TIME
+			Else
+				If z <> 1
+					gravity:+weight / tp_CURRENT_UPDATE_TIME
+					y:+(gravity / tp_CURRENT_UPDATE_TIME) * z
+				Else
+					gravity:+weight / tp_CURRENT_UPDATE_TIME
+					y:+gravity / tp_CURRENT_UPDATE_TIME
+				End If
+			End If
 		End If
 		
 		'set the matrix if it is relative to the parent
@@ -226,7 +249,7 @@ Type tlEntity
 			End If
 			relativeangle = parent.relativeangle + angle
 		Else
-			If parent setz(parent.z)
+			'If parent setz(parent.z)
 			wx = x
 			wy = y
 		End If
@@ -371,12 +394,12 @@ Type tlEntity
 				Image_Radius = getdistance(handlex * scalex * z, handley * scaley * z, avatar.width / 2 * scalex * z, avatar.height / 2 * scaley * z) ..
 				+ Max(avatar.Max_Radius * scalex * z, avatar.Max_Radius * scaley * z)
 			Else
-				Image_Radius = GetDistance(handlex * scalex * z, handley * scaley * z, avatar.width * scalex * z, avatar.height * scaley * z)
+				Image_Radius = getdistance(handlex * scalex * z, handley * scaley * z, avatar.width * scalex * z, avatar.height * scaley * z)
 			End If
 		End If
 		entity_radius = image_radius
-		If Not childcount
-			UpdateParentEntityRadius()
+		If rootparent
+			UpdateRootParentEntityRadius()
 		End If
 	End Method
 	rem
@@ -385,11 +408,21 @@ Type tlEntity
 	Method UpdateParentEntityRadius()
 		If parent
 			If childcount
-				parent.entity_radius:+Max(0, GetDistance(wx, wy, parent.wx, parent.wy) + entity_radius - parent.Entity_Radius)
+				parent.entity_radius:+Max(0, getdistance(wx, wy, parent.wx, parent.wy) + entity_radius - parent.Entity_Radius)
 			Else
-				parent.entity_radius:+Max(0, GetDistance(wx, wy, parent.wx, parent.wy) + image_radius - parent.Entity_Radius)
+				parent.entity_radius:+Max(0, getdistance(wx, wy, parent.wx, parent.wy) + image_radius - parent.Entity_Radius)
 			End If
+			DebugLog name + " - Radius: " + entity_Radius + " | Distance to Parent: " + getdistance(wx, wy, parent.wx, parent.wy)
 			parent.UpdateParentEntityRadius()
+		End If
+	End Method
+	rem
+		bbdoc: Update the entity's parent radius of influence
+	end rem
+	Method UpdateRootParentEntityRadius()
+		If rootparent
+			If Alpha rootparent.entity_radius:+Max(0, getdistance(wx, wy, rootparent.wx, rootparent.wy) + image_radius - rootparent.Entity_Radius)
+			'DebugLog name + " - Radius: " + entity_Radius + " | Distance to Parent: " + getdistance(wx, wy, rootparent.wx, rootparent.wy)
 		End If
 	End Method
 	rem
@@ -402,6 +435,18 @@ Type tlEntity
 			parent.AABB_xmin:+Min(0, wx - parent.wx + AABB_xmin - parent.AABB_xmin)
 			parent.AABB_ymin:+Min(0, wy - parent.wy + AABB_ymin - parent.AABB_ymin)
 			parent.UpdateParentBoundingBox()
+		End If
+	End Method
+	rem
+		bbdoc: Assign the root parent of the entity
+		about: This assigns the root parent of the entity which will be the highest level in the entity hierarchy. This method is generally only used
+		internally, when an entity is added as a child to another entity.
+	end rem
+	Method AssignRootParent(e:tlEntity)
+		If parent
+			parent.AssignRootParent(e)
+		Else
+			e.rootparent = Self
 		End If
 	End Method
 	rem
@@ -449,6 +494,7 @@ Type tlEntity
 		children.AddLast(e)
 		e.parent = Self
 		e.Radius_Calculate = radius_calculate
+		e.AssignRootParent(e)
 		childcount:+1
 	End Method
 	rem

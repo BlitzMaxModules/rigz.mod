@@ -6,7 +6,7 @@ SetGraphicsDriver GLMax2DDriver()
 
 Graphics (800, 600, 0)
 
-Global Tweener:tTweener = New tTweener.Create(30)
+Global Tweener:tTweener = New tTweener.Create(10)
 
 'A little test oval we can move about the screen
 Type Testoval
@@ -24,7 +24,7 @@ Type Testoval
 		'capture the old coordinate so that we have something to tween with
 		capture()
 		'divide the speed by the updatefrequency to get the proper pixels per second value and update x
-		X:+speed / Tweener.UpdateFrequecy
+		X:+speed / Tweener.UpdateFrequency
 		'Bounce the oval off the side of the screens
 		If x > GraphicsWidth() speed = -speed
 		If x < 0 speed = -speed

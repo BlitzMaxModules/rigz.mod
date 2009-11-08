@@ -34,9 +34,9 @@ moon.setsprite(LoadSprite("moon.png",,, , True))
 moonlet.setsprite(LoadSprite("moon.png",,, , True))
 sun.SetHandleX(-100)
 sun.SetHandleY(-100)
-sun.SetentityScale(0.75, 0.75)
+sun.SetentityScale(.75, .75)
 sun.SetAutoCenter(False)
-sun.SetZ(0.75)
+sun.SetZ(0.5)
 'add the earth to the sun as a child
 sun.addchild(earth)
 'set the suns postion
@@ -57,7 +57,7 @@ earth.SetHandleY(100)
 earth.name = "earth"
 earth.SetAutoCenter(False)
 
-moon.AddChild(moonlet)
+
 'set the moon 75 pixels to the right of the earth
 moon.setx(75)
 'scale it down to a quarter of its size
@@ -67,6 +67,9 @@ moon.capture()
 moonlet.SetX(25)
 moonlet.SetEntityScale(0.1, 0.1)
 moonlet.Capture
+moonlet.SetSpeed(25)
+moonlet.name = "Moonlet"
+moon.AddChild(moonlet)
 
 sun.SetRadiusCalculate(True)
 
@@ -91,6 +94,7 @@ While Not KeyDown(KEY_ESCAPE)
 		sun.rotate(1)
 		earth.rotate(-5)
 		moon.Rotate(2.5)
+		If KeyDown(KEY_SPACE) moonlet.SetSpeed(0)
 	Next
 	
 	'draw them all to the screen

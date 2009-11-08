@@ -32,6 +32,8 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.07: 08th November 2009 - Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute"
+ModuleInfo "History v1.07: 07th November 2009 - Particle manager now restores the GFX states (alpha, scale etc.) after drawing particles."
 ModuleInfo "History v1.07: 29th October 2009 - Added Destroy method to tlParticleManager. Use to avoid memory leaks."
 ModuleInfo "History v1.06: 20th September 2009 - Initial implementation of Z on effects (changes the overal scale of an effect)"
 ModuleInfo "History v1.06: 4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place"
@@ -339,6 +341,7 @@ Type tlEffect Extends tlEntity
 	Field height:TList = CreateList()
 	Field effectangle:TList = CreateList()
 	Field stretch:TList = CreateList()
+	Field globalz:TList = CreateList()
 	
 	'Compiled arrays of global settings
 	Field c_life:tlEmitterArray
@@ -355,6 +358,7 @@ Type tlEffect Extends tlEntity
 	Field c_height:tlEmitterArray
 	Field c_angle:tlEmitterArray
 	Field c_stretch:tlEmitterArray
+	Field c_globalz:tlEmitterArray
 	
 	Field currentlife:Float
 	Field currentamount:Float
@@ -369,6 +373,7 @@ Type tlEffect Extends tlEntity
 	Field currentemissionangle:Float
 	Field currentemissionrange:Float
 	Field currentstretch:Float
+	Field currentglobalz:Float
 	
 	Field OverrideSize:Int
 	Field OverrideEmissionAngle:Int
@@ -383,6 +388,7 @@ Type tlEffect Extends tlEntity
 	Field OverrideWeight:Int
 	Field OverrideAlpha:Int
 	Field OverrideStretch:Int
+	Field OverrideGlobalz:Int
 	
 	Field bypass_weight:Int
 	
@@ -403,6 +409,8 @@ Type tlEffect Extends tlEntity
 		SortList(width)
 		SortList(height)
 		SortList(effectangle)
+		SortList(stretch)
+		SortList(globalz)
 	End Method
 	rem
 	bbdoc: Show all Emitters
@@ -648,7 +656,7 @@ Type tlEffect Extends tlEntity
 		Return e
 	End Method
 	Rem
-	bbdoc: Add an angle attribute node
+	bbdoc: Add a stretch attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
 	<p>This will scale the stretch overtime attribute of all particles within the effect.</p>
@@ -658,6 +666,19 @@ Type tlEffect Extends tlEntity
 		e.frame = f
 		e.value = v
 		stretch.AddLast e
+		Return e
+	End Method
+	Rem
+	bbdoc: Add a globalz attribute node
+	returns: Emitter change object.
+	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
+	<p>This will affect the overal scale of the effect, effecticvely zooming into or out of the effect</p>
+	endrem
+	Method addglobalz:tlAttributeNode(f:Float, v:Float)
+		Local e:tlAttributeNode = New tlAttributeNode
+		e.frame = f
+		e.value = v
+		globalz.AddLast e
 		Return e
 	End Method
 	
@@ -994,7 +1015,23 @@ Type tlEffect Extends tlEntity
 		ellipsearc = degrees
 		ellipseoffset = 90 - degrees / 2
 	End Method
-	
+	Rem
+		bbdoc:Set the current zoom level of the effect
+		about:This overides the graph the effect uses to set the Global Attribute Global Zoom
+	End Rem
+	method SetZ(v:Float)
+		overrideglobalz = True
+		z = v
+	End Method
+	rem
+	bbdoc: Set the Global attribute Stretch of the effect
+	about: This overides the graph the effect uses to set the Global Attribute Stretch
+	endrem
+	Method SetStretch(v:Float)
+		OverrideStretch = True
+		currentstretch = v
+	End Method
+
 	
 	Rem
 	bbdoc: Get class
@@ -1266,7 +1303,7 @@ Type tlEffect Extends tlEntity
 		End If
 		
 		currentframe = age / tp_LOOKUP_FREQUENCY
-				
+		
 		Select pm.updatemode
 			Case tlUPDATE_MODE_COMPILED
 				If Not overridesize
@@ -1333,6 +1370,7 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionrange currentemissionrange = get_emissionrange(currentframe)
 					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = get_stretch(age) * parentemitter.parentEffect.currentstretch
+					If Not overrideglobalz currentglobalz = get_globalz(age) * parentemitter.parentEffect.currentglobalz
 				Case tlUPDATE_MODE_INTERPOLATED
 					If Not overridelife currentlife = interpolate_life(age) * parentemitter.parentEffect.currentlife
 					If Not overrideamount currentamount = interpolate_amount(age) * parentemitter.parentEffect.currentamount
@@ -1350,6 +1388,7 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionangle currentemissionangle = interpolate_emissionangle(age)
 					If Not overrideemissionrange currentemissionrange = interpolate_emissionrange(age)
 					If Not overridestretch currentstretch = interpolate_stretch(age) * parentemitter.parentEffect.currentstretch
+					If Not overrideglobalz currentglobalz = interpolate_globalz(age) * parentemitter.parentEffect.currentglobalz
 			End Select
 		Else
 			Select pm.updatemode
@@ -1371,6 +1410,7 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionrange currentemissionrange = get_emissionrange(currentframe)
 					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = get_stretch(age)
+					If Not overridestretch currentglobalz = get_globalz(age)
 				Case tlUPDATE_MODE_INTERPOLATED
 					If Not overridelife currentlife = interpolate_life(age)
 					If Not overrideamount currentamount = interpolate_amount(age)
@@ -1389,8 +1429,11 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionrange currentemissionrange = interpolate_emissionrange(age)
 					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = interpolate_stretch(age)
+					If Not overridestretch currentglobalz = interpolate_globalz(age)
 			End Select
 		End If
+		
+		setz(currentglobalz)
 		
 		If Not currentweight bypass_weight = True
 		
@@ -1717,7 +1760,31 @@ Type tlEffect Extends tlEntity
 		For Local a:tlAttributeNode = EachIn stretch
 			If _age < a.frame
 				p = (_age - lastf) / (a.frame - lastf)
-				Local BezierValue:Float = GetBezierValue(lastec, a, p, tlANGLE_MIN, tlANGLE_MAX)
+				Local BezierValue:Float = GetBezierValue(lastec, a, p, tlGLOBAL_PERCENT_MIN, tlGLOBAL_PERCENT_MAX)
+				If BezierValue
+					Return BezierValue
+				Else
+					Return lastv - p * (lastv - a.value)
+				End If
+			End If
+			lastv = a.value
+			lastf = a.frame - 1
+			lastec = a
+		Next
+		Return lastv
+	End Method
+	Method interpolate_globalz:Float(_age:Int)
+		If Not globalz.Last()
+			Return 1
+		End If
+		Local lastv:Float
+		Local lastf:Float
+		Local p:Float
+		Local lastec:tlAttributeNode
+		For Local a:tlAttributeNode = EachIn globalz
+			If _age < a.frame
+				p = (_age - lastf) / (a.frame - lastf)
+				Local BezierValue:Float = GetBezierValue(lastec, a, p, tlGLOBAL_PERCENT_MIN, tlGLOBAL_PERCENT_MAX)
 				If BezierValue
 					Return BezierValue
 				Else
@@ -1752,6 +1819,7 @@ Type tlEffect Extends tlEntity
 		compile_height()
 		compile_angle()
 		compile_stretch()
+		compile_globalz()
 		For Local e:tlEmitter = EachIn children
 			e.compile_all()
 		Next
@@ -2071,6 +2139,29 @@ Type tlEffect Extends tlEntity
 			c_stretch = New tlEmitterArray.Create(1)
 		End If
 	End Method
+	Method compile_globalz()
+		If globalz.Count()
+			Local lastec:tlAttributeNode = tlAttributeNode(globalz.Last())
+			Local frame:Int
+			Local _age:Int
+			While _age < lastec.frame
+				frame:+1
+				_age:+tp_LOOKUP_FREQUENCY_OVERTIME
+			Wend
+			c_globalz = New tlEmitterArray.Create(frame + 1)
+			frame = 0
+			_age = 0
+			While _age < lastec.frame
+				c_globalz.changes[frame] = interpolate_globalz(_age)
+				frame:+1
+				_age:+tp_LOOKUP_FREQUENCY_OVERTIME
+			Wend
+			c_globalz.changes[frame] = lastec.VALUE
+		Else
+			c_globalz = New tlEmitterArray.Create(1)
+			c_globalz.changes[c_globalz.lastframe] = 1
+		End If
+	End Method
 	'-------------
 	'Lookups
 	Method get_life:Float(frame:Int)
@@ -2169,6 +2260,13 @@ Type tlEffect Extends tlEntity
 			Return c_stretch.changes[frame]
 		Else
 			Return c_stretch.changes[c_stretch.lastframe]
+		End If
+	End Method
+	Method get_globalz:Float(frame:Int)
+		If frame <= c_globalz.lastframe
+			Return c_globalz.changes[frame]
+		Else
+			Return c_globalz.changes[c_globalz.lastframe]
 		End If
 	End Method
 End Type
@@ -3295,6 +3393,19 @@ Type tlEmitter Extends tlEntity
 	Method getpath:String()
 		Return path
 	End Method
+	Rem
+		bbdoc:Set the Radius Calculate value for this tlEntity object.
+		about: This overides the tlentity method so that the effects list can be updated too
+	End Rem
+	method SetRadiusCalculate(Value:Int)
+		Radius_Calculate = VALUE
+		For Local e:tlEntity = EachIn children
+			e.SetRadiusCalculate(Value)
+		Next
+		For Local e:tlEffect = EachIn effects
+			e.SetRadiusCalculate(VALUE)
+		Next
+	End Method
 	
 	Method destroy()
 		parenteffect = Null
@@ -3488,16 +3599,26 @@ Type tlEmitter Extends tlEntity
 											tween = c / intcounter
 											e.x = TweenValues(oldwx, wx, tween)
 											e.y = TweenValues(oldwy, wy, tween)
-											e.wx = e.x - parentEffect.handlex
-											e.wy = e.y - parentEffect.handley
+											If z <> 1
+												e.wx = e.x - parentEffect.handlex * z
+												e.wy = e.y - parentEffect.handley * z
+											Else
+												e.wx = e.x - parentEffect.handlex
+												e.wy = e.y - parentEffect.handley
+											End If
 										Else
 											e.x = 0 - parentEffect.handlex
 											e.y = 0 - parentEffect.handley
 											rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
 											e.x = TweenValues(oldwx, wx, tween) + rotvec.x
 											e.y = TweenValues(oldwy, wy, tween) + rotvec.y
-											e.wx = e.x
-											e.wy = e.y
+											If z <> 1
+												e.wx = e.x * z
+												e.wy = e.y * z
+											Else
+												e.wx = e.x
+												e.wy = e.y
+											End If
 										End If
 									End If
 								Case tlAREA_EFFECT
@@ -3538,8 +3659,13 @@ Type tlEmitter Extends tlEntity
 									End If
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 								Case tlELLIPSE_EFFECT
 									If parentEffect.emitatpoints
@@ -3577,8 +3703,13 @@ Type tlEmitter Extends tlEntity
 									End If
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x 
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 								Case tlLINE_EFFECT
 									If Not parentEffect.traverseedge
@@ -3638,8 +3769,13 @@ Type tlEmitter Extends tlEntity
 									'rotate
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x 
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 							End Select
 							'Set the zoom level
@@ -3648,6 +3784,7 @@ Type tlEmitter Extends tlEntity
 							e.avatar = image
 							e.handlex = handlex
 							e.handley = handley
+							e.autocenter = handlecenter
 							'-------------------------------
 							'-----Set lifetime properties---
 							e.lifetime = currentlife + Rnd(-current_lifevariation, current_lifevariation) * parentEffect.currentlife
@@ -3937,16 +4074,26 @@ Type tlEmitter Extends tlEntity
 											tween = c / intcounter
 											e.x = TweenValues(oldwx, wx, tween)
 											e.y = TweenValues(oldwy, wy, tween)
-											e.wx = e.x - parentEffect.handlex
-											e.wy = e.y - parentEffect.handley
+											If z <> 1
+												e.wx = e.x - parentEffect.handlex * z
+												e.wy = e.y - parentEffect.handley * z
+											Else
+												e.wx = e.x - parentEffect.handlex
+												e.wy = e.y - parentEffect.handley
+											End If
 										Else
 											e.x = 0 - parentEffect.handlex
 											e.y = 0 - parentEffect.handley
 											rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
 											e.x = TweenValues(oldwx, wx, tween) + rotvec.x
 											e.y = TweenValues(oldwy, wy, tween) + rotvec.y
-											e.wx = e.x
-											e.wy = e.y
+											If z <> 1
+												e.wx = e.x * z
+												e.wy = e.y * z
+											Else
+												e.wx = e.x
+												e.wy = e.y
+											End If
 										End If
 									End If
 								Case tlAREA_EFFECT
@@ -3987,8 +4134,13 @@ Type tlEmitter Extends tlEntity
 									End If
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 								Case tlELLIPSE_EFFECT
 									If parentEffect.emitatpoints
@@ -4014,6 +4166,7 @@ Type tlEmitter Extends tlEntity
 										
 										e.x = Cos(th) * tx - parentEffect.handlex + tx
 										e.y = -Sin(th) * ty - parentEffect.handley + ty
+
 									Else
 										tx = parentEffect.currentwidth / 2
 										ty = parentEffect.currentheight / 2
@@ -4022,12 +4175,16 @@ Type tlEmitter Extends tlEntity
 										
 										e.x = Cos(th) * tx - parentEffect.handlex + tx
 										e.y = -Sin(th) * ty - parentEffect.handley + ty
-									
 									End If
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x 
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 								Case tlLINE_EFFECT
 									If Not parentEffect.traverseedge
@@ -4087,14 +4244,22 @@ Type tlEmitter Extends tlEntity
 									'rotate
 									If Not e.relative
 										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
-										e.x = parent.wx + rotvec.x
-										e.y = parent.wy + rotvec.y
+										If z <> 1
+											e.x = parent.wx + rotvec.x * z
+											e.y = parent.wy + rotvec.y * z
+										Else
+											e.x = parent.wx + rotvec.x 
+											e.y = parent.wy + rotvec.y
+										End If
 									End If
 							End Select
+							'Set the zoom level
+							e.setz(z)
 							'-----Set up the image----------
 							e.avatar = image
 							e.handlex = handlex
 							e.handley = handley
+							e.autocenter = handlecenter
 							'-------------------------------
 							'-----Set lifetime properties---
 							e.lifetime = currentlife + Rnd(-current_lifevariation, current_lifevariation) * parentEffect.currentlife
@@ -6657,6 +6822,7 @@ Type tlParticle Extends tlEntity
 		randomspeed = 0
 		randomdirection = 0
 		parent = Null
+		rootparent = Null
 		acycles = 0
 		ccycles = 0
 		rptageA = 0
@@ -6924,6 +7090,15 @@ Type tlParticleManager
 		camtz = TweenValues(Old_Origin_Z, Origin_Z, tween)
 		Local w:Float
 		Local h:Float
+		'record current GFX states
+		Local c_alpha:Float = GetAlpha()
+		Local c_rotation:Float = GetRotation()
+		Local c_scalex:Float, c_scaley:Float
+		GetScale(c_scalex, c_scaley)
+		Local c_red:Int, c_green:Int, c_blue:Int
+		GetColor(c_red, c_green, c_blue)
+		Local c_blend:Int
+		c_blend = GetBlend()
 		'rendercount = 0
 		If angle
 			angletweened = tweenvalues(oldangle, angle, tween)
@@ -6994,6 +7169,12 @@ Type tlParticleManager
 				End If
 			Next
 		Next
+		'restore GFX States
+		SetAlpha c_alpha
+		SetRotation c_rotation
+		SetScale c_scalex, c_scaley
+		SetColor c_red, c_green, c_blue
+		SetBlend c_blend
 	End Method
 	Method DrawBoundingBoxes()
 		For Local e:tlEffect = EachIn effects
@@ -7436,6 +7617,7 @@ Function CopyEffect:tlEffect(e:tlEffect, ParticleManager:tlParticleManager, copy
 	eff.height = CopyAttributeNodes(e.height)
 	eff.effectangle = CopyAttributeNodes(e.effectangle)
 	eff.stretch = CopyAttributeNodes(e.stretch)
+	eff.globalz = CopyAttributeNodes(e.globalz)
 	eff.class = e.class
 	eff.SetEllipseArc e.ellipsearc
 	eff.lockaspect = e.lockaspect
@@ -7491,6 +7673,7 @@ Function UpdateEffect(eff:tlEffect, e:tlEffect)
 		eff.effectangle = CopyAttributeNodes(e.effectangle)
 		eff.weight = CopyAttributeNodes(e.weight)
 		eff.stretch = CopyAttributeNodes(e.stretch)
+		eff.globalz = CopyAttributeNodes(e.globalz)
 		eff.class = e.class
 		eff.SetEllipseArc e.ellipsearc
 		eff.setmgx e.mgx
@@ -7682,7 +7865,7 @@ Function LoadEffects:tlEffectsLibrary(filename:String, compile:Int = True)
 						'							sprite = loadTPA(shapestream)
 						'						Else'
 						If shapestream
-							sprite = LoadSprite(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt())
+							sprite = LoadSprite(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt(), True)
 						End If
 						'						End If
 						If sprite
@@ -7886,6 +8069,7 @@ Function LinkEffectArrays(efrom:tlEffect, eto:tlEffect)
 	eto.c_height = efrom.c_height
 	eto.c_angle = efrom.c_angle
 	eto.c_stretch = efrom.c_stretch
+	eto.c_globalz = efrom.c_globalz
 End Function
 Function LinkEmitterArrays(efrom:tlEmitter, eto:tlEmitter)
 	eto.c_life = efrom.c_life
@@ -8142,6 +8326,20 @@ Function loadeffectxmltree:tlEffect(effectschild:TxmlNode, sprites:TList, parent
 				End If
 			Case "STRETCH"
 				ec = e.addstretch(effectchild.getAttribute("FRAME").ToFloat(), effectchild.getAttribute("VALUE").ToFloat())
+				Local attlist:TList = effectchild.getChildren()
+				If attlist
+					For Local attchild:TxmlNode = EachIn attlist
+						Select attchild.getName()
+							Case "CURVE"
+								ec.SetCurvePoints(attchild.getAttribute("LEFT_CURVE_POINT_X").ToFloat(),  ..
+								attchild.getAttribute("LEFT_CURVE_POINT_Y").ToFloat(),  ..
+								attchild.getAttribute("RIGHT_CURVE_POINT_X").ToFloat(),  ..
+								attchild.getAttribute("RIGHT_CURVE_POINT_Y").ToFloat())
+						End Select
+					Next
+				End If
+			Case "GLOBAL_ZOOM"
+				ec = e.addglobalz(effectchild.getAttribute("FRAME").ToFloat(), effectchild.getAttribute("VALUE").ToFloat())
 				Local attlist:TList = effectchild.getChildren()
 				If attlist
 					For Local attchild:TxmlNode = EachIn attlist
