@@ -19,7 +19,7 @@ ModuleInfo ""
 Import brl.max2d
 ?Win32
 	Import brl.d3d7max2d
-	Import dbs.d3d9max2d
+	Import brl.d3d9max2d
 ?
 Import brl.glmax2d
 Import rigz.math
@@ -51,7 +51,7 @@ Type TAnimImage
 	Field Max_Radius:Float
 	?Win32
 		Field DX7Frame:TD3D7ImageFrame
-		Field DX9Frame:TDX9ImageFrame		'Rem this if you dont use dx9
+		Field DX9Frame:TD3D9ImageFrame		'Rem this if you dont use dx9
 	?
 	Field GLFrame:TGLImageFrame
 	Field dxVer:Int
@@ -137,11 +137,18 @@ Type TAnimImage
 					End If
 			        DX7Frame.setUV(u0[frame], v0[frame], u1[frame], v1[frame])
 				Case 9																'and this bit
-					DX9Frame = TDX9ImageFrame (image.frame(0))						'
+					DX9Frame = TD3D9ImageFrame (image.frame(0))						'
 					If frame > frames												'
 						frame = 0													'
-					End If															'	
-			        DX9Frame.setUV(u0[frame], v0[frame], u1[frame], v1[frame])		'
+					End If
+					dx9frame._fverts[4] = u0[frame]
+					dx9frame._fverts[5] = v0[frame]
+					dx9frame._fverts[10] = u1[frame]
+					dx9frame._fverts[11] = v0[frame]
+					dx9frame._fverts[16] = u1[frame]
+					dx9frame._fverts[17] = v1[frame]
+					dx9frame._fverts[22] = u0[frame]
+					dx9frame._fverts[23] = v1[frame]
 				Default
 		?
 		            GLFrame = TGLImageFrame(image.frame(0))

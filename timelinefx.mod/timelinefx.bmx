@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.08: 19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning."
 ModuleInfo "History v1.07: 08th November 2009 - Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute"
 ModuleInfo "History v1.07: 07th November 2009 - Particle manager now restores the GFX states (alpha, scale etc.) after drawing particles."
 ModuleInfo "History v1.07: 29th October 2009 - Added Destroy method to tlParticleManager. Use to avoid memory leaks."
@@ -90,6 +91,10 @@ Const tlAREA_EFFECT_LEFT_EDGE:Int = 3
 Const tlGLOBAL_PERCENT_MIN:Float = 0
 Const tlGLOBAL_PERCENT_MAX:Float = 20
 Const tlGLOBAL_PERCENT_STEPS:Float = 100
+
+Const tlGLOBAL_PERCENT_V_MIN:Float = 0
+Const tlGLOBAL_PERCENT_V_MAX:Float = 10
+Const tlGLOBAL_PERCENT_V_STEPS:Float = 200
 
 Const tlANGLE_MIN:Float = 0
 Const tlANGLE_MAX:Float = 1080
@@ -1410,7 +1415,7 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionrange currentemissionrange = get_emissionrange(currentframe)
 					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = get_stretch(age)
-					If Not overridestretch currentglobalz = get_globalz(age)
+					If Not overrideglobalz currentglobalz = get_globalz(age)
 				Case tlUPDATE_MODE_INTERPOLATED
 					If Not overridelife currentlife = interpolate_life(age)
 					If Not overrideamount currentamount = interpolate_amount(age)
@@ -1429,11 +1434,13 @@ Type tlEffect Extends tlEntity
 					If Not overrideemissionrange currentemissionrange = interpolate_emissionrange(age)
 					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = interpolate_stretch(age)
-					If Not overridestretch currentglobalz = interpolate_globalz(age)
+					If Not overrideglobalz currentglobalz = interpolate_globalz(age)
 			End Select
 		End If
 		
-		setz(currentglobalz)
+		If Not overrideglobalz
+			z = currentglobalz
+		End If
 		
 		If Not currentweight bypass_weight = True
 		
@@ -3992,6 +3999,8 @@ Type tlEmitter Extends tlEntity
 								e.matrix = e.matrix.transform(parent.matrix)
 							End If
 							e.relativeangle = parent.relativeangle + e.angle
+							e.UpdateEntityRadius()
+							e.UpdateBoundingBox()
 							'Capture old values for tweening
 							e.capture()
 						End If
@@ -4468,6 +4477,8 @@ Type tlEmitter Extends tlEntity
 								e.matrix = e.matrix.transform(parent.matrix)
 							End If
 							e.relativeangle = parent.relativeangle + e.angle
+							e.UpdateEntityRadius()
+							e.UpdateBoundingBox()
 							'Capture old values for tweening
 							e.capture()
 						End If

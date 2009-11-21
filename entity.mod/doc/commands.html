@@ -92,11 +92,15 @@ Local Earth:tAstralBody = New tAstralBody
 Local Moon:tAstralBody = New tAstralBody
 Local Moonlet:tAstralBody = New tAstralBody
 
-sun.setsprite(LoadSprite("sun.png"))
-earth.setsprite(LoadSprite("earth.png"))
-moon.setsprite(LoadSprite("moon.png"))
-moonlet.setsprite(LoadSprite("moon.png"))
-
+sun.setsprite(LoadSprite("sun.png",,, , True))
+earth.setsprite(LoadSprite("earth.png",,, , True))
+moon.setsprite(LoadSprite("moon.png",,, , True))
+moonlet.setsprite(LoadSprite("moon.png",,, , True))
+sun.SetHandleX(-100)
+sun.SetHandleY(-100)
+sun.SetentityScale(.75, .75)
+sun.SetAutoCenter(False)
+sun.SetZ(0.5)
 'add the earth to the sun as a child
 sun.addchild(earth)
 'set the suns postion
@@ -112,8 +116,12 @@ earth.setx(250)
 'scale the earth sprite down by half
 earth.SetentityScale(0.5, 0.5)
 earth.capture()
+earth.SetHandleX(-100)
+earth.SetHandleY(100)
+earth.name = "earth"
+earth.SetAutoCenter(False)
 
-moon.AddChild(moonlet)
+
 'set the moon 75 pixels to the right of the earth
 moon.setx(75)
 'scale it down to a quarter of its size
@@ -123,7 +131,11 @@ moon.capture()
 moonlet.SetX(25)
 moonlet.SetEntityScale(0.1, 0.1)
 moonlet.Capture
+moonlet.SetSpeed(25)
+moonlet.name = "Moonlet"
+moon.AddChild(moonlet)
 
+sun.SetRadiusCalculate(True)
 
 'set up a tweener using the tweener module
 Local tweener:tTweener = New tTweener.Create(30)
@@ -146,11 +158,17 @@ While Not KeyDown(KEY_ESCAPE)
 		sun.rotate(1)
 		earth.rotate(-5)
 		moon.Rotate(2.5)
+		If KeyDown(KEY_SPACE) moonlet.SetSpeed(0)
 	Next
 	
 	'draw them all to the screen
-	sun.render(tweener.getTween())
-
+	sun.render(1)
+	'sun.DrawBoundingBox()
+	sun.DrawEntityBoundary()
+	earth.DrawentityBoundary()
+	moon.DrawEntityBoundary()
+	moonlet.DrawEntityBoundary()
+	
 	Flip 0
 	
 Wend</pre></td></tr>
@@ -158,6 +176,9 @@ Wend</pre></td></tr>
 <table class=doc width=90% align=center><tr ><th class=doctop colspan=2 align=left><a name=tlEntity_methods></a>Methods Summary</th></tr>
 <tr><td class=docleft width=1%><a href=#AddChild>AddChild</a></td><td class=docright>
 Add a new child entity to the entity.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#AssignRootParent>AssignRootParent</a></td><td class=docright>
+Assign the root parent of the entity.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#CalculateBoundingBox>CalculateBoundingBox</a></td><td class=docright>
 Set the AABB Include value for this tlEntity object.
@@ -179,6 +200,12 @@ Destroy the entity.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#DrawBoundingBox>DrawBoundingBox</a></td><td class=docright>
 draw the bounding box for debugging.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#DrawEntityBoundary>DrawEntityBoundary</a></td><td class=docright>
+Draw the whole boundary of the entity including children.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#DrawImageBoundary>DrawImageBoundary</a></td><td class=docright>
+Draw the image boundary of the entity.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetAge>GetAge</a></td><td class=docright>
 Get the age value in this tlEntity object.
@@ -207,6 +234,9 @@ Get the alpha value in this tlEntity object.
 <tr><td class=docleft width=1%><a href=#GetEntityDirection>GetEntityDirection</a></td><td class=docright>
 Get the direction value in this tlEntity object.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#GetEntityRadius>GetEntityRadius</a></td><td class=docright>
+Get the Entity Radius value in this tlEntity object.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#GetEntityScale>GetEntityScale</a></td><td class=docright>
 Gets the x and y scale of the entity.
 </td></tr>
@@ -222,6 +252,9 @@ Get the current entity handle x.
 <tr><td class=docleft width=1%><a href=#GetHandleY>GetHandleY</a></td><td class=docright>
 Get the current entity image handle y.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#GetImageRadius>GetImageRadius</a></td><td class=docright>
+Get the Image Radius value in this tlEntity object.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#GetLifeTime>GetLifeTime</a></td><td class=docright>
 Get the lifetime value in this tlEntity object.
 </td></tr>
@@ -233,6 +266,9 @@ Get the oktorender value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetParent>GetParent</a></td><td class=docright>
 Get the current parent of the entity.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#GetRadiusCalculate>GetRadiusCalculate</a></td><td class=docright>
+Get the Radius Calculate value in this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#GetRed>GetRed</a></td><td class=docright>
 Get the red value in this tlEntity object.
@@ -342,6 +378,9 @@ Set the parent of the entity.
 <tr><td class=docleft width=1%><a href=#SetPosition>SetPosition</a></td><td class=docright>
 The the x and y position of the entity.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetRadiusCalculate>SetRadiusCalculate</a></td><td class=docright>
+Set the Radius Calculate value for this tlEntity object.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#SetRed>SetRed</a></td><td class=docright>
 Set the red value for this tlEntity object.
 </td></tr>
@@ -381,8 +420,17 @@ Update the entities bounding box.
 <tr><td class=docleft width=1%><a href=#UpdateChildren>UpdateChildren</a></td><td class=docright>
 Update all children of this entity.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#UpdateEntityRadius>UpdateEntityRadius</a></td><td class=docright>
+Update the entity's radius of influence.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#UpdateParentBoundingBox>UpdateParentBoundingBox</a></td><td class=docright>
 Update the entity's parent bounding box.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#UpdateParentEntityRadius>UpdateParentEntityRadius</a></td><td class=docright>
+Update the entity's parent radius of influence.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#UpdateRootParentEntityRadius>UpdateRootParentEntityRadius</a></td><td class=docright>
+Update the entity's parent radius of influence.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#Zoom>Zoom</a></td><td class=docright>
 Change the level of zoom for the particle.
@@ -397,6 +445,12 @@ Interpolate between 2 values.
 <tr><td class=doctop colspan=2>Method AddChild(e:tlEntity)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Add a new child entity to the entity.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This will also automatically set the childs parent.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=AssignRootParent>
+<tr><td class=doctop colspan=2>Method AssignRootParent(e:tlEntity)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Assign the root parent of the entity.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This assigns the root parent of the entity which will be the highest level in the entity hierarchy. This method is generally only used
+internally, when an entity is added as a child to another entity.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=CalculateBoundingBox>
 <tr><td class=doctop colspan=2>Method CalculateBoundingBox(Value:Int = True)</td></tr>
@@ -433,6 +487,14 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <table class=doc width=100% cellspacing=3 id=DrawBoundingBox>
 <tr><td class=doctop colspan=2>Method DrawBoundingBox()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>draw the bounding box for debugging.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=DrawEntityBoundary>
+<tr><td class=doctop colspan=2>Method DrawEntityBoundary()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Draw the whole boundary of the entity including children.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=DrawImageBoundary>
+<tr><td class=doctop colspan=2>Method DrawImageBoundary()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Draw the image boundary of the entity.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=GetAge>
 <tr><td class=doctop colspan=2>Method GetAge:Float()</td></tr>
@@ -473,6 +535,12 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the direction value in this tlEntity object.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Get the current direction the entity is travelling in.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=GetEntityRadius>
+<tr><td class=doctop colspan=2>Method GetEntityRadius:Float()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the Entity Radius value in this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>The entity radius is similar to the Image_Radius except that it also takes into account all the children of the entity as well.
+Radius_Calculate needs to be set to true for this value to be kept updated.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=GetEntityScale>
 <tr><td class=doctop colspan=2>Method GetEntityScale(sx:Float Var, sy:Float Var)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Gets the x and y scale of the entity.</td></tr>
@@ -494,6 +562,12 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <tr><td class=doctop colspan=2>Method GetHandleY:Int()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the current entity image handle y.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=GetImageRadius>
+<tr><td class=doctop colspan=2>Method GetImageRadius:Float()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the Image Radius value in this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>The image radius is the area that the entity could possible be drawn to. This takes into account scale and more importantly, the handle
+of the image. Radius_Calculate needs to be set to true for this value to be kept updated.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=GetLifeTime>
 <tr><td class=doctop colspan=2>Method GetLifeTime:Int()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the lifetime value in this tlEntity object.</td></tr>
@@ -513,6 +587,11 @@ when you're finished with the entity to avoid memory leaks.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the current parent of the entity.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Entities can have parents and children. Entities are drawn relative to their parents if the relative flag is true.
 Using this command and <a href=#addchild>addchild</a> you can create a hierarchy of entities.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=GetRadiusCalculate>
+<tr><td class=doctop colspan=2>Method GetRadiusCalculate:Int()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the Radius Calculate value in this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>see <a href=#SetRadiusCalculate>SetRadiusCalculate</a> for more info.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=GetRed>
 <tr><td class=doctop colspan=2>Method GetRed:Int()</td></tr>
@@ -688,6 +767,13 @@ because both commands will automatically set both accordingly.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>The the x and y position of the entity.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This will be relative to the parent if relative is set to true.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetRadiusCalculate>
+<tr><td class=doctop colspan=2>Method SetRadiusCalculate(Value:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the Radius Calculate value for this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>Radius is the radius of the entity where it could possible be drawn to. This includes all of it's children as well.
+This will also propagate to all children, so it's best to set this to true before adding children to the entity, that way, the children will acquire
+the same value as the parent. By default this is false.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=SetRed>
 <tr><td class=doctop colspan=2>Method SetRed(Value:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the red value for this tlEntity object.</td></tr>
@@ -751,9 +837,23 @@ it's parent entities. Update also updates the entity's children so only a single
 <tr><td class=doctop colspan=2>Method UpdateChildren()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Update all children of this entity.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=UpdateEntityRadius>
+<tr><td class=doctop colspan=2>Method UpdateEntityRadius()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Update the entity's radius of influence.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>The radius of influence is the area around the entity that could possibly be drawn to. This is used in the timelinefx editor where
+it's used to autofit the effect to the animation frame.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=UpdateParentBoundingBox>
 <tr><td class=doctop colspan=2>Method UpdateParentBoundingBox()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Update the entity's parent bounding box.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=UpdateParentEntityRadius>
+<tr><td class=doctop colspan=2>Method UpdateParentEntityRadius()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Update the entity's parent radius of influence.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=UpdateRootParentEntityRadius>
+<tr><td class=doctop colspan=2>Method UpdateRootParentEntityRadius()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Update the entity's parent radius of influence.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=Zoom>
 <tr><td class=doctop colspan=2>Method Zoom(v:Float)</td></tr>
@@ -770,7 +870,10 @@ it's parent entities. Update also updates the entity's children so only a single
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
 <tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
 <tr><th width=1%>Purpose</th><td>A base entity class</td></tr>
-<tr><th width=1%>Version</th><td>v1.04</td></tr>
+<tr><th width=1%>Version</th><td>v1.07</td></tr>
+<tr><th width=1%>History v1.07</th><td>8th November 2009 - Tidied up the behaviour of entities that have a z value other then 1</td></tr>
+<tr><th width=1%>History v1.07</th><td>7th November 2009 - New field: RootParent. This is the absolute root parent of the entity. Set when you add the entity as a child. see AssignRootParent</td></tr>
+<tr><th width=1%>History v1.07</th><td>1st November 2009 - You can now SetRadiusCalculate Which starts calculating the entity's area of influence. See SetRadiusCalculate</td></tr>
 <tr><th width=1%>History v1.06</th><td>20th September 2009 - Initial implementation of Z on entities (changes the overal scale of an entity and its children)</td></tr>
 <tr><th width=1%>History v1.04</th><td>7th September 2009 - Added a few more Getters and Setters</td></tr>
 <tr><th width=1%>History v1.04</th><td>7th September 2009 - Fixed a bug with animated entities causing a crash</td></tr>

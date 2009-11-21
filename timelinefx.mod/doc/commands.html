@@ -270,6 +270,9 @@ Add an emission range attribute node.
 <tr><td class=docleft width=1%><a href=#AddEmitter>AddEmitter</a></td><td class=docright>
 Add a new emitter to the directory. Emitters are stored using a map and can be retrieved using <a href=#GetEmitter>GetEmitter</a>. Generally you don't want to call this at all,
 </td></tr>
+<tr><td class=docleft width=1%><a href=#addglobalz>addglobalz</a></td><td class=docright>
+Add a globalz attribute node.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#addheight>addheight</a></td><td class=docright>
 Add a height attribute node.
 </td></tr>
@@ -286,7 +289,7 @@ Add a size y attribute node.
 Add a spin attribute node.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#addstretch>addstretch</a></td><td class=docright>
-Add an angle attribute node.
+Add a stretch attribute node.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#addvelocity>addvelocity</a></td><td class=docright>
 Add a velocity attribute node.
@@ -519,6 +522,9 @@ This sets the direction particles are spawned.
 <tr><td class=docleft width=1%><a href=#SetSpin>SetSpin</a></td><td class=docright>
 Set the Global attribute Spin of the effect.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetStretch>SetStretch</a></td><td class=docright>
+Set the Global attribute Stretch of the effect.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#settraverseedge>settraverseedge</a></td><td class=docright>
 Set to true for particles to traverse line type effects.
 </td></tr>
@@ -527,6 +533,9 @@ Set the Global attribute velocity of the effect.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetWeight>SetWeight</a></td><td class=docright>
 Set the Global attribute Weight of the effect.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetZ>SetZ</a></td><td class=docright>
+Set the current zoom level of the effect.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#setzoom>setzoom</a></td><td class=docright>
 Sets the zoom of the animation.
@@ -597,6 +606,13 @@ degrees randomly around the emission angle.</p></td></tr>
 <tr><td class=doctop colspan=2>Method AddEmitter(e:tlEmitter)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Add a new emitter to the directory. Emitters are stored using a map and can be retrieved using <a href=#GetEmitter>GetEmitter</a>. Generally you don't want to call this at all,</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=addglobalz>
+<tr><td class=doctop colspan=2>Method addglobalz:tlAttributeNode(f:Float, v:Float)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Add a globalz attribute node.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><p>Pass the method the time in millisecs (f) and the value (v)</p>
+<p>This will affect the overal scale of the effect, effecticvely zooming into or out of the effect</p></td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=addheight>
 <tr><td class=doctop colspan=2>Method addheight:tlAttributeNode(f:Float, v:Float)</td></tr>
 <tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
@@ -640,7 +656,7 @@ Note that this attribute will instantly effect all particles within the effect.<
 <table class=doc width=100% cellspacing=3 id=addstretch>
 <tr><td class=doctop colspan=2>Method addstretch:tlAttributeNode(f:Float, v:Float)</td></tr>
 <tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
-<tr><td class=docleft width=1%>Description</td><td class=docright>Add an angle attribute node.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Add a stretch attribute node.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright><p>Pass the method the time in millisecs (f) and the value (v)</p>
 <p>This will scale the stretch overtime attribute of all particles within the effect.</p></td></tr>
 </table>
@@ -1056,6 +1072,11 @@ that the effect is parented to.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the Global attribute Spin of the effect.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This overides the graph the effect uses to set the Global Attribute Spin.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetStretch>
+<tr><td class=doctop colspan=2>Method SetStretch(v:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the Global attribute Stretch of the effect.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This overides the graph the effect uses to set the Global Attribute Stretch.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=settraverseedge>
 <tr><td class=doctop colspan=2>Method settraverseedge(v:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set to true for particles to traverse line type effects.</td></tr>
@@ -1070,6 +1091,11 @@ that the effect is parented to.</td></tr>
 <tr><td class=doctop colspan=2>Method SetWeight(Weight:Float)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the Global attribute Weight of the effect.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>This overides the graph the effect uses to set the Global Attribute Weight.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetZ>
+<tr><td class=doctop colspan=2>method SetZ(v:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the current zoom level of the effect.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This overides the graph the effect uses to set the Global Attribute Global Zoom.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=setzoom>
 <tr><td class=doctop colspan=2>Method setzoom(v:Float)</td></tr>
@@ -1532,6 +1558,9 @@ Set Parent Effect.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#setParticlesrelative>setParticlesrelative</a></td><td class=docright>
 Set wheter the particles and emitter remain relative to the effect.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetRadiusCalculate>SetRadiusCalculate</a></td><td class=docright>
+Set the Radius Calculate value for this tlEntity object.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#setrandomcolor>setrandomcolor</a></td><td class=docright>
 Sets whether the particle chooses random colour from the colour attributes.
@@ -2058,6 +2087,11 @@ by indiepath.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set wheter the particles and emitter remain relative to the effect.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Emitters that are relative spawn particles that move and rotate with the effect they're contained in.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetRadiusCalculate>
+<tr><td class=doctop colspan=2>method SetRadiusCalculate(Value:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the Radius Calculate value for this tlEntity object.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This overides the tlentity method so that the effects list can be updated too.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=setrandomcolor>
 <tr><td class=doctop colspan=2>Method setrandomcolor(v:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Sets whether the particle chooses random colour from the colour attributes.</td></tr>
@@ -2306,6 +2340,9 @@ Clear all particles in use.
 <tr><td class=docleft width=1%><a href=#Create>Create</a></td><td class=docright>
 Create a new Particle Manager.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#destroy>destroy</a></td><td class=docright>
+Destroy the particle manager.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#DrawParticles>DrawParticles</a></td><td class=docright>
 Draw all particles currently in use.
 </td></tr>
@@ -2396,6 +2433,12 @@ rendered.</td></tr>
 <tr><td class=doctop colspan=2>Method Create:tlParticleManager(Particles:Int = tlPARTICLE_LIMIT)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Create a new Particle Manager.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Creates a new particle manager and sets the maximum number of particles. Default maximum is 5000.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=destroy>
+<tr><td class=doctop colspan=2>Method destroy()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Destroy the particle manager.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>This will destroy the particle, clearing all effects and particles. Use only when you are finished with the particle manager and want it removed
+to avoid any memory leaks.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=DrawParticles>
 <tr><td class=doctop colspan=2>Method DrawParticles(tween:Float = 1)</td></tr>
@@ -2502,6 +2545,10 @@ is compiled mode.</td></tr>
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
 <tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
 <tr><th width=1%>Purpose</th><td>To add rich particle effects to games and applications, quickly and easily</td></tr>
+<tr><th width=1%>History v1.08</th><td>19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning.</td></tr>
+<tr><th width=1%>History v1.07</th><td>08th November 2009 - Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute</td></tr>
+<tr><th width=1%>History v1.07</th><td>07th November 2009 - Particle manager now restores the GFX states (alpha, scale etc.) after drawing particles.</td></tr>
+<tr><th width=1%>History v1.07</th><td>29th October 2009 - Added Destroy method to tlParticleManager. Use to avoid memory leaks.</td></tr>
 <tr><th width=1%>History v1.06</th><td>20th September 2009 - Initial implementation of Z on effects (changes the overal scale of an effect)</td></tr>
 <tr><th width=1%>History v1.06</th><td>4th August 2009 - Fixed a bug where clicking on the shape preview wouldn't set the handle to the correct place</td></tr>
 <tr><th width=1%>History v1.06</th><td>4th August 2009 - Fixed a bug where locking the angle of a particle reversed the direction it was going in</td></tr>
