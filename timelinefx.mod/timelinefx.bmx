@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.08: 23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn."
 ModuleInfo "History v1.08: 19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning."
 ModuleInfo "History v1.07: 08th November 2009 - Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute"
 ModuleInfo "History v1.07: 07th November 2009 - Particle manager now restores the GFX states (alpha, scale etc.) after drawing particles."
@@ -7128,11 +7129,7 @@ Type tlParticleManager
 						px = (px * camtz) + center_x + (camtz * camtx)
 						py = (py * camtz) + center_y + (camtz * camty)
 					End If
-					w = (e.avatar.width * e.scalex)
-					h = (e.avatar.height * e.scaley)
-					If w > h h = w Else w = h
-					'check that the particle is on the screen before drawing
-					If px > - w And px < vp_w + w And py > - h And py < vp_h + h
+					If px > - e.Image_Diameter And px < vp_w + e.Image_Diameter And py > - e.Image_Diameter And py < vp_h + e.Image_Diameter
 						If e.avatar
 							If e.emitter.handlecenter
 								If e.avatar.frames = 1

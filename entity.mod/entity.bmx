@@ -51,7 +51,7 @@ ModuleInfo "History v1.01: 14th July 2009 - Fixed bug in tlEntity example - impo
 ModuleInfo "History v1.01: 13th July 2009 - Fixed a bug in tAnimImage where it wouldn't load images properly"
 ModuleInfo "History v1.00: 28th March 2009 - First Release"
 
-Import rigz.singlesurface
+Import wxrigz.wxsinglesurface
 Import "consts.bmx"
 Import rigz.math
 
@@ -170,7 +170,8 @@ Type tlEntity
 	Field AABB_MinHeight:Float
 	Field Radius_Calculate:Int = True
 	Field Image_Radius:Float								'This is the radius of which the image can be drawn within
-	Field Entity_Radius:Float								'This is the radius that encompasses the whole wntity, including children
+	Field Entity_Radius:Float								'This is the radius that encompasses the whole entity, including children
+	Field Image_Diameter:Float
 	'---------------------------------
 	'Ownerships-----------------------
 	Field parent:tlEntity									'parent of the entity, for example bullet fired by the entity
@@ -398,6 +399,7 @@ Type tlEntity
 			End If
 		End If
 		entity_radius = image_radius
+		image_diameter = image_radius * 2
 		If rootparent
 			UpdateRootParentEntityRadius()
 		End If
