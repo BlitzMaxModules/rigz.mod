@@ -20,7 +20,7 @@
 
 SuperStrict
 
-rem
+Rem
 	bbdoc: Timeline Entity System for blitzmax
 	about: This module provides a base entity class for use in any applications that need to have objects in world that need to be controlled
 	and drawn onto the screen. tlEntity provides the means to control these objects in a structured hierarchy with parent and child entities.
@@ -55,7 +55,7 @@ Import rigz.singlesurface
 Import "consts.bmx"
 Import rigz.math
 
-rem
+Rem
 	bbdoc: Entity type for basic object information
 	about: <p>This is the main type for storing entity information such as coordinates, colour and other information. This type is designed to be a base
 	type that you can use to extend and create other types, for example tPlayer or tBullet. </p>
@@ -142,15 +142,15 @@ Type tlEntity
 	Field oktorender:Int = True								'Set to false if you don't want this to be rendered
 	'---------------------------------
 	'life and age variables-----------
-	Field dob:float
+	Field dob:Float
 	Field age:Float
 	Field rptageA:Float
-	Field rptageC:float
+	Field rptageC:Float
 	Field acycles:Int
 	Field ccycles:Int
-	Field oldage:float
+	Field oldage:Float
 	Field dead:Int
-	field destroyed:Int
+	Field destroyed:Int
 	Field lifetime:Int
 	Field timediff:Float
 	'---------------------------------
@@ -190,7 +190,7 @@ Type tlEntity
 	'Temps
 	Field pixelspersecond:Float
 	'methods--------------------------
-	rem
+	Rem
 		bbdoc: Update the entity
 		about: Updates its coordinates based on the current speed (cs), applies any gravity, updates the current frame of the image and also updates the world coordinates. World
 		coordinates (wx and wy) represent the location of the entity where it will be drawn on screen. This is calculated based on where the entity is in relation to
@@ -285,7 +285,7 @@ Type tlEntity
 		updatechildren()
 		
 	End Method
-	rem
+	Rem
 		bbdoc: A mini update called when the entity is created
 		about: This is sometimes necessary to get the correct world coordinates for when new entities are spawned so that tweening is updated too. Otherwise
 		you might experience the entity shooting across the screen as it tweens between locations.
@@ -312,7 +312,7 @@ Type tlEntity
 		End If
 		
 	End Method
-	rem
+	Rem
 		bbdoc: Update all children of this entity.
 	endrem
 	Method UpdateChildren()
@@ -320,7 +320,7 @@ Type tlEntity
 			e.update()
 		Next
 	End Method
-	rem
+	Rem
 		bbdoc: Capture world coordinates, entity angle and scale for tweening.
 		about: Tweening is used in applications that use fixed rate timing. This is where the logic routines of an application are updated a fixed
 		amount of times each frame, but the drawing routines are updated as many times as possible. Each time the entity is updated during a logic
@@ -338,7 +338,7 @@ Type tlEntity
 		oldscaley = scaley
 		oldcurrentframe = currentframe
 	End Method
-	rem
+	Rem
 		bbdoc: Capture all including all children
 	end rem
 	Method CaptureAll()
@@ -347,7 +347,7 @@ Type tlEntity
 			e.CaptureAll()
 		Next
 	End Method
-	rem
+	Rem
 		bbdoc: Update the entities bounding box
 		about: This will update the entities bounding box, and if the entity has no children it will update its parent bounding box if it has one.
 	end rem
@@ -374,7 +374,7 @@ Type tlEntity
 			updateparentboundingbox()
 		End If
 	End Method
-	rem
+	Rem
 		bbdoc: Update the entity's radius of influence
 		about: The radius of influence is the area around the entity that could possibly be drawn to. This is used in the timelinefx editor where
 		it's used to autofit the effect to the animation frame
@@ -439,7 +439,7 @@ Type tlEntity
 			parent.UpdateParentBoundingBox()
 		End If
 	End Method
-	rem
+	Rem
 		bbdoc: Assign the root parent of the entity
 		about: This assigns the root parent of the entity which will be the highest level in the entity hierarchy. This method is generally only used
 		internally, when an entity is added as a child to another entity.
@@ -461,7 +461,7 @@ Type tlEntity
 		SetColor 0, 255, 0
 		DrawRect wx + AABB_xmin, wy + AABB_ymin, AABB_xmax - AABB_xmin, AABB_ymax - AABB_ymin
 	End Method
-	rem
+	Rem
 		bbdoc: Draw the image boundary of the entity
 	end rem
 	Method DrawImageBoundary()
@@ -488,7 +488,7 @@ Type tlEntity
 		z:+v
 		oldz = z
 	End Method
-	rem
+	Rem
 		bbdoc: Add a new child entity to the entity
 		about: This will also automatically set the childs parent.
 	endrem		
@@ -499,7 +499,7 @@ Type tlEntity
 		e.AssignRootParent(e)
 		childcount:+1
 	End Method
-	rem
+	Rem
 		bbdoc:Destroy the entity
 		about:This will destroy the entity and all it's children, ensuring all references are removed. Best to call this
 		when you're finished with the entity to avoid memory leaks.
@@ -512,7 +512,7 @@ Type tlEntity
 		children.Clear()
 		destroyed = True
 	End Method
-	rem
+	Rem
 		bbdoc: Remove a child entity from this entity's list of children
 	endrem
 	Method RemoveChild(e:tlEntity)
@@ -520,7 +520,7 @@ Type tlEntity
 		e.parent = Null
 		childcount:-1
 	End Method
-	rem
+	Rem
 		bbdoc: Clear all child entities from this list of children
 		about: This completely destroys them so the garbage collector can free the memory
 	endrem
@@ -531,7 +531,7 @@ Type tlEntity
 		children.Clear()
 		childcount = 0
 	End Method
-	rem
+	Rem
 		bbdoc: Recursively kills all child entities and any children within those too and so on.
 		about: This sets all the children's dead field to true so that you can tidy them later on however you need. If you just want to 
 		get rid of them completely use #clearchildren.
@@ -542,13 +542,13 @@ Type tlEntity
 			e.dead = True
 		Next
 	End Method
-	rem
+	Rem
 		bbdoc: Rotate the entity by the number of degrees you pass to it
 	end rem
 	Method Rotate(degrees:Float)
 		angle:+degrees
 	End Method
-	rem
+	Rem
 		bbdoc: Move the entity by the amount x and y that you pass to it
 	end rem
 	Method Move(xamount:Float, yamount:Float)
@@ -627,41 +627,41 @@ Type tlEntity
 	Method SetEntityAlpha(Value:Float)
 		alpha = Value
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current x coordinate of the entity
 		about: This will be relative to the parent if relative is set to true
 	endrem
 	Method SetX(v:Float)
 		x = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current y coordinate of the entity
 		about: This will be relative to the parent if relative is set to true
 	endrem
 	Method SetY(v:Float)
 		y = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current zoom level of the entity
 	endrem
 	Method SetZ(v:Float)
 		z = v
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current x coordinate of the entity
 		about: This will be relative to the parent if relative is set to true
 	endrem
 	Method GetX:Float()
 		Return x
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current y coordinate of the entity
 		about: This will be relative to the parent if relative is set to true
 	endrem
 	Method GetY:Float()
 		Return y
 	End Method
-	rem
+	Rem
 		bbdoc: The the x and y position of the entity
 		about: This will be relative to the parent if relative is set to true
 	end rem
@@ -669,57 +669,57 @@ Type tlEntity
 		x = _x
 		y = _y
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current world x coordinate of the entity
 	endrem
 	Method SetWX(v:Float)
 		wx = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current world y coordinate of the entity
 	endrem
 	Method SetWY(v:Float)
 		wy = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set to true to position the handle of the entity at the center
 	endrem
 	Method SetAutoCenter(v:Int)
 		autocenter = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current angle of rotation of the entity
 	endrem
 	Method SetAngle(v:Float)
 		angle = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current blendmode of the entity ie., ALPHABLEND/LIGHTBLEND
 	endrem
 	Method SetBlendMode(v:Int)
 		blendmode = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the entities x handle
 		about: This will not apply if autocenter is set to true
 	endrem
 	Method SetHandleX(v:Int)
 		handlex = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the entities y handle
 		about: This will not apply if autocenter is set to true
 	endrem
 	Method SetHandleY(v:Int)
 		handley = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the name of the entity
 	endrem
 	Method SetName(v:String)
 		name = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the parent of the entity
 		about: Entities can have parents and children. Entities are drawn relative to their parents if the relative flag is set to true. 
 		Using this command and #addchild you can create a hierarchy of entities. There's no need to call #addchild as well as #setparent
@@ -728,14 +728,14 @@ Type tlEntity
 	Method SetParent(e:tlEntity)
 		e.addchild(Self)
 	End Method
-	rem
+	Rem
 		bbdoc: Sets whether this entity remains relative to it's parent
 		about: Entities that are relative to their parent entity will position, rotate and scale with their parent.
 	endrem
 	Method SetRelative(v:Int)
 		relative = v
 	End Method
-	rem
+	Rem
 		bbdoc: Sets the scale of the entity.
 		about: This will set both the x and y scale of the entity based on the values you pass it.
 	end rem
@@ -743,14 +743,14 @@ Type tlEntity
 		scalex = sx
 		scaley = sy
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current speed of the entity
 		abput: Sets the speed which is measured in pixels per second
 	end rem
 	Method SetSpeed(v:Float)
 		speed = v
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current speed of the entity
 		abput: Gets the speed which is measured in pixels per second
 	end rem
@@ -815,10 +815,10 @@ Type tlEntity
 	Method SetCurrentFrame(Value:Float)
 		currentframe = Value
 	End Method
-	rem
+	Rem
 		bbdoc: Set the sprite (tAnimImage) that the entity uses when it draws to the screen
 		about: tAnimImage is defined in singlesurface.mod, and is a type that draws animated images using a single surface for extra speed.
-	end rem
+	End Rem
 	Method SetSprite(sprite:TAnimImage)
 		avatar = sprite
 		AABB_MaxWidth = avatar.width *.5
@@ -826,7 +826,7 @@ Type tlEntity
 		AABB_MinWidth = avatar.width * -.5
 		AABB_MinHeight = avatar.height * -.5
 	End Method
-	rem
+	Rem
 		bbdoc: Set to true to make the entity animate just once
 		about: Once the entity as reached the end of the animation cycle it will stop animating.
 	end rem
@@ -842,56 +842,56 @@ Type tlEntity
 	Method SetUpdateSpeed(Value:Int)
 		UpdateSpeed = Value
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current angle of rotation
 	endrem
 	Method GetAngle:Float()
 		Return angle
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current entity handle x
 	endrem
 	Method GetHandleX:Int()
 		Return handlex
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current entity image handle y
 	endrem
 	Method GetHandleY:Int()
 		Return handley
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current blendmode
 	endrem
 	Method GetBlendMode:Int()
 		Return blendmode
 	End Method
-	rem
+	Rem
 		bbdoc: Get whether this entity is relative to it's parent
 	endrem
 	Method GetRelative:Int()
 		Return relative
 	End Method
-	rem
+	Rem
 		bbdoc: Get the name of the entity
 	endrem
 	Method GetName:String()
 		Return name
 	End Method
-	rem
+	Rem
 		bbdoc: Gets the x and y scale of the entity.
 	end rem
 	Method GetEntityScale(sx:Float Var, sy:Float Var)
 		 sx = scalex
 		 sy = scaley
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current sprite (tAnimImage) that the entity uses when it draws to the screen
 	end rem
 	Method GetSprite:TAnimImage()
 		Return avatar
 	End Method
-	rem
+	Rem
 		bbdoc: Get the current parent of the entity
 		about: Entities can have parents and children. Entities are drawn relative to their parents if the relative flag is true. 
 		Using this command and #addchild you can create a hierarchy of entities.
@@ -899,7 +899,7 @@ Type tlEntity
 	Method GetParent:tlEntity()
 		Return parent
 	End Method
-	rem
+	Rem
 		bbdoc: Get the children that this entity has
 		about: This will return a list of children that the entity currently has
 	end rem
@@ -1004,7 +1004,7 @@ Type tlEntity
 		AABB_Calculate = Value
 	End Method
 	'---------------------------------
-	rem
+	Rem
 		bbdoc: Render the entity
 		about: This will Draw the entity onto the screen using the tween value you pass to it to interpolate between old and new positions when
 		using fixed rate timing.
@@ -1047,7 +1047,7 @@ Type tlEntity
 			e.render(tween)
 		Next
 	End Method
-	rem
+	Rem
 		bbdoc: Interpolate between 2 values
 		about: This is the function used to achieve render tweening by taking the old and new values and interpolating between the 2
 	end rem
@@ -1056,7 +1056,7 @@ Type tlEntity
 	End Function
 End Type
 
-rem
+Rem
 	bbdoc: Create a new entity
 end rem
 Function CreateEntity:tlEntity()

@@ -1,6 +1,6 @@
 SuperStrict
 
-rem
+Rem
 	bbdoc: Single Surface mod 
 	about: Most of the credit For this goes To indiepath from Blitzmax forums. I changed a few things And made it work with the DX9 Mod by Dstastny
 	Its questionable how much faster this makes things, but it might make improvements on slower cards, and it doesn't seem to slow down faster ones so...
@@ -25,7 +25,7 @@ Import brl.max2d
 Import brl.glmax2d
 Import rigz.math
 
-rem
+Rem
 	bbdoc: Type for creating single surface animations
 	about: This type replaces the usual drawimage with one that lets you draw animations using a single surface. 
 	Its questionable how much faster this makes things, but it might make improvements on slower cards, and it 
@@ -52,11 +52,6 @@ Type TAnimImage
 	Field selected:Int
 	Field freshsave:Int = False
 	Field Max_Radius:Float
-	?Win32
-		Field DX7Frame:TD3D7ImageFrame
-		Field DX9Frame:TD3D9ImageFrame		'Rem this if you dont use dx9
-	?
-	Field GLFrame:TGLImageFrame
 	Field dxVer:Int
 
 	Function Load:TAnimImage(url:Object, cell_width:Float, cell_height:Float, start:Int, frames:Int, flags:Int = -1)
@@ -112,7 +107,7 @@ Type TAnimImage
 				Next
 			Next
 		End If
-		return max_radius
+		Return max_radius
 	End Method
 	
 	Function Pow2Size:Float(n:Int) 
@@ -190,7 +185,7 @@ Type TAnimImage
 	End Method
 End Type
 
-rem
+Rem
 	bbdoc: Load an image and store it as a tAnimImage
 	about: <p>Very similar to BRL's loadanimimage except of course it returns a tAnimImage.</p>
 	<p>Parametres:</p>
@@ -222,7 +217,7 @@ Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, fr
 	End If
 	
 End Function
-rem
+Rem
 	bbdoc: Draw a tAnimImage to the screen
 	about: <p>Very similar to BRL's DrawImage except of course it draws a tAnimImage.</p>
 	<p>Parametres:</p>
