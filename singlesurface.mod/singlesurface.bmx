@@ -11,6 +11,7 @@ ModuleInfo "Author: Tim Fisher (Indiepath) Modified by Peter Rigby"
 ModuleInfo "Purpose: Single surface image drawing when using animated images"
 ModuleInfo "Version: v1"
 
+ModuleInfo "No longer uses DBS dx9 mod, now uses official BRL dx9 mod"
 ModuleInfo "Added DX 9 compatibility using DStastny mod."
 ModuleInfo "Added drawsprite and load sprite helper functions"
 ModuleInfo "Now returns null if the given dimensions don't fit the animation being loaded"
@@ -39,7 +40,9 @@ Type TAnimImage
 	Field u0:Float[] 
 	Field v0:Float[] 
 	Field u1:Float[] 
-	Field v1:Float[] 
+	Field v1:Float[]
+	Field sx:Float[]
+	Field sy:Float[]
 	Field url:String
 	Field name:String
 	Field frames:Int
@@ -65,6 +68,8 @@ Type TAnimImage
 		t.v0 = New Float[frames]
 		t.u1 = New Float[frames] 
 		t.v1 = New Float[frames]
+		t.sx = New Float[frames]
+		t.sy = New Float[frames]
 		If TStream(url)
 			TStream(url).Seek(0)
 		End If
@@ -80,7 +85,9 @@ Type TAnimImage
 				t.u0[f] = Float(tx) / Float(t.Image.Width) 
 				t.v0[f] = Float(ty) / Float(t.Image.Height) 
 				t.u1[f] = Float(tx + cell_width * xdelta) / Float(t.Image.Width) 
-				t.v1[f] = Float(ty + cell_Height * ydelta) / Float(t.Image.Height) 
+				t.v1[f] = Float(ty + cell_Height * ydelta) / Float(t.Image.Height)
+				t.sx[f] = tx
+				t.sy[f] = ty
 			Next
 			
 			Return t
@@ -122,44 +129,44 @@ Type TAnimImage
 	End Function
 	
 	Method Draw(x:Float, y:Float, width:Float, height:Float, frame:Int = 0)
-		?Win32
-			If TD3D7Max2DDriver(_max2dDriver) <> Null
-				dxVer = 7
-			EndIf
-	 		If TD3D9Max2DDriver(_max2dDriver) <> Null			'rem this bit here for no dx9
-				dxVer = 9										'
-			EndIf												'
-			Select dxVer
-				Case 7
-					DX7Frame = TD3D7ImageFrame (image.frame(0))
-					If frame > frames
-						frame = 0
-					End If
-			        DX7Frame.setUV(u0[frame], v0[frame], u1[frame], v1[frame])
-				Case 9																'and this bit
-					DX9Frame = TD3D9ImageFrame (image.frame(0))						'
-					If frame > frames												'
-						frame = 0													'
-					End If
-					dx9frame._fverts[4] = u0[frame]
-					dx9frame._fverts[5] = v0[frame]
-					dx9frame._fverts[10] = u1[frame]
-					dx9frame._fverts[11] = v0[frame]
-					dx9frame._fverts[16] = u1[frame]
-					dx9frame._fverts[17] = v1[frame]
-					dx9frame._fverts[22] = u0[frame]
-					dx9frame._fverts[23] = v1[frame]
-				Default
-		?
-		            GLFrame = TGLImageFrame(image.frame(0))
-		            GLFrame.u0 = u0[frame]
-		            GLFrame.u1 = u1[frame]
-		            GLFrame.v0 = v0[frame]
-		            GLFrame.v1 = v1[frame]
-		?Win32
-			End Select
-		?
-		DrawImageRect(Self.Image, x, y, width, height)
+'		?Win32
+'			If TD3D7Max2DDriver(_max2dDriver) <> Null
+'				dxVer = 7
+'			EndIf
+'	 		If TD3D9Max2DDriver(_max2dDriver) <> Null			'rem this bit here for no dx9
+'				dxVer = 9										'
+'			EndIf												'
+'			Select dxVer
+'				Case 7
+'					DX7Frame = TD3D7ImageFrame (image.frame(0))
+'					If frame > frames
+'						frame = 0
+'					End If
+'			        DX7Frame.setUV(u0[frame], v0[frame], u1[frame], v1[frame])
+'				Case 9																'and this bit
+'					DX9Frame = TD3D9ImageFrame (image.frame(0))						'
+'					If frame > frames												'
+'						frame = 0													'
+'					End If
+'					dx9frame._fverts[4] = u0[frame]
+'					dx9frame._fverts[5] = v0[frame]
+'					dx9frame._fverts[10] = u1[frame]
+'					dx9frame._fverts[11] = v0[frame]
+'					dx9frame._fverts[16] = u1[frame]
+'					dx9frame._fverts[17] = v1[frame]
+'					dx9frame._fverts[22] = u0[frame]
+'					dx9frame._fverts[23] = v1[frame]
+'				Default
+'		?
+'		            GLFrame = TGLImageFrame(image.frame(0))
+'		            GLFrame.u0 = u0[frame]
+'		            GLFrame.u1 = u1[frame]
+'		            GLFrame.v0 = v0[frame]
+'		            GLFrame.v1 = v1[frame]
+'		?Win32
+'			End Select
+'		?
+		DrawSubImageRect(Self.Image, x, y, width, height, sx[frame], sy[frame], width, height, image.handle_x, image.handle_y)
 	End Method
 	
 	Method nextframe() 

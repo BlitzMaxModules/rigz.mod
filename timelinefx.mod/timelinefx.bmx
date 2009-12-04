@@ -7170,7 +7170,7 @@ Type tlParticleManager
 							Else
 								tv = e.currentframe
 							End If
-							drawsprite e.avatar, px, py, tv Mod e.avatar.frames
+							drawsprite e.avatar, px, py, tv
 							'rendercount:+1
 						End If
 					End If
