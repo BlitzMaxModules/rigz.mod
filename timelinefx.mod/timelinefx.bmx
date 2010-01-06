@@ -3447,7 +3447,7 @@ Type tlEmitter Extends tlEntity
 		If parent And relative
 			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
-			rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
+			rotvec:tlVector2 = parent.matrix.transformvector(New tlVector2.Create(x, y))
 			If z <> 1
 				wx = parent.wx + rotvec.x * z
 				wy = parent.wy + rotvec.y * z
@@ -3515,7 +3515,7 @@ Type tlEmitter Extends tlEntity
 		Local intcounter:Int
 		Local e:tlParticle
 				
-		Local rotvec:tVector2
+		Local rotvec:tlVector2
 		Local cellsizew:Float
 		Local cellsizeh:Float
 		Local th:Float
@@ -3617,7 +3617,7 @@ Type tlEmitter Extends tlEntity
 										Else
 											e.x = 0 - parentEffect.handlex
 											e.y = 0 - parentEffect.handley
-											rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+											rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 											e.x = TweenValues(oldwx, wx, tween) + rotvec.x
 											e.y = TweenValues(oldwy, wy, tween) + rotvec.y
 											If z <> 1
@@ -3666,7 +3666,7 @@ Type tlEmitter Extends tlEntity
 										e.y = Rnd(parentEffect.currentheight) - parentEffect.handley
 									End If
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -3710,7 +3710,7 @@ Type tlEmitter Extends tlEntity
 										e.y = -Sin(th) * ty - parentEffect.handley + ty
 									End If
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -3776,7 +3776,7 @@ Type tlEmitter Extends tlEntity
 									End If
 									'rotate
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -3873,30 +3873,30 @@ Type tlEmitter Extends tlEntity
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(0, 0, e.x, e.y)
+													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
 												Else
-													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 												End If
 											Case tlEMISSION_OUTWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													e.emissionangle:+getdirection(0, 0, e.x, e.y)
 												Else
-													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 												End If
 											Case tlEMISSION_IN_AND_OUT
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If diralternater
 													If e.relative
-														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
-													Else
-														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
-													End If
-												Else
-													If e.relative
 														e.emissionangle:+getdirection(0, 0, e.x, e.y)
 													Else
 														e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													End If
+												Else
+													If e.relative
+														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													Else
+														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 													End If
 												End If
 												diralternater = Not diralternater
@@ -3931,7 +3931,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(e.speedvec.x, -e.speedvec.y, 0, 0)
+									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -4094,7 +4094,7 @@ Type tlEmitter Extends tlEntity
 										Else
 											e.x = 0 - parentEffect.handlex
 											e.y = 0 - parentEffect.handley
-											rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+											rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 											e.x = TweenValues(oldwx, wx, tween) + rotvec.x
 											e.y = TweenValues(oldwy, wy, tween) + rotvec.y
 											If z <> 1
@@ -4143,7 +4143,7 @@ Type tlEmitter Extends tlEntity
 										e.y = Rnd(parentEffect.currentheight) - parentEffect.handley
 									End If
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -4187,7 +4187,7 @@ Type tlEmitter Extends tlEntity
 										e.y = -Sin(th) * ty - parentEffect.handley + ty
 									End If
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -4253,7 +4253,7 @@ Type tlEmitter Extends tlEntity
 									End If
 									'rotate
 									If Not e.relative
-										rotvec = parent.matrix.transformvector(New tVector2.Create(e.x, e.y))
+										rotvec = parent.matrix.transformvector(New tlVector2.Create(e.x, e.y))
 										If z <> 1
 											e.x = parent.wx + rotvec.x * z
 											e.y = parent.wy + rotvec.y * z
@@ -4350,30 +4350,30 @@ Type tlEmitter Extends tlEntity
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(0, 0, e.x, e.y)
+													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
 												Else
-													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 												End If
 											Case tlEMISSION_OUTWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													e.emissionangle:+getdirection(0, 0, e.x, e.y)
 												Else
-													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 												End If
 											Case tlEMISSION_IN_AND_OUT
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If diralternater
 													If e.relative
-														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
-													Else
-														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
-													End If
-												Else
-													If e.relative
 														e.emissionangle:+getdirection(0, 0, e.x, e.y)
 													Else
 														e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													End If
+												Else
+													If e.relative
+														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													Else
+														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 													End If
 												End If
 												diralternater = Not diralternater
@@ -4408,7 +4408,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(e.speedvec.x, -e.speedvec.y, 0, 0)
+									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -4514,7 +4514,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.wx, e.wy, e.oldwx, e.oldwy)
+								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -4671,7 +4671,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.wx, e.wy, e.oldwx, e.oldwy)
+								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -7001,8 +7001,8 @@ Type tlParticleManager
 	Field angle:Float
 	Field oldangle:Float
 	
-	Field matrix:tMatrix2 = New tMatrix2.Create()
-	Field rotvec:tVector2 = New tVector2.Create(0, 0)
+	Field matrix:tlMatrix2 = New tlMatrix2.Create()
+	Field rotvec:tlVector2 = New tlVector2.Create(0, 0)
 	
 	Field vp_w:Float
 	Field vp_h:Float
@@ -7122,7 +7122,7 @@ Type tlParticleManager
 					px = TweenValues(e.oldwx, e.wx, tween)
 					py = TweenValues(e.oldwy, e.wy, tween)
 					If angle
-						rotvec:tVector2 = matrix.transformvector(New tVector2.Create(px, py))
+						rotvec:tlVector2 = matrix.transformvector(New tlVector2.Create(px, py))
 						px = (rotvec.x * camtz) + center_x + (camtz * camtx)
 						py = (rotvec.y * camtz) + center_y + (camtz * camty)
 					Else
@@ -7170,7 +7170,7 @@ Type tlParticleManager
 							Else
 								tv = e.currentframe
 							End If
-							drawsprite e.avatar, px, py, tv
+							DrawSprite e.avatar, px, py, tv
 							'rendercount:+1
 						End If
 					End If

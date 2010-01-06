@@ -54,6 +54,7 @@ ModuleInfo "History v1.00: 28th March 2009 - First Release"
 Import rigz.singlesurface
 Import "consts.bmx"
 Import rigz.math
+Import rigz.vector
 
 Rem
 	bbdoc: Entity type for basic object information
@@ -86,11 +87,11 @@ Type tlEntity
 	Field oldz:Float = 1									'old z coords for tweening
 	Field relative:Int = 1									'whether the entity remains relative to it's parent. Relative is the default.
 	'---------------------------------
-	Field matrix:tMatrix2 = New tMatrix2.Create()			'A matrix to calculate entity rotation relative to the parent
-	Field spawnmatrix:tMatrix2 = New tMatrix2.Create()		'May be moved in the future to tlParticle!
-	Field rotvec:tVector2 = New tVector2.Create(0, 0)		'Vector formed between the parent and the children
-	Field speedvec:tVector2 = New tVector2.Create(0, 0)		'vector created by he speed and direction of the entity
-	Field gravvec:tVector2 = New tVector2.Create(0, 0)		'vector created by the current down force of the entity
+	Field matrix:tlMatrix2 = New tlMatrix2.Create()			'A matrix to calculate entity rotation relative to the parent
+	Field spawnmatrix:tlMatrix2 = New tlMatrix2.Create()		'May be moved in the future to tlParticle!
+	Field rotvec:tlVector2 = New tlVector2.Create(0, 0)		'Vector formed between the parent and the children
+	Field speedvec:tlVector2 = New tlVector2.Create(0, 0)		'vector created by he speed and direction of the entity
+	Field gravvec:tlVector2 = New tlVector2.Create(0, 0)		'vector created by the current down force of the entity
 	'Entity name----------------------
 	Field name:String										'name
 	'---------------------------------
@@ -240,7 +241,7 @@ Type tlEntity
 		If parent And relative
 			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
-			rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
+			rotvec:tlVector2 = parent.matrix.transformvector(New tlVector2.Create(x, y))
 			If z <> 1
 				wx = parent.wx + rotvec.x * z
 				wy = parent.wy + rotvec.y * z
@@ -297,7 +298,7 @@ Type tlEntity
 		If parent And relative
 			setz(parent.z)
 			matrix = matrix.transform(parent.matrix)
-			Local rotvec:tVector2 = parent.matrix.transformvector(New tVector2.Create(x, y))
+			Local rotvec:tlVector2 = parent.matrix.transformvector(New tlVector2.Create(x, y))
 			If z <> 1
 				wx = parent.wx + rotvec.x * z
 				wy = parent.wy + rotvec.y * z
@@ -1063,64 +1064,3 @@ Function CreateEntity:tlEntity()
 	Return New tlEntity
 End Function
 
-'internal matrix and vector types
-Type tMatrix2
-	
-	Field aa:Float, ab:Float
-	Field ba:Float, bb:Float
-	
-	Function Create:tMatrix2(aa:Float = 1, ab:Float = 0, ba:Float = 0, bb:Float = 1)
-		Local m:tMatrix2 = New tMatrix2
-		m.aa = aa
-		m.ab = ab
-		m.ba = ba
-		m.bb = bb
-		Return m
-	End Function
-	
-	Method set(_aa:Float = 1, _ab:Float = 0, _ba:Float = 0, _bb:Float = 1)
-		aa = _aa
-		ab = _ab
-		ba = _ba
-		bb = _bb
-	End Method
-	
-	Method transpose()
-		Local abt:Float = ab
-		ab = ba
-		ba = abt
-	End Method
-	
-	Method scale(s:Float)
-		aa:*s
-		ab:*s
-		ba:*s
-		bb:*s
-	End Method
-	
-	Method transform:tMatrix2(m:tMatrix2)
-		Local r:tMatrix2 = New tMatrix2
-		r.aa = aa * m.aa + ab * m.ba;r.ab = aa * m.ab + ab * m.bb
-		r.ba = ba * m.aa + bb * m.ba;r.bb = ba * m.ab + bb * m.bb
-		Return r
-	End Method
-	
-	Method transformvector:tVector2(v:TVector2)
-		Local tV:tVector2 = New tVector2.Create(0, 0)
-		tV.x = v.x * aa + v.y * ba
-		tV.y = v.x * ab + v.y * bb
-		Return tV
-	End Method
-
-End Type
-Type tVector2
-	Field x:Float , y:Float
-	Method Create:TVector2(vx:Float, vy:Float)
-		x = vx
-		y = vy
-		Return Self
-	End Method
-	Method Clone:tVector2()
-		Return New tVector2.Create(x, y)
-	End Method
-End Type

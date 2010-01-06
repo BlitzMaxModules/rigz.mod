@@ -31,26 +31,42 @@ ModuleInfo "Version: v1"
 
 Import brl.basic
 
-Function getdirection:Float(fromx:Float, fromy:Float, tox:Float, toy:Float)
+rem
+	bbdoc: get the direction from 1 point to another
+	returns: Angle of difference
+	about: Thanks to "Snarkbait" for this little code snippit
+end rem
+Function GetDirection:Float(fromx:Float, fromy:Float, tox:Float, toy:Float)
 
-	Return (ATan2(fromy - toy, fromx - tox) + 450) Mod 360
+	Return (ATan2(toy - fromy, tox - fromx) + 450) Mod 360
 	
 End Function
-Function getdistance:Float(fromx:Float, fromy:Float, tox:Float, toy:Float, fast:Int = False)
 
-	Local w:Float
-	Local h:Float
+rem
+	bbdoc: Get the difference between 2 angles
+end rem
+Function AngleDifference:Float(Angle1:Float, Angle2:Float)
+	Local diff:Float = Abs((angle1 + 180 - angle2) Mod 360 - 180)
+	If diff > 180 Return Abs(diff - 360) Else Return diff
+End Function
+
+rem
+	bbdoc: The distance between 1 point and another
+	returns: The distance between the 2 points
+end rem
+Function GetDistance:Float(fromx:Float, fromy:Float, tox:Float, toy:Float, fast:Int = False)
+
+	Local w:Float = tox - fromx
+	Local h:Float = toy - fromy
 	
-	w=tox-fromx
-	h=toy-fromy
-	
-	If fast
-		Return w * w + h * h
-	Else
-		Return Sqr(w*w+h*h)
-	End If
+	Return Sqr(w * w + h * h)
 	
 End Function
+rem
+	bbdoc: Gets the texture size needed for an animation with a given size and number of frames
+	returns: the texture width and height, along with the number of columns and rows of animation frames.
+	about: this function will ensure that the texture width and height remain in powers of 2.
+end rem
 Function GetTexSize(w:Int, h:Int, frames:Int, powersof2:Int = True, texwidth:Int Var, texheight:Int Var, Cols:Int Var, rows:Int Var)
 
         Local area:Int=w*h*frames 
@@ -82,4 +98,11 @@ Function GetTexSize(w:Int, h:Int, frames:Int, powersof2:Int = True, texwidth:Int
         
         rows=texheight/h 
 
-End Function 
+End Function
+Rem
+	bbdoc: Interpolate between 2 values
+	about: This is the function used to achieve render tweening by taking the old and new values and interpolating between the 2
+end rem
+Function TweenValues:Float(oldValue:Float, value:Float, tween:Float)
+	Return oldValue + (value - oldValue) * tween
+End Function
