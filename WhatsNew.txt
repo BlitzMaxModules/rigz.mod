@@ -1,4 +1,8 @@
 What's new in the TimelineFX Module?
+06.01.10
+New Modules!
+rigz.collision - collision module with quadtrees, see documentation for more information
+rigz.vector - This was in in entity.mod but I decided to put it in a separate module since expanding it
 
 08.11.09
 entity.mod
