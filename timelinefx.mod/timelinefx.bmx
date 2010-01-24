@@ -1,4 +1,4 @@
-Ôªø'Copyright (c) 2009 Peter J Rigby
+'Copyright (c) 2009 Peter J Rigby
 '
 'Permission is hereby granted, free of charge, to any person obtaining a copy
 'of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ Rem
 	bbdoc:	TimelineFX for BlitzMax
 	about:	<p>TimelineFX is a system for creating particle effects within your games and applications</p>
 	<p>Big thanks to the following: Bruce Henderson (Brucey) for all the great modules, Garritt Grandberg (gman) for the zipengine module,
-	 Manel Ib√°√±ez (Ziggy) for a great IDE, Doug Stastny for the DX9 module and Mark Sibly of course for everything Blitz.</p>
+	 Manel Ib·Òez (Ziggy) for a great IDE, Doug Stastny for the DX9 module and Mark Sibly of course for everything Blitz.</p>
 	<p>For more help and tutorials that expand on the Docs below visit <a href="http://www.rigzsoft.co.uk" target="_blank">www.rigzsoft.co.uk</a></p>
 EndRem
 Module rigz.timelinefx
@@ -162,7 +162,7 @@ Const tlPARTICLE_LIMIT:Int = 5000
 Const tlUPDATE_MODE_COMPILED:Int = 0
 Const tlUPDATE_MODE_INTERPOLATED:Int = 1
 
-rem
+Rem
 	bbdoc: Effects library for storing a list of effects and particle images/animations
 	about: When using #LoadEffects, all the effects and images that go with them are stored in this type.
 endrem
@@ -171,14 +171,14 @@ Type tlEffectsLibrary
 	Field name:String
 	Field shapelist:TList = CreateList()
 	
-	rem
+	Rem
 	bbdoc: Create an effect library for storing your effects
 	returns: A new tlEffectsLibrary
 	endrem
 	Method Create:tlEffectsLibrary()
 		Return Self
 	End Method
-	rem
+	Rem
 	bbdoc: Add a new effect to the library including any sub effects and emitters. Effects are stored using a tMap and can be retrieved using #GetEffect.
 	endrem
 	Method AddEffect(e:tlEffect)
@@ -197,7 +197,7 @@ Type tlEffectsLibrary
 			addeffect(ef)
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Clear all effects in the library
 	about: Use this to empty the library of all effects and shapes.
 	endrem
@@ -209,7 +209,7 @@ Type tlEffectsLibrary
 		Self.effects.Clear()
 		Self.shapelist.Clear()
 	End Method
-	rem
+	Rem
 	bbdoc: Retrieve an effect from the library
 	returns: tlEffect
 	about: <p>Use this to get an effect from the library by passing the name of the effect you want. Example:</p>
@@ -221,7 +221,7 @@ Type tlEffectsLibrary
 	Method GetEffect:tlEffect(name:String)
 		Return tlEffect(effects.ValueForKey(Upper(name)))
 	End Method
-	rem
+	Rem
 	bbdoc: Retrieve an emitter from the library
 	returns: tlEmitter
 	about:<p> Use this To get an emitter from the library by passing the name of the emitter you want. All effects And emitters are
@@ -234,7 +234,7 @@ Type tlEffectsLibrary
 		Return tlEmitter(effects.ValueForKey(Upper(name)))
 	End Method
 End Type
-rem
+Rem
 	bbdoc: Effect type - extension of tlEntity
 	about: <p>Effect types are the main containers for emitters and has a set of global attributes that can effect any emitters it stores.</p>
 	<p>The basic entity structure of an effect is: Effect -> Emitter(s) -> Particle(s)</p>
@@ -398,7 +398,7 @@ Type tlEffect Extends tlEntity
 	
 	Field bypass_weight:Int
 	
-	rem
+	Rem
 	bbdoc: Sort all attribute lists
 	about: Sorts all the graph nodes into the proper order for every effect attribute
 	endrem
@@ -418,7 +418,7 @@ Type tlEffect Extends tlEntity
 		SortList(stretch)
 		SortList(globalz)
 	End Method
-	rem
+	Rem
 	bbdoc: Show all Emitters
 	about: Sets all emitters to visible so that they will be rendered. This also applies to any sub effects and their emitters.
 	endrem
@@ -436,7 +436,7 @@ Type tlEffect Extends tlEntity
 			e.hideall()
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Show one Emitter
 	about: Sets the emitter passed to the method to visible so that it will be rendered, all the other emitters are made invisible.
 	endrem
@@ -446,7 +446,7 @@ Type tlEffect Extends tlEntity
 		Next
 		emm.setvisible True
 	End Method
-	rem
+	Rem
 	bbdoc: Get count of emitters within this effect
 	returns: Number of emitters
 	about: Use this to find out how many emitters the effect has
@@ -454,14 +454,14 @@ Type tlEffect Extends tlEntity
 	Method emittercount:Int()
 		Return childcount
 	End Method
-	rem
+	Rem
 	bbdoc: Assign Particle Manager
 	about: Sets the Particle Manager that this effect is managed by. See #tlParticleManager
 	endrem
 	Method assignParticleManager(partman:tlParticleManager)
 		PM = partman
 	End Method
-	rem
+	Rem
 	bbdoc: Assigns a shape to each emitter
 	about: <p>Recursively goes through each emitter within this effect and any sub effects and assigns a shape to each emitter.</p>
 	<p>The list passed to the method should contain the list of shapes, which will then be searched using the name stored in emitter.image.name and assigned if one is found, 
@@ -475,7 +475,7 @@ Type tlEffect Extends tlEntity
 			Next
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Add an amount attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -488,7 +488,7 @@ Type tlEffect Extends tlEntity
 		amount.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a life attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -502,7 +502,7 @@ Type tlEffect Extends tlEntity
 		life.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a size x attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -516,7 +516,7 @@ Type tlEffect Extends tlEntity
 		sizex.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a size y attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -530,7 +530,7 @@ Type tlEffect Extends tlEntity
 		sizey.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a velocity attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -545,7 +545,7 @@ Type tlEffect Extends tlEntity
 		velocity.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a weight attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -574,7 +574,7 @@ Type tlEffect Extends tlEntity
 		spin.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add an alpha attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -590,7 +590,7 @@ Type tlEffect Extends tlEntity
 		alpha.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add an emission angle attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -603,7 +603,7 @@ Type tlEffect Extends tlEntity
 		emissionangle.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add an emission range attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -619,7 +619,7 @@ Type tlEffect Extends tlEntity
 		emissionrange.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a width attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -688,7 +688,7 @@ Type tlEffect Extends tlEntity
 		Return e
 	End Method
 	
-	rem
+	Rem
 	bbdoc: Set the class of the Effect
 	about: <p>Sets the effect to one of 4 types - point, area, ellipse and line. To set one of these use one of the 4 corresponding consts: tlPOINT_EFFECT, 
 	tlAREA_EFFECT, tlLINE_EFFECT, tlELLIPSE_EFFECT</p>
@@ -696,21 +696,21 @@ Type tlEffect Extends tlEntity
 	Method setclass(v:Int)
 		class = v
 	End Method
-	rem
+	Rem
 	bbdoc: Sets lockaspect
 	about: <p>Set to true to make the size of particles scale uniformly</p>
 	endrem
 	Method setlockaspect(v:Int)
 		lockaspect = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set Name
 	about: Sets the name of the effect
 	endrem
 	Method setname(v:String)
 		name = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set maximum width grid points
 	about: In area and ellipse effects this value represents the number of grid points along the width, in the case of area and line effect, or around the 
 	circumference, in the case of ellipses.
@@ -718,14 +718,14 @@ Type tlEffect Extends tlEntity
 	Method setmgx(v:Int)
 		mgx = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set maximum height grid points
 	about: In area effects this value represents the number of grid points along the height, it has no relevence for other effect types.
 	endrem
 	Method setmgy(v:Int)
 		mgy = v
 	End Method
-	rem
+	Rem
 	bbdoc: Sets whether the effect should emit at points
 	about: If set to true then the particles within the effect will emit from evenly spaced points with the area, line or ellipse. The number of points is determined
 	by <i>mgx</i> and <i>mgy</i>. The value is not applicable to point effects.
@@ -733,7 +733,7 @@ Type tlEffect Extends tlEntity
 	Method setemitatpoints(v:Int)
 		emitatpoints = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the emission type
 	about: <p>In area, line and ellipse effects the emission type determines the direction that the particles travel once spawned. Use the following consts to determine
 	the direction:</p>
@@ -745,7 +745,7 @@ Type tlEffect Extends tlEntity
 	Method setemissiontype(v:Int)
 		emissiontype = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the length of the effect
 	about: Effects can be looped by setting the effect length. Just pass it the length in milliseconds that you want it to loop by or set to 0 if 
 	you don't want the effect to loop.
@@ -878,7 +878,7 @@ Type tlEffect Extends tlEntity
 	Method setreversespawn(v:Int)
 		reversespawn = v
 	End Method
-	rem
+	Rem
 		bbdoc: This sets the direction particles are spawned.
 		about: theres no need to call this, as its called internally by the emitter depending on the reverse spawn flag. see #setreversespawn.
 	end rem
@@ -889,14 +889,14 @@ Type tlEffect Extends tlEntity
 			spawndirection = 1
 		End If
 	End Method
-	rem
+	Rem
 	bbdoc: Set the effects particle manager
 	about: Every effect needs a particle manager. For more info see #tlParticleManager
 	endrem
 	Method setparticlemanager(v:tlParticleManager)
 		pm = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the area size of the effect
 	about: For area and ellipse effects, use this function to override the graph and set the width and height of the area to whatever you want.
 	endrem
@@ -905,7 +905,7 @@ Type tlEffect Extends tlEntity
 		currentwidth = Width
 		currentheight = Height
 	End Method
-	rem
+	Rem
 	bbdoc: Set the line length of the effect
 	about: For line effects, use this function to override the graph and set the length of the line to whatever you want.
 	endrem
@@ -913,7 +913,7 @@ Type tlEffect Extends tlEntity
 		overridesize = True
 		currentwidth = Length
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Emission Angle of the effect
 	about: This overides whatever angle is set on the graph and sets the emission angle of the effect. This won't effect emitters that have <i>UseEffectEmission</i> set
 	to FALSE.
@@ -922,7 +922,7 @@ Type tlEffect Extends tlEntity
 		overrideemissionangle = True
 		currentemissionangle = angle
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Angle of the effect
 	about: This overides the whatever angle is set on the graph and sets the angle of the effect.
 	endrem
@@ -930,7 +930,7 @@ Type tlEffect Extends tlEntity
 		OverrideAngle = True
 		angle = _angle
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Life of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Life
 	endrem
@@ -938,7 +938,7 @@ Type tlEffect Extends tlEntity
 		OverrideLife = True
 		currentlife = life
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Amount of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Amount
 	endrem
@@ -946,7 +946,7 @@ Type tlEffect Extends tlEntity
 		OverrideAmount = True
 		currentamount = amount
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute velocity of the effect
 	about: This overides the graph the effect uses to set the Global Attribute velocity
 	endrem
@@ -954,7 +954,7 @@ Type tlEffect Extends tlEntity
 		OverrideVelocity = True
 		currentamount = velocity
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Spin of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Spin
 	endrem
@@ -962,7 +962,7 @@ Type tlEffect Extends tlEntity
 		OverrideSpin = True
 		currentspin = Spin
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Weight of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Weight
 	endrem
@@ -980,7 +980,7 @@ Type tlEffect Extends tlEntity
 		currentsizex = Sizex
 		currentsizey = Sizey
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Sizex of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Sizex
 	endrem
@@ -988,7 +988,7 @@ Type tlEffect Extends tlEntity
 		OverrideSizex = True
 		currentsizex = Sizex
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Sizey of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Sizey
 	endrem
@@ -996,7 +996,7 @@ Type tlEffect Extends tlEntity
 		OverrideSizey = True
 		currentSizey = Sizey
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Alpha of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Alpha
 	endrem
@@ -1004,7 +1004,7 @@ Type tlEffect Extends tlEntity
 		OverrideAlpha = True
 		currentalpha = Alpha
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute EmissionRange of the effect
 	about: This overides the graph the effect uses to set the Global Attribute EmissionRange
 	endrem
@@ -1012,7 +1012,7 @@ Type tlEffect Extends tlEntity
 		OverrideEmissionRange = True
 		currentemissionrange = EmissionRange
 	End Method
-	rem
+	Rem
 	bbdoc: Set range in degrees of the arc
 	about: When an effect uses an ellipse as its effect type, you can adjust how far round the ellipse particles will spawn
 	by setting the ellipse arc. 360 degrees will spawn around the full amount.
@@ -1025,11 +1025,11 @@ Type tlEffect Extends tlEntity
 		bbdoc:Set the current zoom level of the effect
 		about:This overides the graph the effect uses to set the Global Attribute Global Zoom
 	End Rem
-	method SetZ(v:Float)
+	Method SetZ(v:Float)
 		overrideglobalz = True
 		z = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the Global attribute Stretch of the effect
 	about: This overides the graph the effect uses to set the Global Attribute Stretch
 	endrem
@@ -1237,7 +1237,7 @@ Type tlEffect Extends tlEntity
 		Return False
 	End Method
 	
-	rem
+	Rem
 	bbdoc: Add a new effect to the directory including any sub effects and emitters. Effects are stored using a map and can be retrieved using #GetEffect.
 	endrem
 	Method AddEffect(e:tlEffect)
@@ -1256,7 +1256,7 @@ Type tlEffect Extends tlEntity
 			addeffect(ef)
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Retrieve an effect from the directory of the effect
 	returns: tlEffect
 	about: <p>Use this to get an effect from the effect directory by passing the name of the effect you want. Example:</p>
@@ -1268,7 +1268,7 @@ Type tlEffect Extends tlEntity
 	Method GetEffect:tlEffect(name:String)
 		Return tlEffect(directory.ValueForKey(Upper(name)))
 	End Method
-	rem
+	Rem
 	bbdoc: Retrieve an emitter from the of the effect
 	returns: tlEmitter
 	about:< p > Use this To get an emitter from the effect directory by passing the name of the emitter you want. All effects And emitters are
@@ -1807,7 +1807,7 @@ Type tlEffect Extends tlEntity
 	End Method
 	
 	'Compilers
-	rem
+	Rem
 	bbdoc: Pre-Compile all attributes.
 	about: In order to use look-up arrays to access attribute values over the course of the effects life you need to compile all of the attribute values
 	into an array. This method will compile all of them together in one go including all of it children emiters and any sub effects and so on.
@@ -2278,7 +2278,7 @@ Type tlEffect Extends tlEntity
 		End If
 	End Method
 End Type
-rem
+Rem
 	bbdoc: Emitter Type - Extension of tlEntity
 	about: <p>An emitter type is an entity whose sole purpose is to spawn particles. Like the effect type it too has number of attributes that can tell the particles
 	that it spawns how to move, orientate and scale themselves on screen to create the effects.</p>
@@ -2550,7 +2550,7 @@ Type tlEmitter Extends tlEntity
 	Field current_sizeyvariation:Float
 	Field current_framerate:Float
 	
-	rem
+	Rem
 	bbdoc: Sort all attribute lists
 	about: Sorts all the graph nodes into the proper order for every emitter attribute
 	endrem
@@ -2583,7 +2583,7 @@ Type tlEmitter Extends tlEntity
 		SortList(stretch)
 		SortList(globalvelocity)
 	End Method
-	rem
+	Rem
 	bbdoc:Show all Emitters
 	about: Sets all emitters to visible so that they will be rendered. This also applies to any sub effects and their emitters.
 	endrem
@@ -2634,7 +2634,7 @@ Type tlEmitter Extends tlEntity
 		scaley.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add a Size x attribute node
 	returns: Emitter change object.
 	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
@@ -3045,7 +3045,7 @@ Type tlEmitter Extends tlEntity
 		stretch.AddLast e
 		Return e
 	End Method
-	rem
+	Rem
 	bbdoc: Add an effect to the emitters list of effects.
 	about: Effects that are in the effects list are basically sub effects that are added to any particles that this emitter spawns which in turn should
 	contain their own emitters that spawn more particles and so on.</p>
@@ -3054,14 +3054,14 @@ Type tlEmitter Extends tlEntity
 		effects.AddLast(e)
 	End Method
 	
-	rem
+	Rem
 	bbdoc: Set Parent Effect
 	about: Assigns the effect that is the parent to this emitter
 	endrem
 	Method setparentEffect(v:tlEffect)
 		parentEffect = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set image
 	about: When Particles are spawned this image is the image that is assigned to them. Not a tImage but a tAnimImage, a custom image type written
 	by indiepath.
@@ -3073,14 +3073,14 @@ Type tlEmitter Extends tlEntity
 		AABB_ParticleMinWidth = image.width * -.5
 		AABB_ParticleMinHeight = image.height * -.5
 	End Method
-	rem
+	Rem
 	bbdoc: Set the image frame
 	about: If the image has more then one frame then setting this can determine which frame the particle uses to draw itself.
 	endrem
 	Method setframe(v:Int)
 		frame = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the angle offset or variation
 	about: Depending on the value of %angletype (tlANGLE_ALIGN, tlANGLE_RANDOM or tlANGLE_SPECIFY), this will either set the angle offset of the particle in the 
 	case of tlANGLE_ALIGN and tlANGLE_SPECIFY, or act as the range of degrees for tlANGLE_RANDOM.
@@ -3088,14 +3088,14 @@ Type tlEmitter Extends tlEntity
 	Method setangleoffset(v:Int)
 		angleoffset = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set Uniform
 	about: Dictates whether the particles size scales uniformally. Set to either TRUE or FALSE.
 	endrem
 	Method setuniform(v:Int)
 		uniform = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the range of splatter
 	about: Sets the radius of splatter to make particles spawn randomly about its initended coordinates.
 	endrem
@@ -3113,7 +3113,7 @@ Type tlEmitter Extends tlEntity
 	Method setangletype(v:Int)
 		angletype = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set Use effect emission
 	about: Set to TRUE by default, this tells the emitter to take the emission range and emission angle attributes from the parent effect, otherwise if set to FALSE it
 	will take the values from the emitters own emission attributes.
@@ -3121,7 +3121,7 @@ Type tlEmitter Extends tlEntity
 	Method setuseeffectemission(v:Int)
 		useeffectemission = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to FALSE to stop drawing the particles this emitter spawns
 	endrem
 	Method setvisible(v:Int)
@@ -3136,13 +3136,13 @@ Type tlEmitter Extends tlEntity
 	Method setsingleparticle(v:Int)
 		singleparticle = v
 	End Method
-	rem
+	Rem
 	bbdoc: Sets whether the particle chooses random colour from the colour attributes
 	endrem
 	Method setrandomcolor(v:Int)
 		randomcolor = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the z layer
 	about: Emitters can be set to draw on different layers depending on what kind of effect you need. By default everything is drawn on layer 0, higher layers
 	makes those particles spawned by that emitter drawn on top of emitters below them in layers. The layer value can range from 0-8 giving a total of 9 layers.
@@ -3150,35 +3150,35 @@ Type tlEmitter Extends tlEntity
 	Method setzlayer(v:Int)
 		zlayer = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set whether the particle should animate
 	about: Only applies if the particle's image has more then one frame of animation.
 	endrem
 	Method setanimate(v:Int)
 		animate = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the particles to spawn with a random frame
 	about: Only applies if the particle has more then one frame of animation
 	endrem
 	Method setrandomstartframe(v:Int)
 		randomstartframe = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the direction the animation plays in
 	about: Set to 1 for forwards playback and set to -1 for reverse playback of the image aniamtion
 	endrem
 	Method setanimationdirection(v:Int)
 		animationdirection = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to the number of times the colour should cycle within the particle lifetime
 	about: Timeline Particles editor allows values from 1 to 10. 1 is the default.
 	endrem
 	Method setcolorrepeat(v:Int)
 		colorrepeat = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to the number of times the alpha of the particle should cycle within the particle lifetime.
 	about: Timeline Particles editor allows values from 1 to 10. 1 is the default.
 	endrem
@@ -3193,7 +3193,7 @@ Type tlEmitter Extends tlEntity
 	Method setoneshot(v:Int)
 		oneshot = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the handle of the particle to its center
 	about: Set to TRUE for the hande to be placed automatically at the center of the particle, or FALSE for the handle to be dictated by %handlex and %handley.
 	endrem
@@ -3207,188 +3207,188 @@ Type tlEmitter Extends tlEntity
 	Method setParticlesrelative(v:Int)
 		particlesrelative = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to TRUE for particles to spawn imbetween th effects old and new coordinates.
 	about: This creates better spawning behaviour especially for smoke trails.
 	endrem
 	Method settweenspawns(v:Int)
 		tweenspawns = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to TRUE to make th particles spawned have their angle of rotation locked to direction
 	endrem
 	Method setlockangle(v:Int)
 		lockedangle = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to TRUE to make th particles spawned have their angle of rotation relative to the parent effect
 	endrem
 	Method setanglerelative(v:Int)
 		anglerelative = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set to TRUE to make the particles spawned playback the animation just once 
 	endrem
 	Method setonce(v:Int)
 		once = v
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current parent effect
 	returns: tlEffect
 	endrem
 	Method getparentEffect:tlEffect()
 		Return parentEffect
 	End Method
-	rem
+	Rem
 	bbdoc: Get the tAnimImage currently used by the emitter
 	returns: tAnimimage
 	endrem
 	Method getimage:TAnimImage()
 		Return image
 	End Method
-	rem
+	Rem
 	bbdoc: Get the animation frame of the tAnimImage used by the emitter
 	endrem
 	Method getframe:Int()
 		Return frame
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current angle offset used by %angletype (see #setangletype)
 	endrem
 	Method getangleoffset:Int()
 		Return angleoffset
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the particles spawned by this emitter scale uniformally
 	returns: TRUE or FALSE
 	endrem
 	Method getuniform:Int()
 		Return uniform
 	End Method
-	rem
+	Rem
 	bbdoc: Get the radius of the splatter
 	endrem
 	Method getsplatter:Int()
 		Return splatter
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current angletype for particles spawned by this emitter
 	returns: either tlANGLE_ALIGN, tlANGLE_RANDOM or tlANGLE_SPECIFY
 	endrem
 	Method getangletype:Int()
 		Return angletype
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the emitter uses the effect emission instead of its own
 	returns: either TRUE or FALSE
 	endrem
 	Method getuseeffectemission:Int()
 		Return useeffectemission
 	End Method
-	rem
+	Rem
 	bbdoc: Get the visibility status of the emitter
 	returns: either TRUE or FALSE
 	endrem
 	Method getvisible:Int()
 		Return visible
 	End Method
-	rem
+	Rem
 	bbdoc: Find out if the emitter spawns a single particle
 	returns: Either TRUE or FALSE
 	endrem
 	Method getsingleparticle:Int()
 		Return singleparticle
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the emitter chooses a random colour for the particles it spawns
 	returns: Either TRUE or FALSE
 	endrem
 	Method getrandomcolor:Int()
 		Return randomcolor
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current z layer of the emitter
 	returns: Value from 0 - 8
 	endrem
 	Method getzlayer:Int()
 		Return zlayer
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether this emitter spawns particles that animate
 	returns: Either TRUE or FALSE
 	endrem
 	Method getanimate:Int()
 		Return animate
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the emitter chooses a random start frame for the particles it spawns
 	returns: Either TRUE or FALSE
 	endrem
 	Method getrandomstartframe:Int()
 		Return randomstartframe
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current animation direction
 	returns: Either -1 for reverse playback or 1 for normal playback for particles spawned by this emitter.
 	endrem
 	Method getanimationdirection:Int()
 		Return animationdirection
 	End Method
-	rem
+	Rem
 	bbdoc: Get the number of times the colour cycles over the lifetime of the particles spawned by this emitter.
 	endrem
 	Method getcolorrepeat:Int()
 		Return colorrepeat
 	End Method
-	rem
+	Rem
 	bbdoc: Get the number of times the alpha cycles over the lifetime of the particles spawned by this emitter.
 	endrem
 	Method getalpharepeat:Int()
 		Return alpharepeat
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether this emitter spawns a one shot particle (see #setoneshot)
 	returns: either TRUE or FALSE
 	endrem
 	Method getoneshot:Int()
 		Return oneshot
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the handle of the particles spawned by this emitter are set to the center.
 	returns: Either TRUE or FALSE
 	endrem
 	Method gethandlecenter:Int()
 		Return handlecenter
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether the particles spawned by this emitter remain relative to the containg effect
 	returns: Either TRUE or FALSE
 	endrem
 	Method getParticlesrelative:Int()
 		Return particlesrelative
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether particles are being spawned from the old effect coordinates to the new.
 	returns: Either TRUE or FALSE
 	endrem
 	Method gettweenspawns:Int()
 		Return tweenspawns
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether particles spawned are having their angles locked to direction
 	returns: Either TRUE or FALSE
 	endrem
 	Method getlockangle:Int()
 		Return lockedangle
 	End Method
-	rem
+	Rem
 	bbdoc: Get whether particles spawned will have there angle relative to the parent
 	returns: Either TRUE or FALSE
 	endrem
 	Method getanglerelative:Int()
 		Return anglerelative
 	End Method
-	rem
+	Rem
 	bbdoc: Returns the current state of whether spawned particles playback the animation just once
 	endrem
 	Method getonce:Int()
@@ -3405,7 +3405,7 @@ Type tlEmitter Extends tlEntity
 		bbdoc:Set the Radius Calculate value for this tlEntity object.
 		about: This overides the tlentity method so that the effects list can be updated too
 	End Rem
-	method SetRadiusCalculate(Value:Int)
+	Method SetRadiusCalculate(Value:Int)
 		Radius_Calculate = VALUE
 		For Local e:tlEntity = EachIn children
 			e.SetRadiusCalculate(Value)
@@ -3422,7 +3422,7 @@ Type tlEmitter Extends tlEntity
 		Next
 		Super.Destroy()
 	End Method
-	rem
+	Rem
 		bbdoc: Change the dob of the emitter. dob being date of birth, or time it was created.
 		about: This will also change the dob of any effects the emitter contains. This is more of an internal method used by
 		the tlParticleManager method #AddPreLoadedEffect
@@ -3433,7 +3433,7 @@ Type tlEmitter Extends tlEntity
 			e.ChangeDob(_DoB)
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Update the emitter
 	about: This is an internal method called by the parent effect when updating each frame. This method will update its position and spawn new particles
 	depending on whatever settings the emitter has by calling #updatespawns
@@ -3490,7 +3490,7 @@ Type tlEmitter Extends tlEntity
 		End If
 				
 	End Method
-	rem
+	Rem
 	bbdoc: Updates all the particles this emitter has spawned
 	about: This method is called by #update each frame.
 	endrem
@@ -3499,7 +3499,7 @@ Type tlEmitter Extends tlEntity
 			p.update()
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Spawns a new lot of particles if necessary and assign all properties and attributes to the particle.
 	about: This method is called by #update each frame.
 	endrem
@@ -3873,30 +3873,30 @@ Type tlEmitter Extends tlEntity
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													e.emissionangle:+GetDirection(e.x, e.y, 0, 0)
 												Else
-													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+													e.emissionangle:+GetDirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 												End If
 											Case tlEMISSION_OUTWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(0, 0, e.x, e.y)
+													e.emissionangle:+GetDirection(0, 0, e.x, e.y)
 												Else
-													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													e.emissionangle:+GetDirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 												End If
 											Case tlEMISSION_IN_AND_OUT
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If diralternater
 													If e.relative
-														e.emissionangle:+getdirection(0, 0, e.x, e.y)
+														e.emissionangle:+GetDirection(0, 0, e.x, e.y)
 													Else
-														e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+														e.emissionangle:+GetDirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 													End If
 												Else
 													If e.relative
-														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+														e.emissionangle:+GetDirection(e.x, e.y, 0, 0)
 													Else
-														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+														e.emissionangle:+GetDirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 													End If
 												End If
 												diralternater = Not diralternater
@@ -3931,7 +3931,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
+									e.angle = GetDirection(0, 0, e.speedvec.x, -e.speedvec.y)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -3939,7 +3939,7 @@ Type tlEmitter Extends tlEntity
 										e.angle = e.direction + angle + angleoffset
 									End If
 								End If
-							else
+							Else
 								Select angletype
 									Case tlANGLE_ALIGN
 										If parentEffect.traverseedge
@@ -4350,30 +4350,30 @@ Type tlEmitter Extends tlEntity
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+													e.emissionangle:+GetDirection(e.x, e.y, 0, 0)
 												Else
-													e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+													e.emissionangle:+GetDirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 												End If
 											Case tlEMISSION_OUTWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If e.relative
-													e.emissionangle:+getdirection(0, 0, e.x, e.y)
+													e.emissionangle:+GetDirection(0, 0, e.x, e.y)
 												Else
-													e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+													e.emissionangle:+GetDirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 												End If
 											Case tlEMISSION_IN_AND_OUT
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
 												If diralternater
 													If e.relative
-														e.emissionangle:+getdirection(0, 0, e.x, e.y)
+														e.emissionangle:+GetDirection(0, 0, e.x, e.y)
 													Else
-														e.emissionangle:+getdirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
+														e.emissionangle:+GetDirection(e.parent.wx, e.parent.wy, e.wx, e.wy)
 													End If
 												Else
 													If e.relative
-														e.emissionangle:+getdirection(e.x, e.y, 0, 0)
+														e.emissionangle:+GetDirection(e.x, e.y, 0, 0)
 													Else
-														e.emissionangle:+getdirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
+														e.emissionangle:+GetDirection(e.wx, e.wy, e.parent.wx, e.parent.wy)
 													End If
 												End If
 												diralternater = Not diralternater
@@ -4408,7 +4408,7 @@ Type tlEmitter Extends tlEntity
 								If Not bypass_weight And Not bypass_speed And Not parenteffect.bypass_weight
 									e.speedvec.x = Sin(e.direction)
 									e.speedvec.y = Cos(e.direction)
-									e.angle = getdirection(0, 0, e.speedvec.x, -e.speedvec.y)
+									e.angle = GetDirection(0, 0, e.speedvec.x, -e.speedvec.y)
 								Else
 									If parentEffect.traverseedge
 										e.angle = parentEffect.angle + angleoffset
@@ -4416,7 +4416,7 @@ Type tlEmitter Extends tlEntity
 										e.angle = e.direction + angle + angleoffset
 									End If
 								End If
-							else
+							Else
 								Select angletype
 									Case tlANGLE_ALIGN
 										If parentEffect.traverseedge
@@ -4514,7 +4514,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -4632,9 +4632,9 @@ Type tlEmitter Extends tlEntity
 							e.speedvec.y = -e.gravity
 						End If
 						If uniform
-							e.scaley = (get_scalex(e.age, e.lifetime) * e.gsizex * (e.width + (getdistance(0, 0, e.speedvec.x, e.speedvec.y) * get_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.width
+							e.scaley = (get_scalex(e.age, e.lifetime) * e.gsizex * (e.width + (GetDistance(0, 0, e.speedvec.x, e.speedvec.y) * get_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.width
 						Else
-							e.scaley = (get_scaley(e.age, e.lifetime) * e.gsizey * (e.height + (getdistance(0, 0, e.speedvec.x, e.speedvec.y) * get_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.height
+							e.scaley = (get_scaley(e.age, e.lifetime) * e.gsizey * (e.height + (GetDistance(0, 0, e.speedvec.x, e.speedvec.y) * get_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.height
 						End If
 					Else
 						If uniform
@@ -4671,7 +4671,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = getdirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -4789,9 +4789,9 @@ Type tlEmitter Extends tlEntity
 							e.speedvec.y = -e.gravity
 						End If
 						If uniform
-							e.scaley = (interpolate_scalex(e.age, e.lifetime) * e.gsizex * (e.width + (getdistance(0, 0, e.speedvec.x, e.speedvec.y) * interpolate_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.width
+							e.scaley = (interpolate_scalex(e.age, e.lifetime) * e.gsizex * (e.width + (GetDistance(0, 0, e.speedvec.x, e.speedvec.y) * interpolate_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.width
 						Else
-							e.scaley = (interpolate_scaley(e.age, e.lifetime) * e.gsizey * (e.height + (getdistance(0, 0, e.speedvec.x, e.speedvec.y) * interpolate_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.height
+							e.scaley = (interpolate_scaley(e.age, e.lifetime) * e.gsizey * (e.height + (GetDistance(0, 0, e.speedvec.x, e.speedvec.y) * interpolate_stretch(e.age, e.lifetime) * parenteffect.currentstretch))) / image.height
 						End If
 					Else
 						If uniform
@@ -4821,10 +4821,10 @@ Type tlEmitter Extends tlEntity
 			SetImageHandle image.image, 0, 0
 			SetColor 255, 255, 255
 			SetScale w / image.width, h / image.height
-			drawsprite image, x, y, frame
+			DrawSprite image, x, y, frame
 		End If
 	End Method
-	rem
+	Rem
 	bbdoc: Cycle forward through the image frames
 	endrem
 	Method nextframe()
@@ -4833,7 +4833,7 @@ Type tlEmitter Extends tlEntity
 			frame = 0
 		End If
 	End Method
-	rem
+	Rem
 	bbdoc: Cycle backwards throught the image frames.
 	endrem
 	Method previousframe()
@@ -6750,7 +6750,7 @@ Type tlEmitter Extends tlEntity
 		End If
 	End Method
 End Type
-rem
+Rem
 	bbdoc: Particle Type - extends tlEntity
 	about: This is the object that is spawned by emitter types and maintained by a Particle Manager. Particles are controlled by the emitters and effects they're
 	parented to.
@@ -6780,7 +6780,7 @@ Type tlParticle Extends tlEntity
 	Field PM:tlParticleManager								'link to the particle manager
 	Field layer:Int											'layer the particle belongs to
 
-	rem
+	Rem
 		bbdoc: Updates the particle.
 		about: This is called by the emitter the particle is parented to.
 	endrem
@@ -6817,7 +6817,7 @@ Type tlParticle Extends tlEntity
 		emitter.controlparticle(Self)
 			
 	End Method
-	rem
+	Rem
 		bbdoc: Resets the particle so it's ready to be recycled by the particle manager
 	endrem
 	Method reset()
@@ -6849,7 +6849,7 @@ Type tlParticle Extends tlEntity
 		Super.Destroy()
 		reset()
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current x coordinate of the particle and capture the old value
 	endrem
 	Method setx(v:Float)
@@ -6860,7 +6860,7 @@ Type tlParticle Extends tlEntity
 		End If
 		x = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current y coordinate of the particle and capture the old value
 	endrem
 	Method sety(v:Float) 
@@ -6871,7 +6871,7 @@ Type tlParticle Extends tlEntity
 		End If
 		y = v
 	End Method
-	rem
+	Rem
 		bbdoc: Set the current zoom factor of the particle and capture the old value
 	endrem
 	Method setz(v:Float)
@@ -6883,7 +6883,7 @@ Type tlParticle Extends tlEntity
 		z = v
 	End Method
 End Type
-rem
+Rem
 	bbdoc: Attribute Node type
 	about: <p>An Attribute Node is basically a type used to store effect and emitter attributes. They are in effect nodes on a line graph so that when an effect plays 
 	out the attribute value is looked up on the line graph and interpolated if the current time is imbetween 2 attribute nodes. Think of the x-axis of the graph
@@ -6907,7 +6907,7 @@ Type tlAttributeNode
 		End If
 		Return - 1
 	End Method
-	rem
+	Rem
 	bbdoc: Set the curve points for the emitterchange
 	about: x0 and y0 are the coordinates of the point to the left of the attribute node, x1 and y1 are the coordinates to the right of the attribute node. Setting
 	these will create a bezier curve. The bezier curves are restricted so that they cannot be drawn so that they loop over or behind the frame of the attribute nodes.
@@ -6919,14 +6919,14 @@ Type tlAttributeNode
 		c1y = y1
 		isCurve = True
 	End Method
-	rem
+	Rem
 	bbdoc: Toggle whether this attribute node is curved or linear
 	endrem
 	Method ToggleCurve()
 		iscurve = Not iscurve
 	End Method
 End Type
-rem
+Rem
 	bbdoc: An attribute array type
 	about: This Type stores the Attribute node graphs inside arrays for a faster lookup rather then having to interpolate in real-time. See #Compile_All
 endrem
@@ -6943,7 +6943,7 @@ Type tlEmitterArray
 		Return lastframe
 	End Method
 End Type
-rem
+Rem
 	bbdoc: Particle manager for managing a list of effects and all the emitters and particles they contain
 	about: <p>The particle manger is the main type you can use to easily manage all of the effects you want to use in your application. It will automatically update 
 	all of the effects and draw the particles with a simple call to #Update and #DrawParticles.</p>
@@ -7034,7 +7034,7 @@ Type tlParticleManager
 	
 	Field rendercount:Int
 		
-	rem
+	Rem
 	bbdoc: Update the Particle Manager
 	about: Run this method in your main loop to update all particle effects.
 	endrem
@@ -7052,7 +7052,7 @@ Type tlParticleManager
 			old_origin_z = origin_z
 		End If
 	End Method
-	rem
+	Rem
 	bbdoc: Create a new Particle Manager
 	about: Creates a new particle manager and sets the maximum number of particles. Default maximum is 5000.
 	endrem
@@ -7090,7 +7090,7 @@ Type tlParticleManager
 		inuse[p.layer].Remove p
 	End Method
 	
-	rem
+	Rem
 	bbdoc: Draw all particles currently in use
 	about: Draws all pariticles in use and uses the tween value you pass to use render tween in order to smooth out the movement of effects assuming you
 	use some kind of tweening code in your app.
@@ -7113,7 +7113,7 @@ Type tlParticleManager
 		c_blend = GetBlend()
 		'rendercount = 0
 		If angle
-			angletweened = tweenvalues(oldangle, angle, tween)
+			angletweened = TweenValues(oldangle, angle, tween)
 			matrix.set(Cos(angletweened), Sin(angletweened), -Sin(angletweened), Cos(angletweened))
 		End If
 		For Local l:Int = 0 To 8
@@ -7163,14 +7163,11 @@ Type tlParticleManager
 							SetColor e.Red, e.Green, e.Blue
 							SetAlpha e.alpha
 							If e.animating
-								tv = tweenvalues(e.oldcurrentframe, e.currentframe, tween) Mod e.avatar.frames
-								If tv < 0
-									tv = e.avatar.frames - Abs(tv)
-								End If
+								tv = TweenValues(e.oldcurrentframe, e.currentframe, tween) 
 							Else
 								tv = e.currentframe
 							End If
-							DrawSprite e.avatar, px, py, tv
+							DrawSprite e.avatar, px, py, Abs(tv) Mod e.avatar.frames
 							'rendercount:+1
 						End If
 					End If
@@ -7202,7 +7199,7 @@ Type tlParticleManager
 		Origin_Y = y
 		Origin_Z = z
 	End Method
-	rem
+	Rem
 	bbdoc: Set the x origin
 	about: See #SetOrigin
 	endrem
@@ -7210,7 +7207,7 @@ Type tlParticleManager
 		old_origin_x = Origin_X
 		Origin_X = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the y origin
 	about: See #SetOrigin
 	endrem
@@ -7218,7 +7215,7 @@ Type tlParticleManager
 		old_origin_y = Origin_Y
 		Origin_Y = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the level of zoom
 	about: Values above 1 will zoom out whilst values from 1 - 0 will zoom in. Values less then 0 will flip the particles being drawn.
 	endrem
@@ -7234,7 +7231,7 @@ Type tlParticleManager
 		oldangle = angle
 		angle = v
 	End Method
-	rem
+	Rem
 	bbdoc: Set the update mode for the particle manager
 	about: There are 2 types of mode, compiled and interpolated. Compiled mode will force the particles to be updated using compiled lookup tables whereas interpolated mode
 	will force the particles to use interpolation to update. Pass either either @tlUPDATE_MODE_COMPILED or @tlUPDATE_MODE_INTERPOLATED to set either mode. The default mode
@@ -7243,7 +7240,7 @@ Type tlParticleManager
 	Method SetUpdateMode(mode:Int)
 		updatemode = mode
 	End Method
-	rem
+	Rem
 	bbdoc: Set the current screen size
 	about: Tells the particle manager the current size of the view port, whether its the screen size or canvas size if you're using a gui. 
 	endrem
@@ -7260,25 +7257,25 @@ Type tlParticleManager
 	Method SetIdleTimeLimit(v:Int)
 		idletimelimit = v
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current x origin of the particle manager
 	endrem
 	Method GetOrigin_X:Float()
 		Return Origin_X
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current y origin of the particle manager
 	endrem
 	Method GetOrigin_Y:Float()
 		Return Origin_Y
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current z origin/zoom factor of the particle manager
 	endrem
 	Method GetOrigin_Z:Float()
 		Return Origin_Z
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current update mode for the particle manager
 	returns: The current update mode of the particle manager. See #SetUpdateMode.
 	end rem
@@ -7286,20 +7283,20 @@ Type tlParticleManager
 		Return updatemode
 	End Method
 	
-	rem
+	Rem
 	bbdoc: Get the current number of particles in use
 	endrem
 	Method GetParticlesInUse:Int()
 		Return inusecount
 	End Method
-	rem
+	Rem
 	bbdoc: Get the current number of un used particles
 	endrem
 	Method GetParticlesUnUsed:Int()
 		Return unusedcount
 	End Method
 
-	rem
+	Rem
 		bbdoc: Adds a New effect To the particle manager, and pre loads a given number of frames
 		about: Use this method to add a new effect to the particle and start the effect running from whatever number of frames you pass to it.
 		In most cases the overhead for this will be small, but for extremely heavy effects with many particles you may experience some performance hit.
@@ -7319,21 +7316,21 @@ Type tlParticleManager
 		CURRENT_TIME = temptime
 		effects.AddLast e
 	End Method	
-	rem
+	Rem
 	bbdoc: Adds a new effect to the particle manager
 	about: Use this method to add new effects to the particle manager which will be updated automatically
 	endrem
 	Method addeffect(e:tlEffect)
 		effects.AddLast e
 	End Method
-	rem
+	Rem
 	bbdoc: Removes an effect from the particle manager
 	about: Use this method to remove effects from the particle manager. It's best to destroy the effect as well to avoid memory leaks
 	endrem
 	Method removeeffect(e:tlEffect)
 		effects.Remove e
 	End Method
-	rem
+	Rem
 	bbdoc: Clear all particles in use
 	about: Call this method to empty the list of in use particles and move them to the un used list.
 	endrem
@@ -7348,7 +7345,7 @@ Type tlParticleManager
 			Next
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Destroy the particle manager
 	about: This will destroy the particle, clearing all effects and particles. Use only when you are finished with the particle manager and want it removed
 	to avoid any memory leaks.
@@ -7358,7 +7355,7 @@ Type tlParticleManager
 		Self.ClearInUse()
 		Self.UnUsed.Clear()
 	End Method
-	rem
+	Rem
 	bbdoc: Remove all effects and clear all particles in use
 	about: If you want to remove all effects and particles from the manager then use this command. Every effect will instantly stop being
 	rendered.
@@ -7369,7 +7366,7 @@ Type tlParticleManager
 		Next
 		effects.Clear()
 	End Method
-	rem
+	Rem
 	bbdoc: Release single particles
 	about: If there are any singleparticles (see #SetSingleParticle) this will release all of them and allow them to age and die.
 	endrem
@@ -7380,14 +7377,14 @@ Type tlParticleManager
 			Next
 		Next
 	End Method
-	rem
+	Rem
 	bbdoc: Pause and unpause the particle manager
 	about: Pauses the drawing and updating of all effects within the particle manager.
 	endrem
 	Method Togglepause()
 		paused = Not paused
 	End Method
-	rem
+	Rem
 		bbdoc: Interpolate between 2 values
 		about: This is the function used to achieve render tweening by taking the old and new values and interpolating between the 2
 	end rem
@@ -7396,7 +7393,7 @@ Type tlParticleManager
 	End Function
 End Type
 
-rem
+Rem
 	bbdoc: Create a new particle manager
 	returns: A new tlParticleManager
 	about: Particle manager maintain a list of effects. See #tlParticleManager.
@@ -7405,7 +7402,7 @@ Function CreateParticleManager:tlParticleManager(Particles:Int = tlPARTICLE_LIMI
 	Local pm:tlParticleManager = New tlParticleManager.Create(particles)
 	Return pm
 End Function
-rem
+Rem
 	bbdoc: Create a new Emitter
 	returns: a New tlEmitter with a default set of attribute values
 endrem
@@ -7456,7 +7453,7 @@ Function CreateParticle:tlEmitter(parent:tlEffect)
 	Return e
 	
 End Function
-rem
+Rem
 	bbdoc: Create a new emitter
 	Returns: Blank tlEmitter
 endrem
@@ -7464,7 +7461,7 @@ Function CreateEmitter:tlEmitter()
 	Local e:tlEmitter = New tlEmitter
 	Return e
 End Function
-rem
+Rem
 	bbdoc: Create a new effect
 	returns: A new effect with a default set of attributes.
 	about: Pass the parent emitter if it is to be a sub effect.
@@ -7492,7 +7489,7 @@ Function CreateEffect:tlEffect(parent:tlEmitter = Null)
 	e.sethandlecenter(True)
 	Return e
 End Function
-rem
+Rem
 	bbdoc: Copy a list of attribute nodes
 	returns: A new list of attribute nodes
 endrem
@@ -7513,7 +7510,7 @@ Function CopyAttributeNodes:TList(e:TList)
 	Next
 	Return ec
 End Function
-rem
+Rem
 	bbdoc: Makes a copy of the emitter passed to it
 	returns: A new clone of the emitter
 	about: Generally you will want to copy an effect, which will in turn copy all emitters within it recursively
@@ -7604,7 +7601,7 @@ Function CopyEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleManager)
 	LinkEmitterArrays(em, ec)
 	Return ec
 End Function
-rem
+Rem
 	bbdoc: Makes a copy of the effect passed to it
 	returns: A new clone of the effect entire, including all emitters and sub effects.
 endrem
@@ -7660,7 +7657,7 @@ Function CopyEffect:tlEffect(e:tlEffect, ParticleManager:tlParticleManager, copy
 	End If
 	Return eff
 End Function
-rem
+Rem
 	bbdoc: Replace the effect properties, inlcuding emitters with the effect properties you pass to it
 	about: You can use this to overwrite an effect with another effect.
 endrem
@@ -7820,7 +7817,7 @@ Function CopyParticle:tlParticle(e:tlParticle)
 	ce.relative = e.relative
 	Return ce
 End Function
-rem
+Rem
 	bbdoc: Load an effects library
 	returns: New tlEffectsLibrary
 	about: <p>Pass the url of the library and pass TRUE or FALSE for compile if you want to compile all the effects or not.</p>
