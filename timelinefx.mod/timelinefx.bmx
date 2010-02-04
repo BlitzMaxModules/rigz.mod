@@ -1,4 +1,4 @@
-'Copyright (c) 2009 Peter J Rigby
+Ôªø'Copyright (c) 2009 Peter J Rigby
 '
 'Permission is hereby granted, free of charge, to any person obtaining a copy
 'of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ Rem
 	bbdoc:	TimelineFX for BlitzMax
 	about:	<p>TimelineFX is a system for creating particle effects within your games and applications</p>
 	<p>Big thanks to the following: Bruce Henderson (Brucey) for all the great modules, Garritt Grandberg (gman) for the zipengine module,
-	 Manel Ib·Òez (Ziggy) for a great IDE, Doug Stastny for the DX9 module and Mark Sibly of course for everything Blitz.</p>
+	 Manel Ib√°√±ez (Ziggy) for a great IDE, Doug Stastny for the DX9 module and Mark Sibly of course for everything Blitz.</p>
 	<p>For more help and tutorials that expand on the Docs below visit <a href="http://www.rigzsoft.co.uk" target="_blank">www.rigzsoft.co.uk</a></p>
 EndRem
 Module rigz.timelinefx
@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+moduleinfo "History v1.09: 26th Januray 2010 - Fixed a bug where the wrong frame would be drawn causing array out of bounds error"
 ModuleInfo "History v1.08: 23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn."
 ModuleInfo "History v1.08: 19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning."
 ModuleInfo "History v1.07: 08th November 2009 - Tidied up the behaviour of adjusting the Z value of effects and implented globalz as a graph attribute"

@@ -18,11 +18,6 @@ ModuleInfo "Now returns null if the given dimensions don't fit the animation bei
 ModuleInfo ""
 
 Import brl.max2d
-?Win32
-	Import brl.d3d7max2d
-	Import brl.d3d9max2d
-?
-Import brl.glmax2d
 Import rigz.math
 
 Rem
@@ -70,8 +65,8 @@ Type TAnimImage
 		End If
 		t.Image = LoadImage(url, flags)
 		t.frames = frames
-		Local xDelta:Float = t.Image.Width / Pow2Size(t.image.width) 
-		Local yDelta:Float = t.Image.Height / Pow2Size(t.image.height) 
+		Local xDelta:Float = 1
+		Local yDelta:Float = 1
 		x_cells = t.Image.Width / cell_width
 		If x_cells
 			For Local f:Int = start To frames - 1
@@ -84,7 +79,6 @@ Type TAnimImage
 				t.sx[f] = tx
 				t.sy[f] = ty
 			Next
-			
 			Return t
 		Else
 			Return Null
@@ -124,44 +118,7 @@ Type TAnimImage
 	End Function
 	
 	Method Draw(x:Float, y:Float, width:Float, height:Float, frame:Int = 0)
-'		?Win32
-'			If TD3D7Max2DDriver(_max2dDriver) <> Null
-'				dxVer = 7
-'			EndIf
-'	 		If TD3D9Max2DDriver(_max2dDriver) <> Null			'rem this bit here for no dx9
-'				dxVer = 9										'
-'			EndIf												'
-'			Select dxVer
-'				Case 7
-'					DX7Frame = TD3D7ImageFrame (image.frame(0))
-'					If frame > frames
-'						frame = 0
-'					End If
-'			        DX7Frame.setUV(u0[frame], v0[frame], u1[frame], v1[frame])
-'				Case 9																'and this bit
-'					DX9Frame = TD3D9ImageFrame (image.frame(0))						'
-'					If frame > frames												'
-'						frame = 0													'
-'					End If
-'					dx9frame._fverts[4] = u0[frame]
-'					dx9frame._fverts[5] = v0[frame]
-'					dx9frame._fverts[10] = u1[frame]
-'					dx9frame._fverts[11] = v0[frame]
-'					dx9frame._fverts[16] = u1[frame]
-'					dx9frame._fverts[17] = v1[frame]
-'					dx9frame._fverts[22] = u0[frame]
-'					dx9frame._fverts[23] = v1[frame]
-'				Default
-'		?
-'		            GLFrame = TGLImageFrame(image.frame(0))
-'		            GLFrame.u0 = u0[frame]
-'		            GLFrame.u1 = u1[frame]
-'		            GLFrame.v0 = v0[frame]
-'		            GLFrame.v1 = v1[frame]
-'		?Win32
-'			End Select
-'		?
-		DrawSubImageRect(Self.Image, x, y, width, height, sx[frame], sy[frame], width, height, image.handle_x, image.handle_y)
+		DrawSubImageRect(Self.image, x, y, width, height, sx[frame], sy[frame], width, height, image.handle_x, image.handle_y)
 	End Method
 	
 	Method nextframe() 
