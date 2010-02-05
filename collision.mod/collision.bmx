@@ -2288,7 +2288,7 @@ Type tlCircle Extends tlBox
 	end rem
 	Method draw(offsetx:Float = 0, offsety:Float = 0, BoundingBox:Int = False)
 		DrawOval world.x - radius - offsetx, world.y - radius - offsety, width, height
-		If boundingbox Super.draw
+		If boundingbox Super.draw(offsetx, offsety, boundingbox)
 	End Method
 	
 	'internal stuff--------------------
@@ -2863,7 +2863,7 @@ Type tlPolygon Extends tlBox
 			DrawLine(v1.x + world.x - offsetx, v1.y + world.y - offsety, v2.x + world.x - offsetx, v2.y + world.y - offsety, False)
 			v1 = v2
 		Next
-		If boundingbox Super.draw
+		If boundingbox Super.draw(offsetx, offsety, boundingbox)
 	End Method
 	
 	'internal stuff---------------------------------
