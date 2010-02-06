@@ -1033,9 +1033,9 @@ Type tlBox
 		within it.
 	end rem
 	Method SetPosition(x:Float, y:Float)
+		tl_corner.Move(x - world.x, y - world.y)
+		br_corner.Move(x - world.x, y - world.y)
 		world.SetPosition(x, y)
-		tl_corner.SetPosition(x - width / 2, y - height / 2)
-		br_corner.SetPosition(tl_corner.x + width, tl_corner.y + height)
 		If needsmoving() quadtree.UpdateRect(Self)
 	End Method
 	
@@ -3881,6 +3881,9 @@ rem
 	about: After you have retrieved a #tlCollisionResult from calling #CheckCollision you can call this function to separate 2 boundaries from each other.
 	If push is false (default) then the source boundary will be stopped by the target boundary, otherwsie the source bouandry will push the target boundary
 	along it's veloctity vector and the normal of the edge it's pushing against.
+	***NOTE*** Remember that after an overlap has been been prevented, the coordinates of the boundary wil have change in order to separate it from the other
+	boundary, so remember to update any other objects coordinates to match this (such as your game object). If your game object is dictating where the boundary 
+	is located then it might inadvertantly place the bouandary back inside the object it's colliding with causing strange things to happen.
 end rem
 Function PreventOverlap(Result:tlCollisionResult, Push:Int = False)
 	If result
