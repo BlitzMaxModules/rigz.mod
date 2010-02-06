@@ -2358,7 +2358,7 @@ Type tlPolygon Extends tlBox
 	end rem
 	Method Rotate(_angle:Float)
 		angle:+_angle
-		tformmatrix.set(Cos(angle) * scale.x, Sin(angle) * scale.y, -Sin(angle) * scale.x, Cos(angle) * scale.y)
+		tformmatrix.set(Cos(angle) , Sin(angle) , -Sin(angle) , Cos(angle))
 		TForm()
 	End Method
 	
@@ -2368,7 +2368,7 @@ Type tlPolygon Extends tlBox
 	end rem
 	Method SetAngle(_angle:Float)
 		angle = _angle
-		tformmatrix.set(Cos(angle) * scale.x, Sin(angle) * scale.y, -Sin(angle) * scale.x, Cos(angle) * scale.y)
+		tformmatrix.set(Cos(angle) , Sin(angle) , -Sin(angle), Cos(angle))
 		TForm()
 	End Method
 	
@@ -2380,7 +2380,6 @@ Type tlPolygon Extends tlBox
 		ResetBoundingBox()
 		scale.x = x
 		scale.y = y
-		tformmatrix.set(Cos(angle) * scale.x, Sin(angle) * scale.y, -Sin(angle) * scale.x, Cos(angle) * scale.y)
 		TForm()
 	End Method
 	
@@ -2873,7 +2872,7 @@ Type tlPolygon Extends tlBox
 		'complex polys!
 		ResetBoundingBox()
 		For Local i:Int = 0 To vertices.Length - 1
-			tformvertices[i].SetPosition(vertices[i].x + handle.x, vertices[i].y + handle.y)
+			tformvertices[i].SetPosition(scale.x * vertices[i].x + handle.x, scale.y * vertices[i].y + handle.y)
 			tformvertices[i] = tformmatrix.transformvector(tformvertices[i])
 			UpdateBoundingBox(tformvertices[i].x, tformvertices[i].y)
 		Next
@@ -3494,10 +3493,10 @@ Type tlLine Extends tlPolygon
 		'This transforms the line according to the current scale/angle. Both local and transformed vertices are stored within the type, which
 		'while takes more memory, makes things a bit easier, and I think a bit faster!
 		ResetBoundingBox()
-		tformvertices[0].SetPosition(vertices[0].x + handle.x, vertices[0].y + handle.y)
+		tformvertices[0].SetPosition(scale.x * vertices[0].x + handle.x, scale.x * vertices[0].y + handle.y)
 		tformvertices[0] = tformmatrix.transformvector(tformvertices[0])
 		UpdateBoundingBox(tformvertices[0].x, tformvertices[0].y)
-		tformvertices[1].SetPosition(vertices[1].x + handle.x, vertices[1].y + handle.y)
+		tformvertices[1].SetPosition(scale.x * vertices[1].x + handle.x, scale.x * vertices[1].y + handle.y)
 		tformvertices[1] = tformmatrix.transformvector(tformvertices[1])
 		UpdateBoundingBox(tformvertices[1].x, tformvertices[1].y)
 		UpdateNormals()
