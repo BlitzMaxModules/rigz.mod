@@ -88,10 +88,10 @@ Type tlEntity
 	Field relative:Int = 1									'whether the entity remains relative to it's parent. Relative is the default.
 	'---------------------------------
 	Field matrix:tlMatrix2 = New tlMatrix2.Create()			'A matrix to calculate entity rotation relative to the parent
-	Field spawnmatrix:tlMatrix2 = New tlMatrix2.Create()		'May be moved in the future to tlParticle!
+	Field spawnmatrix:tlMatrix2 = New tlMatrix2.Create()	'May be moved in the future to tlParticle!
 	Field rotvec:tlVector2 = New tlVector2.Create(0, 0)		'Vector formed between the parent and the children
-	Field speedvec:tlVector2 = New tlVector2.Create(0, 0)		'vector created by he speed and direction of the entity
-	Field gravvec:tlVector2 = New tlVector2.Create(0, 0)		'vector created by the current down force of the entity
+	Field speedvec:tlVector2 = New tlVector2.Create(0, 0)	'vector created by he speed and direction of the entity
+	Field gravvec:tlVector2 = New tlVector2.Create(0, 0)	'vector created by the current down force of the entity
 	'Entity name----------------------
 	Field name:String										'name
 	'---------------------------------
@@ -333,6 +333,8 @@ Type tlEntity
 		oldz = z
 		oldwx = wx
 		oldwy = wy
+		oldx = x
+		oldy = y
 		oldangle = angle
 		oldrelativeangle = relativeangle
 		oldscalex = scalex

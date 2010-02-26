@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.09: 13th February 2010 - Particles will now only stretch along their relative velocities."
 moduleinfo "History v1.09: 26th Januray 2010 - Fixed a bug where the wrong frame would be drawn causing array out of bounds error"
 ModuleInfo "History v1.08: 23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn."
 ModuleInfo "History v1.08: 19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning."
@@ -3869,7 +3870,7 @@ Type tlEmitter Extends tlEntity
 								e.direction = 90
 							Else
 								If parentEffect.class <> tlPOINT_EFFECT
-									If Not bypass_speed
+									If Not bypass_speed Or angletype = tlANGLE_ALIGN
 										Select parentEffect.emissiontype
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
@@ -4346,7 +4347,7 @@ Type tlEmitter Extends tlEntity
 								e.direction = 90
 							Else
 								If parentEffect.class <> tlPOINT_EFFECT
-									If Not bypass_speed
+									If Not bypass_speed Or angletype = tlANGLE_ALIGN
 										Select parentEffect.emissiontype
 											Case tlEMISSION_INWARDS
 												e.emissionangle = current_emissionangle + Rnd(-er, er)
@@ -4515,7 +4516,11 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								If e.relative
+									e.angle = GetDirection(e.oldx, e.oldy, e.x, e.y)
+								Else
+									e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								End If
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -4672,7 +4677,11 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
-								e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								If e.relative
+									e.angle = GetDirection(e.oldx, e.oldy, e.x, e.y)
+								Else
+									e.angle = GetDirection(e.oldwx, e.oldwy, e.wx, e.wy)
+								End If
 								If Abs(e.oldangle - e.angle) > 180
 									If e.oldangle > e.angle e.oldangle:-360 Else e.oldangle:+360
 								End If
@@ -7007,6 +7016,8 @@ Type tlParticleManager
 	
 	Field vp_w:Float
 	Field vp_h:Float
+	Field vp_x:Float
+	Field vp_y:Float
 	Field center_x:Float
 	Field center_y:Float
 	
@@ -7130,7 +7141,7 @@ Type tlParticleManager
 						px = (px * camtz) + center_x + (camtz * camtx)
 						py = (py * camtz) + center_y + (camtz * camty)
 					End If
-					If px > - e.Image_Diameter And px < vp_w + e.Image_Diameter And py > - e.Image_Diameter And py < vp_h + e.Image_Diameter
+					If px > vp_x - e.Image_Diameter And px < vp_x + vp_w + e.Image_Diameter And py > vp_y - e.Image_Diameter And py < vp_y + vp_h + e.Image_Diameter
 						If e.avatar
 							If e.emitter.handlecenter
 								If e.avatar.frames = 1
@@ -7250,6 +7261,15 @@ Type tlParticleManager
 		vp_h = h
 		center_x = vp_w / 2
 		center_y = vp_h / 2
+	End Method
+	Rem
+	bbdoc: Set the current screen position
+	about: If you're rendering to a particular section of the screen then you can set the position of the viewport's top left coordinates using
+			this command. Thanks to Imphy for the suggestion!
+	endrem
+	Method SetScreenPosition(x:Int, y:Int)
+	   vp_x = x
+	   vp_y = y
 	End Method
 	Rem
 	bbdoc: Set the amount of time before idle effects are deleted from the particle manager
