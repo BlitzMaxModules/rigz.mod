@@ -64,6 +64,7 @@ Import rigz.entity
 Import brl.pngloader
 Import rigz.graphbeziers
 Import rigz.math
+Import koriolis.zipstream
 Import "globals.bmx"
 
 ?Debug
@@ -4302,7 +4303,7 @@ Type tlEmitter Extends tlEntity
 								e.scalex = sizetemp
 								e.scaley = sizetemp
 								If Not bypass_stretch And e.speed
-									e.scaley = (c_scaley.changes[0] * e.gsizex * (e.width + (Abs(e.speed) * c_stretch.changes[0] * parenteffect.currentstretch))) / image.width
+									e.scaley = (c_scalex.changes[0] * e.gsizex * (e.width + (Abs(e.speed) * c_stretch.changes[0] * parenteffect.currentstretch))) / image.width
 									If e.scaley < e.scalex e.scaley = e.scalex
 								End If
 								e.AABB_MaxWidth = AABB_ParticleMaxWidth
@@ -4788,7 +4789,7 @@ Type tlEmitter Extends tlEntity
 				Else
 					e.speed = e.randomspeed
 				End If
-				'-------Stretch---------
+				'--------Stretch---------
 				If Not bypass_stretch
 					If Not bypass_weight And Not parenteffect.bypass_weight
 						If e.speed
@@ -4817,7 +4818,7 @@ Type tlEmitter Extends tlEntity
 				If Not bypass_weight
 					e.weight = interpolate_weight(e.age, e.lifetime) * e.baseweight
 				End If
-			'------------------------
+				'------------------------
 		End Select
 	End Method
 	Rem
@@ -7851,6 +7852,7 @@ Function LoadEffects:tlEffectsLibrary(filename:String, compile:Int = True)
 	End If
 	
 	Local zip:ZipReader = New ZipReader
+	
 	zip.OpenZip(filename)
 	Local xmlstream:TStream = zip.ExtractFile("DATA.XML")
 	
