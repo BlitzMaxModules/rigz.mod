@@ -64,7 +64,6 @@ Import rigz.entity
 Import brl.pngloader
 Import rigz.graphbeziers
 Import rigz.math
-Import koriolis.zipstream
 Import "globals.bmx"
 
 ?Debug
