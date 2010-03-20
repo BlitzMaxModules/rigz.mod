@@ -2388,6 +2388,9 @@ Set the y origin.
 <tr><td class=docleft width=1%><a href=#SetOrigin_Z>SetOrigin_Z</a></td><td class=docright>
 Set the level of zoom.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetScreenPosition>SetScreenPosition</a></td><td class=docright>
+Set the current screen position.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#SetScreenSize>SetScreenSize</a></td><td class=docright>
 Set the current screen size.
 </td></tr>
@@ -2512,6 +2515,12 @@ will zoom out whilst values from 1 - 0 will zoom in. Values less then 0 will fli
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the level of zoom.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Values above 1 will zoom out whilst values from 1 - 0 will zoom in. Values less then 0 will flip the particles being drawn.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetScreenPosition>
+<tr><td class=doctop colspan=2>Method SetScreenPosition(x:Int, y:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the current screen position.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>If you're rendering to a particular section of the screen then you can set the position of the viewport's top left coordinates using
+this command. Thanks to Imphy for the suggestion!</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=SetScreenSize>
 <tr><td class=doctop colspan=2>Method SetScreenSize(w:Int, h:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the current screen size.</td></tr>
@@ -2545,6 +2554,7 @@ is compiled mode.</td></tr>
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
 <tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
 <tr><th width=1%>Purpose</th><td>To add rich particle effects to games and applications, quickly and easily</td></tr>
+<tr><th width=1%>History v1.09</th><td>13th February 2010 - Particles will now only stretch along their relative velocities.</td></tr>
 <tr><th width=1%>History v1.09</th><td>26th Januray 2010 - Fixed a bug where the wrong frame would be drawn causing array out of bounds error</td></tr>
 <tr><th width=1%>History v1.08</th><td>23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn.</td></tr>
 <tr><th width=1%>History v1.08</th><td>19th November 2009 - The particle radius and bounding box are now initialised initialised properly when spawning.</td></tr>

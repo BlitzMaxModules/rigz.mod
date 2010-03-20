@@ -5645,7 +5645,7 @@ Type tlEmitter Extends tlEntity
 				bypass_weight = True
 			End If
 		End If
-		If Not c_weight.lastframe And c_weight.changes[0]
+		If Not c_weight.lastframe And Not c_weight.changes[0]
 			bypass_weight = True
 		End If
 		If Not c_basespeed.lastframe And Not c_velvariation.lastframe
