@@ -64,6 +64,7 @@ Type TAnimImage
 			TStream(url).Seek(0)
 		End If
 		t.Image = LoadImage(url, flags)
+		If t.image.width * t.image.height < cell_width * cell_height * frames Return Null
 		t.frames = frames
 		Local xDelta:Float = 1
 		Local yDelta:Float = 1

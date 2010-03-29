@@ -509,6 +509,8 @@ Type tlEntity
 	end rem
 	Method Destroy()
 		parent = Null
+		avatar = Null
+		rootparent = Null
 		For Local e:tlEntity = EachIn children
 			e.destroy()
 		Next

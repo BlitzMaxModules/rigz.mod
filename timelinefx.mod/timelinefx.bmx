@@ -32,6 +32,8 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.09: 29 March 2010 - Added a new attribute - Splatter"
+ModuleInfo "History v1.09: 29 March 2010 - Fixed a memory leak when effects files are loaded over and over again"
 ModuleInfo "History v1.09: 13th February 2010 - Particles will now only stretch along their relative velocities."
 moduleinfo "History v1.09: 26th Januray 2010 - Fixed a bug where the wrong frame would be drawn causing array out of bounds error"
 ModuleInfo "History v1.08: 23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn."
@@ -205,11 +207,14 @@ Type tlEffectsLibrary
 	endrem
 	Method ClearAll()
 		Self.name = ""
-		For Local e:tlEffect = EachIn effects
+		effects.Values()
+		For Local e:tlEffect = EachIn effects.Values()
 			e.destroy()
 		Next
 		Self.effects.Clear()
+		Self.effects = Null
 		Self.shapelist.Clear()
+		Self.shapelist = Null
 	End Method
 	Rem
 	bbdoc: Retrieve an effect from the library
@@ -2413,7 +2418,6 @@ Type tlEmitter Extends tlEntity
 	Field parentEffect:tlEffect								'the effect it belongs to
 	Field image:TAnimImage									'the sprite of the emitter
 	Field frame:Int											'the frame of the sprite
-	Field splatter:Float									'randomises where the particle appears about the point
 	Field centerhandle:Int = True							'true if the handle of the sprite should be set to the middle
 	Field handlecenter:Int									'Whether or not the particle's handle is in centered automatically
 	Field angleoffset:Int					 				'angle variation and offset
@@ -2479,6 +2483,7 @@ Type tlEmitter Extends tlEntity
 	Field directionvariationot:TList = CreateList()   		'direction variation overtime
 	Field framerate:TList = CreateList()    				'the speed of the animation over time
 	Field stretch:TList = CreateList()    					'amount the particle is stretched by the speed it's travelling
+	Field splatter:TList = CreateList()						'this will randomise the distance where the particle spawns to it's point.
 	
 	'----Arrays for quick access to attribute values
 	Field c_r:tlEmitterArray
@@ -2514,6 +2519,7 @@ Type tlEmitter Extends tlEntity
 	Field c_directionvariationot:tlEmitterArray
 	Field c_framerate:tlEmitterArray
 	Field c_stretch:tlEmitterArray
+	Field c_splatter:tlEmitterArray
 
 	'Bypassers
 	Field bypass_weight:Int
@@ -2529,6 +2535,7 @@ Type tlEmitter Extends tlEntity
 	Field bypass_lifevariaton:Int
 	Field bypass_framerate:Int
 	Field bypass_stretch:Int
+	Field bypass_splatter:Int
 	
 	'Bounding Box Info
 	Field AABB_ParticleMaxWidth:Float
@@ -2693,11 +2700,11 @@ Type tlEmitter Extends tlEntity
 		Return e
 	End Method
 	Rem
-	bbdoc: Add a Base Speed attribute node
-	returns: Emitter change object.
-	about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
-	<p>This is a <b>Base Attribute</b> for setting the base speed of the particle. Speed is then scaled over the lifetime of the particle using the 
-	<b>Overtime Attribute</b> Velocity</p>
+		bbdoc: Add a Base Speed attribute node
+		returns: Emitter change object.
+		about: <p>Pass the method the time in millisecs (f) and the value (v)</p>
+		<p>This is a <b>Base Attribute</b> for setting the base speed of the particle. Speed is then scaled over the lifetime of the particle using the 
+		<b>Overtime Attribute</b> Velocity</p>
 	endrem
 	Method addbasespeed:tlAttributeNode(f:Float, v:Float)
 		Local e:tlAttributeNode = New tlAttributeNode
@@ -3048,6 +3055,19 @@ Type tlEmitter Extends tlEntity
 		Return e
 	End Method
 	Rem
+	bbdoc: Add a splatter overtime attribute node
+	returns: Emitter change object.
+	about: <p>Pass the time in milliseconds (f) and the value (v)</p>
+	<p>This will control how close to the point the particle will spawn. Higher values mean the particle will appear randomnly around the point of spawning.</p>
+	endrem
+	Method addsplatter:tlAttributeNode(f:Float, v:Float)
+		Local e:tlAttributeNode = New tlAttributeNode
+		e.frame = f
+		e.value = v
+		splatter.AddLast e
+		Return e
+	End Method
+	Rem
 	bbdoc: Add an effect to the emitters list of effects.
 	about: Effects that are in the effects list are basically sub effects that are added to any particles that this emitter spawns which in turn should
 	contain their own emitters that spawn more particles and so on.</p>
@@ -3096,13 +3116,6 @@ Type tlEmitter Extends tlEntity
 	endrem
 	Method setuniform(v:Int)
 		uniform = v
-	End Method
-	Rem
-	bbdoc: Set the range of splatter
-	about: Sets the radius of splatter to make particles spawn randomly about its initended coordinates.
-	endrem
-	Method setsplatter(v:Int)
-		splatter = v
 	End Method
 	Rem
 	bbdoc: Set the angle type
@@ -3268,12 +3281,6 @@ Type tlEmitter Extends tlEntity
 		Return uniform
 	End Method
 	Rem
-	bbdoc: Get the radius of the splatter
-	endrem
-	Method getsplatter:Int()
-		Return splatter
-	End Method
-	Rem
 	bbdoc: Get the current angletype for particles spawned by this emitter
 	returns: either tlANGLE_ALIGN, tlANGLE_RANDOM or tlANGLE_SPECIFY
 	endrem
@@ -3419,6 +3426,7 @@ Type tlEmitter Extends tlEntity
 	
 	Method destroy()
 		parenteffect = Null
+		image = Null
 		For Local e:tlEffect = EachIn effects
 			e.destroy()
 		Next
@@ -3525,6 +3533,9 @@ Type tlEmitter Extends tlEntity
 		Local dv:Float
 		Local randomage:Int
 		Local scaletemp:Float
+		Local splattertemp:Float
+		Local splatx:Float
+		Local splaty:Float
 		
 		Local qty:Float
 		
@@ -3863,6 +3874,19 @@ Type tlEmitter Extends tlEntity
 								e.AABB_MinHeight = AABB_ParticleMinHeight
 							End If
 							'-------------------------------
+							'-----Splatter-------------------
+							If Not bypass_splatter
+								splattertemp = get_splatter(parenteffect.currentframe)
+								splatx = Rnd(-splattertemp, splattertemp)
+								splaty = Rnd(-splattertemp, splattertemp)
+								While GetDistance(0, 0, splatx, splaty) >= splattertemp And splattertemp > 0
+									splatx = Rnd(-splattertemp, splattertemp)
+									splaty = Rnd(-splattertemp, splattertemp)
+								WEnd
+								e.x:+splatx
+								e.y:+splaty
+							End If
+							'--------------------------------
 							'rotation  and direction of travel settings-----
 							e.miniupdate()
 							If parentEffect.traverseedge And parentEffect.class = tlLINE_EFFECT
@@ -3969,12 +3993,6 @@ Type tlEmitter Extends tlEntity
 							End If
 							e.alpha = e.emitter.get_alpha(e.age, e.lifetime) * parenteffect.currentalpha
 							'-------------------------------
-							'-----Splatter-------------------
-							'							If splatter
-							'								e.x:+Sin(Rnd(359)) * Rnd(splatter) 
-							'								e.y:+Cos(Rnd(359)) * Rnd(splatter) 
-							'							End If
-							'--------------------------------
 							'-----blend mode-----------------
 							e.blendmode = blendmode
 							'-----Animation and framerate----
@@ -4340,6 +4358,19 @@ Type tlEmitter Extends tlEntity
 								e.AABB_MinHeight = AABB_ParticleMinHeight
 							End If
 							'-------------------------------
+							'-----Splatter-------------------
+							If Not bypass_splatter
+								splattertemp = interpolate_splatter(parenteffect.age)
+								splatx = Rnd(-splattertemp, splattertemp)
+								splaty = Rnd(-splattertemp, splattertemp)
+								While GetDistance(0, 0, splatx, splaty) >= splattertemp And splattertemp > 0
+									splatx = Rnd(-splattertemp, splattertemp)
+									splaty = Rnd(-splattertemp, splattertemp)
+								WEnd
+								e.x:+splatx
+								e.y:+splaty
+							End If
+							'--------------------------------
 							'rotation  and direction of travel settings-----
 							e.miniupdate()
 							If parentEffect.traverseedge And parentEffect.class = tlLINE_EFFECT
@@ -4446,12 +4477,6 @@ Type tlEmitter Extends tlEntity
 							End If
 							e.alpha = c_alpha.changes[0] * parenteffect.currentalpha
 							'-------------------------------
-							'-----Splatter-------------------
-							'							If splatter
-							'								e.x:+Sin(Rnd(359)) * Rnd(splatter) 
-							'								e.y:+Cos(Rnd(359)) * Rnd(splatter) 
-							'							End If
-							'--------------------------------
 							'-----blend mode-----------------
 							e.blendmode = blendmode
 							'-----Animation and framerate----
@@ -5043,6 +5068,27 @@ Type tlEmitter Extends tlEntity
 		Next
 		Return lastv
 	End Method
+	Method interpolate_splatter:Float(age:Int)
+		Local lastv:Float
+		Local lastf:Float
+		Local p:Float
+		Local lastec:tlAttributeNode
+		For Local a:tlAttributeNode = EachIn splatter
+			If age < a.frame
+				p = (age - lastf) / (a.frame - lastf)
+				Local BezierValue:Float = GetBezierValue(lastec, a, p, tlDIMENSIONS_MIN, tlDIMENSIONS_MAX)
+				If BezierValue
+					Return BezierValue
+				Else
+					Return lastv - p * (lastv - a.value)
+				End If
+			End If
+			lastv = a.value
+			lastf = a.frame - 1
+			lastec = a
+		Next
+		Return lastv
+	End Method
 	'-----Variations over effect age----
 	Method interpolate_velvariation:Float(age:Int)
 		Local lastv:Float
@@ -5574,6 +5620,7 @@ Type tlEmitter Extends tlEntity
 		compile_basespin()
 		compile_emissionangle()
 		compile_emissionrange()
+		compile_splatter()
 		compile_velvariation()
 		compile_weightvariation()
 		compile_amountvariation()
@@ -5626,6 +5673,8 @@ Type tlEmitter Extends tlEntity
 		c_framerate.changes[0] = interpolate_framerate(0, longestlife)
 		c_stretch = New tlEmitterArray.Create(1)
 		c_stretch.changes[0] = interpolate_stretch(0, longestlife)
+		c_splatter = New tlEmitterArray.Create(1)
+		c_splatter.changes[0] = interpolate_splatter(0)
 	End Method
 	Method Analyse_Emitter()
 		resetbypassers()
@@ -5638,7 +5687,12 @@ Type tlEmitter Extends tlEntity
 			bypass_stretch = True
 		End If
 		If Not c_framerate.lastframe
-			bypass_framerate = True
+			If Not get_splatter(0)
+				bypass_framerate = True
+			End If
+		End If
+		If Not c_splatter.lastframe And Not c_splatter.changes[0]
+			bypass_splatter = True
 		End If
 		If Not c_baseweight.lastframe And Not c_weightvariation.lastframe
 			If Not get_baseweight(0) And Not get_weightvariation(0)
@@ -5690,6 +5744,7 @@ Type tlEmitter Extends tlEntity
 		bypass_lifevariaton = False
 		bypass_framerate = False
 		bypass_stretch = False
+		bypass_splatter = False
 	End Method
 	'-------------
 	Method getlongestlife:Float()
@@ -5939,6 +5994,28 @@ Type tlEmitter Extends tlEntity
 			c_emissionrange.changes[frame] = lastec.value
 		Else
 			c_emissionrange = New tlEmitterArray.Create(1)
+		End If
+	End Method
+	Method compile_splatter()
+		If splatter.Count()
+			Local lastec:tlAttributeNode = tlAttributeNode(splatter.Last())
+			Local frame:Int
+			Local _age:Int
+			While _age < lastec.frame
+				frame:+1
+				_age:+tp_LOOKUP_FREQUENCY
+			Wend
+			c_splatter = New tlEmitterArray.Create(frame + 1)
+			frame = 0
+			_age = 0
+			While _age < lastec.frame
+				c_splatter.changes[frame] = interpolate_splatter(_age)
+				frame:+1
+				_age:+tp_LOOKUP_FREQUENCY
+			Wend
+			c_splatter.changes[frame] = lastec.VALUE
+		Else
+			c_splatter = New tlEmitterArray.Create(1)
 		End If
 	End Method
 	'-----Spawn variation values over effect age compilers-----
@@ -6505,6 +6582,13 @@ Type tlEmitter Extends tlEntity
 			Return c_emissionrange.changes[c_emissionrange.lastframe]
 		End If
 	End Method
+	Method get_splatter:Float(frame:Int)
+		If frame <= c_splatter.lastframe
+			Return c_splatter.changes[frame]
+		Else
+			Return c_splatter.changes[c_splatter.lastframe]
+		End If
+	End Method
 	'Variations
 	Method get_velvariation:Float(frame:Int)
 		If frame <= c_velvariation.lastframe
@@ -6835,6 +6919,7 @@ Type tlParticle Extends tlEntity
 		wx = 0
 		wy = 0
 		z = 1
+		avatar = Null
 		dead = False
 		clearchildren()
 		childcount = 0
@@ -7564,6 +7649,7 @@ Function CopyEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleManager)
 	ec.amountvariation = CopyAttributeNodes(em.amountvariation)
 	ec.emissionangle = CopyAttributeNodes(em.emissionangle)
 	ec.emissionrange = CopyAttributeNodes(em.emissionrange)
+	ec.splatter = CopyAttributeNodes(em.splatter)
 	ec.globalvelocity = CopyAttributeNodes(em.globalvelocity)
 	ec.direction = CopyAttributeNodes(em.direction)
 	ec.directionvariation = CopyAttributeNodes(em.directionvariation)
@@ -7579,7 +7665,6 @@ Function CopyEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleManager)
 	ec.setblendmode em.blendmode
 	ec.setParticlesrelative em.particlesrelative
 	ec.setuniform em.uniform
-	ec.setsplatter em.splatter
 	ec.setlockangle em.lockedangle
 	ec.setanglerelative em.anglerelative
 	ec.sethandlex em.handlex
@@ -7614,6 +7699,7 @@ Function CopyEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleManager)
 	ec.bypass_scaley = em.bypass_scaley
 	ec.bypass_framerate = em.bypass_framerate
 	ec.bypass_stretch = em.bypass_stretch
+	ec.bypass_splatter = em.bypass_splatter
 	
 	For Local e:tlEffect = EachIn em.effects
 		ec.addeffect CopyEffect(e, ParticleManager)
@@ -7745,6 +7831,7 @@ Function UpdateEffect(eff:tlEffect, e:tlEffect)
 				tlEmitter(ec[index]).amountvariation = CopyAttributeNodes(em.amountvariation)
 				tlEmitter(ec[index]).emissionangle = CopyAttributeNodes(em.emissionangle)
 				tlEmitter(ec[index]).emissionrange = CopyAttributeNodes(em.emissionrange)
+				tlEmitter(ec[index]).splatter = CopyAttributeNodes(em.splatter)
 				tlEmitter(ec[index]).globalvelocity = CopyAttributeNodes(em.globalvelocity)
 				tlEmitter(ec[index]).direction = CopyAttributeNodes(em.direction)
 				tlEmitter(ec[index]).directionvariation = CopyAttributeNodes(em.directionvariation)
@@ -7760,7 +7847,6 @@ Function UpdateEffect(eff:tlEffect, e:tlEffect)
 				tlEmitter(ec[index]).setblendmode em.blendmode
 				tlEmitter(ec[index]).setParticlesrelative em.particlesrelative
 				tlEmitter(ec[index]).setuniform em.uniform
-				tlEmitter(ec[index]).setsplatter em.splatter
 				tlEmitter(ec[index]).setlockangle em.lockedangle
 				tlEmitter(ec[index]).setanglerelative em.anglerelative
 				tlEmitter(ec[index]).sethandlex em.handlex
@@ -7792,6 +7878,7 @@ Function UpdateEffect(eff:tlEffect, e:tlEffect)
 				tlEmitter(ec[index]).bypass_scaley = em.bypass_scaley
 				tlEmitter(ec[index]).bypass_framerate = em.bypass_framerate
 				tlEmitter(ec[index]).bypass_stretch = em.bypass_stretch
+				tlEmitter(ec[index]).bypass_splatter = em.bypass_splatter
 				
 				LinkEmitterArrays(em, tlEmitter(ec[index]))
 				index:+1
@@ -7986,7 +8073,6 @@ Function CopyCompiledEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleM
 	ec.setblendmode em.blendmode
 	ec.setParticlesrelative em.particlesrelative
 	ec.setuniform em.uniform
-	ec.setsplatter em.splatter
 	ec.setlockangle em.lockedangle
 	ec.setanglerelative em.anglerelative
 	ec.sethandlex em.handlex
@@ -8021,6 +8107,7 @@ Function CopyCompiledEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleM
 	ec.bypass_scaley = em.bypass_scaley
 	ec.bypass_framerate = em.bypass_framerate
 	ec.bypass_stretch = em.bypass_stretch
+	ec.bypass_splatter = em.bypass_splatter
 	
 	For Local e:tlEffect = EachIn em.effects
 		ec.addeffect CopyCompiledEffect(e, ParticleManager)
@@ -8109,6 +8196,7 @@ Function LinkEmitterArrays(efrom:tlEmitter, eto:tlEmitter)
 	eto.c_basespin = efrom.c_basespin
 	eto.c_emissionangle = efrom.c_emissionangle
 	eto.c_emissionrange = efrom.c_emissionrange
+	eto.c_splatter = efrom.c_splatter
 	eto.c_velvariation = efrom.c_velvariation
 	eto.c_weightvariation = efrom.c_weightvariation
 	eto.c_amountvariation = efrom.c_amountvariation
@@ -8542,6 +8630,20 @@ Function loademitterxmltree:tlEmitter(effectchild:TxmlNode, sprites:TList, e:tlE
 				End If
 			Case "BASE_SPIN"
 				ec = p.addbasespin(particlechild.getAttribute("FRAME").ToFloat(), particlechild.getAttribute("VALUE").ToFloat())
+				Local attlist:TList = particlechild.getChildren()
+				If attlist
+					For Local attchild:TxmlNode = EachIn attlist
+						Select attchild.getName()
+							Case "CURVE"
+								ec.SetCurvePoints(attchild.getAttribute("LEFT_CURVE_POINT_X").ToFloat(),  ..
+									attchild.getAttribute("LEFT_CURVE_POINT_Y").ToFloat(),  ..
+									attchild.getAttribute("RIGHT_CURVE_POINT_X").ToFloat(),  ..
+									attchild.getAttribute("RIGHT_CURVE_POINT_Y").ToFloat())
+						End Select
+					Next
+				End If
+			Case "SPLATTER"
+				ec = p.addsplatter(particlechild.getAttribute("FRAME").ToFloat(), particlechild.getAttribute("VALUE").ToFloat())
 				Local attlist:TList = particlechild.getChildren()
 				If attlist
 					For Local attchild:TxmlNode = EachIn attlist

@@ -1,8 +1,20 @@
 What's new in the TimelineFX Module?
+29.03.10
+TimelineFX
+- Added a new attribute - Splatter
+- Fixed a memory leak when effects files are loaded over and over again
+
+20.03.10
+New module
+- rigz.zipstreamloader - adds loadeffects2 which allows you to load incbin'd effects files (requires koriolis.zipstream module)
+
+timelinefx.mod
+- fixed a minor bug with precise mode.
+
 06.01.10
 New Modules!
-rigz.collision - collision module with quadtrees, see documentation for more information
-rigz.vector - This was in in entity.mod but I decided to put it in a separate module since expanding it
+- rigz.collision - collision module with quadtrees, see documentation for more information
+- rigz.vector - This was in in entity.mod but I decided to put it in a separate module since expanding it
 
 08.11.09
 entity.mod
