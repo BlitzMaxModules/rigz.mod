@@ -1,7 +1,5 @@
 SuperStrict
 
-Import brl.max2d
-
 Const BEZIER_ACCURACY:Float = 0.01
 
 Function GetQuadBezier:tlPoint(p0:tlPoint, p1:tlPoint, p2:tlPoint, t:Float, ymin:Float, ymax:Float, clamp:Int = True)

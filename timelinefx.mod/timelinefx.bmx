@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.10: 04 April 2010 - Fixed an error on loading effects files with empty folders"
 ModuleInfo "History v1.09: 29 March 2010 - Added a new attribute - Splatter"
 ModuleInfo "History v1.09: 29 March 2010 - Fixed a memory leak when effects files are loaded over and over again"
 ModuleInfo "History v1.09: 13th February 2010 - Particles will now only stretch along their relative velocities."
@@ -8478,16 +8479,18 @@ Function loadeffectxmltree:tlEffect(effectschild:TxmlNode, sprites:TList, parent
 End Function
 Function loadfolderxmltree(folderchild:TxmlNode, sprites:TList, effects:tlEffectsLibrary, compile:Int)
 	Local effectschildren:TList = folderchild.getChildren()
-	For Local effectchild:TxmlNode = EachIn effectschildren
-		Select effectchild.getname()
-			Case "EFFECT"
-				Local e:tlEffect = loadeffectxmltree(effectchild, sprites, Null, folderchild.getAttribute("NAME") + "/")
-				effects.addeffect(e)
-				If compile e.compile_all()
-				e.directory = CreateMap()
-				e.AddEffect(e)
-		End Select
-	Next
+	If effectschildren
+		For Local effectchild:TxmlNode = EachIn effectschildren
+			Select effectchild.getname()
+				Case "EFFECT"
+					Local e:tlEffect = loadeffectxmltree(effectchild, sprites, Null, folderchild.getAttribute("NAME") + "/")
+					effects.addeffect(e)
+					If compile e.compile_all()
+					e.directory = CreateMap()
+					e.AddEffect(e)
+			End Select
+		Next
+	End If
 End Function
 Function loademitterxmltree:tlEmitter(effectchild:TxmlNode, sprites:TList, e:tlEffect)
 	Local particlechildren:TList = effectchild.getChildren()
