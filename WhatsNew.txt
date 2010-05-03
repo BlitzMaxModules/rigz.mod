@@ -1,4 +1,15 @@
 What's new in the TimelineFX Module?
+03.05.10
+TimelineFX
+- You can now change the way particles are drawn by grouping them by the emitter that spawns them. Use effect.SetGroupParticles(true) to achieve this. You won't notice any difference unless you're using  effects that have sub effects however.
+- Fixed a bug where emitters that use the splatter graph are not effected by global zoom properly.
+
+New modules
+- 3 new modules more for the TimelineFX editor at this stage but I included them anyway. max2dext.mod, glmax2dext.mod and graphicsext.mod. These add the possibility to draw images with alpha premultiplied making it easier to grab the screen with alpha channel intact.
+
+04.04.10
+- Fixed an error on loading effects files with empty folders
+
 29.03.10
 TimelineFX
 - Added a new attribute - Splatter

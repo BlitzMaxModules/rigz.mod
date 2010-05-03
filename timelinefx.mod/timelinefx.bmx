@@ -29,9 +29,13 @@ Rem
 EndRem
 Module rigz.timelinefx
 ModuleInfo "Author: Peter J. Rigby"
-ModuleInfo "Copyright: Peter J. Rigby 2009"
+ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.11: 03 May 2010 - You can now change the way particles are drawn by grouping them by the emitter that spawns them. Use"
+ModuleInfo "effect.SetGroupParticles(true) to achieve this. You won't notice any difference unless you're using  effects that have sub effects"
+ModuleInfo "however."
+ModuleInfo "History v1.11: 03 May 2010 - Fixed a bug where emitters that use the splatter graph are not effected by global zoom properly."
 ModuleInfo "History v1.10: 04 April 2010 - Fixed an error on loading effects files with empty folders"
 ModuleInfo "History v1.09: 29 March 2010 - Added a new attribute - Splatter"
 ModuleInfo "History v1.09: 29 March 2010 - Fixed a memory leak when effects files are loaded over and over again"
@@ -166,6 +170,7 @@ Const tlPARTICLE_LIMIT:Int = 5000
 
 Const tlUPDATE_MODE_COMPILED:Int = 0
 Const tlUPDATE_MODE_INTERPOLATED:Int = 1
+
 
 Rem
 	bbdoc: Effects library for storing a list of effects and particle images/animations
@@ -326,6 +331,7 @@ Type tlEffect Extends tlEntity
 	Field allowspawning:Int = True		'Set to false to disable emitters from spawning any new particles
 	Field ellipsearc:Float = 360		'With ellipse effects this sets the degrees of which particles emit around the edge
 	Field ellipseoffset:Int				'This is the offset needed to make arc center at the top of the circle.
+	Field inuse:TList[9]				'This stores particles created by the effect, for drawing purposes only.
 	
 	Field PM:tlParticleManager			'The particle manager that this effect belongs to
 	
@@ -405,6 +411,12 @@ Type tlEffect Extends tlEntity
 	Field OverrideGlobalz:Int
 	
 	Field bypass_weight:Int
+	
+	Method New()
+		For Local l:Int = 0 To 8
+			inuse[l] = CreateList()
+		Next
+	End Method
 	
 	Rem
 	bbdoc: Sort all attribute lists
@@ -1045,7 +1057,19 @@ Type tlEffect Extends tlEntity
 		OverrideStretch = True
 		currentstretch = v
 	End Method
-
+	Rem
+	bbdoc: Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that
+			they're grouped together under each emitter. This will change all emitters with the effect, and is recommended you use this rather then individually
+			for each emitter.
+	endrem
+	Method SetGroupParticles(v:Int)
+		For Local e:tlEmitter = EachIn children
+			e.setgroupparticles(v)
+			For Local ef:tlEffect = EachIn e.effects
+				ef.setgroupparticles(v)
+			Next
+		Next
+	End Method
 	
 	Rem
 	bbdoc: Get class
@@ -1401,6 +1425,7 @@ Type tlEffect Extends tlEntity
 					If Not overridealpha currentalpha = interpolate_alpha(age) * parentemitter.parentEffect.currentalpha
 					If Not overrideemissionangle currentemissionangle = interpolate_emissionangle(age)
 					If Not overrideemissionrange currentemissionrange = interpolate_emissionrange(age)
+					If Not overrideangle angle = interpolate_angle(age)
 					If Not overridestretch currentstretch = interpolate_stretch(age) * parentemitter.parentEffect.currentstretch
 					If Not overrideglobalz currentglobalz = interpolate_globalz(age) * parentemitter.parentEffect.currentglobalz
 			End Select
@@ -1492,6 +1517,9 @@ Type tlEffect Extends tlEntity
 	Method destroy()
 		parentemitter = Null
 		directory = Null
+		For Local c:Int = 0 To 8
+			inuse[c].Clear()
+		Next
 		Super.Destroy()
 	End Method
 		
@@ -2449,6 +2477,7 @@ Type tlEmitter Extends tlEntity
 	Field once:Int											'Whether the particles of this emitter should animate just the once
 	Field path:String										'the path to the emitter for where in the effect hierarchy the emitter is
 	Field dying:Int											'true if the emitter is in the process of dying ie, no longer spawning particles
+	Field groupparticles:Int										'Set to true to add particles to one big pool, instead of the emitters own pool.
 	
 	'----All the lists for controlling the particle over time
 	Field r:TList = CreateList()  							'Red
@@ -3249,6 +3278,13 @@ Type tlEmitter Extends tlEntity
 		once = v
 	End Method
 	Rem
+	bbdoc: Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that
+			they're grouped together under each emitter
+	endrem
+	Method SetGroupParticles(v:Int)
+		groupparticles = v
+	End Method
+	Rem
 	bbdoc: Get the current parent effect
 	returns: tlEffect
 	endrem
@@ -3403,6 +3439,13 @@ Type tlEmitter Extends tlEntity
 	endrem
 	Method getonce:Int()
 		Return once
+	End Method
+	Rem
+	bbdoc: Returns the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that
+			they're added to the particle managers pool.
+	endrem
+	Method getgroupparticles:Int()
+		Return groupparticles
 	End Method
 	Rem
 	bbdoc: Get the path of the entity
@@ -3592,7 +3635,7 @@ Type tlEmitter Extends tlEntity
 						startedspawning = True
 						If Not parentEffect.PM Throw "No Partical Manager assigned to effect"
 						If Not esingle
-							e = parentEffect.PM.GrabParticle(zlayer)
+							e = parentEffect.PM.GrabParticle(parenteffect, groupparticles, zlayer)
 						Else
 							e = esingle
 						End If
@@ -3883,9 +3926,14 @@ Type tlEmitter Extends tlEntity
 								While GetDistance(0, 0, splatx, splaty) >= splattertemp And splattertemp > 0
 									splatx = Rnd(-splattertemp, splattertemp)
 									splaty = Rnd(-splattertemp, splattertemp)
-								WEnd
-								e.x:+splatx
-								e.y:+splaty
+								Wend
+								If z = 1 Or e.relative
+									e.x:+splatx
+									e.y:+splaty
+								Else
+									e.x:+splatx * z
+									e.y:+splaty * z
+								End If
 							End If
 							'--------------------------------
 							'rotation  and direction of travel settings-----
@@ -4079,7 +4127,7 @@ Type tlEmitter Extends tlEntity
 					For Local c:Float = 1 To intcounter
 						startedspawning = True
 						If Not parentEffect.PM Throw "No Partical Manager assigned to effect"
-						e = parentEffect.PM.GrabParticle(zlayer)
+						e = parentEffect.PM.GrabParticle(parenteffect, groupparticles, zlayer)
 						If e
 							?Debug
 							tlParticlesCreated:+1
@@ -4368,8 +4416,13 @@ Type tlEmitter Extends tlEntity
 									splatx = Rnd(-splattertemp, splattertemp)
 									splaty = Rnd(-splattertemp, splattertemp)
 								WEnd
-								e.x:+splatx
-								e.y:+splaty
+								If z = 1 Or e.relative
+									e.x:+splatx
+									e.y:+splaty
+								Else
+									e.x:+splatx * z
+									e.y:+splaty * z
+								End If
 							End If
 							'--------------------------------
 							'rotation  and direction of travel settings-----
@@ -6874,6 +6927,7 @@ Type tlParticle Extends tlEntity
 	'---------------------------------
 	Field PM:tlParticleManager								'link to the particle manager
 	Field layer:Int											'layer the particle belongs to
+	Field groupparticles:Int										'whether the particle is added the PM pool or kept in the emitter's pool
 
 	Rem
 		bbdoc: Updates the particle.
@@ -6900,8 +6954,11 @@ Type tlParticle Extends tlEntity
 		If age > lifetime Or dead = 2	'if dead=2 then that means its reached the end of the line (in kill mode) for line traversal effects
 			dead = True
 			If Not childcount
-				parent.removechild(Self)
 				pm.ReleaseParticle(Self)
+				If emitter.groupparticles
+					emitter.parentEffect.inuse[layer].Remove Self
+				End If
+				parent.removechild(Self)
 				reset()
 			Else
 				killchildren()
@@ -7131,6 +7188,7 @@ Type tlParticleManager
 	Field updatemode:Int
 	
 	Field rendercount:Int
+	Field currenttween:Float
 		
 	Rem
 	bbdoc: Update the Particle Manager
@@ -7166,15 +7224,21 @@ Type tlParticleManager
 		Next
 		unusedcount = Particles
 		effects = CreateList()
+		
 		Return Self
 	End Method
-	Method GrabParticle:tlParticle(layer:Int = 0)
+	Method GrabParticle:tlParticle(effect:tlEffect, pool:Int, layer:Int = 0)
 		If unusedcount
 			Local p:tlParticle = tlParticle(unused.First())
 			If p
 				p.layer = layer
 				unused.Remove p
-				inuse[layer].AddLast p
+				p.groupparticles = pool
+				If pool
+					effect.inuse[layer].AddLast p
+				Else
+					inuse[layer].AddLast p
+				End If
 				unusedcount:-1
 				inusecount:+1
 				Return p
@@ -7185,7 +7249,9 @@ Type tlParticleManager
 		unusedcount:+1
 		inusecount:-1
 		unused.AddLast p
-		inuse[p.layer].Remove p
+		If Not p.groupparticles
+			inuse[p.layer].Remove p
+		End If
 	End Method
 	
 	Rem
@@ -7195,6 +7261,7 @@ Type tlParticleManager
 	endrem
 	Method DrawParticles(tween:Float = 1)
 		'tween origin
+		currenttween = tween
 		camtx = -TweenValues(Old_Origin_X, Origin_X, tween)
 		camty = -TweenValues(Old_Origin_Y, Origin_Y, tween)
 		camtz = TweenValues(Old_Origin_Z, Origin_Z, tween)
@@ -7207,8 +7274,6 @@ Type tlParticleManager
 		GetScale(c_scalex, c_scaley)
 		Local c_red:Int, c_green:Int, c_blue:Int
 		GetColor(c_red, c_green, c_blue)
-		Local c_blend:Int
-		c_blend = GetBlend()
 		'rendercount = 0
 		If angle
 			angletweened = TweenValues(oldangle, angle, tween)
@@ -7216,68 +7281,15 @@ Type tlParticleManager
 		End If
 		For Local l:Int = 0 To 8
 			For Local e:tlParticle = EachIn InUse[l]
-				If e.age Or e.emitter.singleparticle
-					px = TweenValues(e.oldwx, e.wx, tween)
-					py = TweenValues(e.oldwy, e.wy, tween)
-					If angle
-						rotvec:tlVector2 = matrix.transformvector(New tlVector2.Create(px, py))
-						px = (rotvec.x * camtz) + center_x + (camtz * camtx)
-						py = (rotvec.y * camtz) + center_y + (camtz * camty)
-					Else
-						px = (px * camtz) + center_x + (camtz * camtx)
-						py = (py * camtz) + center_y + (camtz * camty)
-					End If
-					If px > vp_x - e.Image_Diameter And px < vp_x + vp_w + e.Image_Diameter And py > vp_y - e.Image_Diameter And py < vp_y + vp_h + e.Image_Diameter
-						If e.avatar
-							If e.emitter.handlecenter
-								If e.avatar.frames = 1
-									MidHandleImage(e.avatar.Image)
-								Else
-									SetImageHandle e.avatar.Image, e.avatar.width / 2, e.avatar.height / 2
-								End If
-							Else
-								SetImageHandle e.avatar.image, e.handlex, e.handley
-							End If
-							SetBlend e.emitter.blendmode
-							tv = TweenValues(e.oldangle, e.angle, tween)
-							If e.emitter.anglerelative
-								If Abs(e.oldrelativeangle - e.relativeangle) > 180
-									tx = TweenValues(e.oldrelativeangle - 360, e.relativeangle, tween)
-								Else
-									tx = TweenValues(e.oldrelativeangle, e.relativeangle, tween)
-								End If
-								SetRotation tv + tx + angletweened
-							Else
-								SetRotation tv + angletweened
-							End If
-							tx = TweenValues(e.oldscalex, e.scalex, tween)
-							ty = TweenValues(e.oldscaley, e.scaley, tween)
-							tz = TweenValues(e.oldz, e.z, tween)
-							If tz <> 1
-								SetScale tx * tz * camtz, ty * tz * camtz
-							Else
-								SetScale tx * camtz, ty * camtz
-							End If
-							SetColor e.Red, e.Green, e.Blue
-							SetAlpha e.alpha
-							If e.animating
-								tv = TweenValues(e.oldcurrentframe, e.currentframe, tween) 
-							Else
-								tv = e.currentframe
-							End If
-							DrawSprite e.avatar, px, py, Abs(tv) Mod e.avatar.frames
-							'rendercount:+1
-						End If
-					End If
-				End If
+				DrawParticle(e)
 			Next
 		Next
+		DrawEffects()
 		'restore GFX States
 		SetAlpha c_alpha
 		SetRotation c_rotation
 		SetScale c_scalex, c_scaley
 		SetColor c_red, c_green, c_blue
-		SetBlend c_blend
 	End Method
 	Method DrawBoundingBoxes()
 		For Local e:tlEffect = EachIn effects
@@ -7448,6 +7460,7 @@ Type tlParticleManager
 				unusedcount:+1
 				inusecount:-1
 				inuse[l].Remove p
+				p.emitter.parentEffect.inuse[p.layer].Remove p
 				p.reset()
 			Next
 		Next
@@ -7498,6 +7511,78 @@ Type tlParticleManager
 	Function TweenValues:Float(oldValue:Float, value:Float, tween:Float)
 		Return oldValue + (value - oldValue) * tween
 	End Function
+	'internal methods-------
+	Method DrawEffects()
+		For Local eff:tlEffect = EachIn Self.effects
+			DrawEffect(eff)
+		Next
+	End Method
+	Method DrawEffect(effect:tlEffect)
+		For Local c:Int = 0 To 8
+			For Local e:tlParticle = EachIn effect.inuse[c]
+				DrawParticle(e)
+				For Local subeff:tlEffect = EachIn e.children
+					draweffect(subeff)
+				Next
+			Next
+		Next
+	End Method
+	Method DrawParticle(e:tlParticle)
+		If e.age Or e.emitter.singleparticle
+			px = TweenValues(e.oldwx, e.wx, currenttween)
+			py = TweenValues(e.oldwy, e.wy, currenttween)
+			If angle
+				rotvec:tlVector2 = matrix.transformvector(New tlVector2.Create(px, py))
+				px = (rotvec.x * camtz) + center_x + (camtz * camtx)
+				py = (rotvec.y * camtz) + center_y + (camtz * camty)
+			Else
+				px = (px * camtz) + center_x + (camtz * camtx)
+				py = (py * camtz) + center_y + (camtz * camty)
+			End If
+			If px > vp_x - e.Image_Diameter And px < vp_x + vp_w + e.Image_Diameter And py > vp_y - e.Image_Diameter And py < vp_y + vp_h + e.Image_Diameter
+				If e.avatar
+					If e.emitter.handlecenter
+						If e.avatar.frames = 1
+							MidHandleImage(e.avatar.Image)
+						Else
+							SetImageHandle e.avatar.Image, e.avatar.width / 2, e.avatar.height / 2
+						End If
+					Else
+						SetImageHandle e.avatar.image, e.handlex, e.handley
+					End If
+					SetBlend e.emitter.blendmode
+					tv = TweenValues(e.oldangle, e.angle, currenttween)
+					If e.emitter.anglerelative
+						If Abs(e.oldrelativeangle - e.relativeangle) > 180
+							tx = TweenValues(e.oldrelativeangle - 360, e.relativeangle, currenttween)
+						Else
+							tx = TweenValues(e.oldrelativeangle, e.relativeangle, currenttween)
+						End If
+						SetRotation tv + tx + angletweened
+					Else
+						SetRotation tv + angletweened
+					End If
+					tx = TweenValues(e.oldscalex, e.scalex, currenttween)
+					ty = TweenValues(e.oldscaley, e.scaley, currenttween)
+					tz = TweenValues(e.oldz, e.z, currenttween)
+					If tz <> 1
+						SetScale tx * tz * camtz, ty * tz * camtz
+					Else
+						SetScale tx * camtz, ty * camtz
+					End If
+					SetAlpha e.alpha
+					SetColor e.Red, e.Green, e.Blue
+					If e.animating
+						tv = TweenValues(e.oldcurrentframe, e.currentframe, currenttween)
+					Else
+						tv = e.currentframe
+					End If
+					DrawSprite e.avatar, px, py, Abs(tv) Mod e.avatar.frames
+					'rendercount:+1
+				End If
+			End If
+		End If
+	End Method
 End Type
 
 Rem
@@ -7685,6 +7770,7 @@ Function CopyEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleManager)
 	ec.sethandlecenter em.handlecenter
 	ec.setonce em.once
 	ec.path = em.path
+	ec.groupparticles = em.groupparticles
 	ec.SetOKToRender(False)
 	
 	'Bypassers
@@ -7865,6 +7951,7 @@ Function UpdateEffect(eff:tlEffect, e:tlEffect)
 				tlEmitter(ec[index]).setoneshot em.oneshot
 				tlEmitter(ec[index]).sethandlecenter em.handlecenter
 				tlEmitter(ec[index]).setonce em.once
+				tlEmitter(ec[index]).setgroupparticles em.groupparticles
 				
 				'Bypassers
 				tlEmitter(ec[index]).bypass_weight = em.bypass_weight
@@ -7975,12 +8062,11 @@ Function LoadEffects:tlEffectsLibrary(filename:String, compile:Int = True)
 				If shapeschildren
 					For Local shape:TxmlNode = EachIn shapeschildren
 						Local shapestream:TStream = zip.ExtractFile(StripDir(shape.getAttribute("URL")))
-						Local sprite:TAnimImage
-						'						If StripDir(shape.getAttribute("URL")).EndsWith(".tpa")
-						'							sprite = loadTPA(shapestream)
-						'						Else'
+						Local Sprite:TAnimImage
+						Local importoption:String = shape.getAttribute("IMPORT_OPTION")
+						If Not importoption importoption = IMAGE_PASSTHROUGH
 						If shapestream
-							sprite = LoadSprite(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt(), True)
+							Sprite = LoadSpriteEffect(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt(), True, importoption)
 						End If
 						'						End If
 						If sprite
@@ -8093,6 +8179,7 @@ Function CopyCompiledEmitter:tlEmitter(em:tlEmitter, ParticleManager:tlParticleM
 	ec.sethandlecenter em.handlecenter
 	ec.setonce em.once
 	ec.path = em.path
+	ec.groupparticles = em.groupparticles
 	ec.SetOKToRender(False)
 
 	'Bypassers
@@ -8147,6 +8234,16 @@ Function ShapeExists:Int(l:TList, search:String)
 		Next
 	End If
 	Return False
+End Function
+Function FindShape:TAnimImage(l:TList, search:String)
+	If l
+		For Local s:TAnimImage = EachIn l
+			If Upper(s.name) = Upper(search)
+				Return s
+			End If
+		Next
+	End If
+	Return Null
 End Function
 Function GetnextPowerof2:Int(v:Int)
 	v:-1
@@ -8519,6 +8616,7 @@ Function loademitterxmltree:tlEmitter(effectchild:TxmlNode, sprites:TList, e:tlE
 	p.alpharepeat = effectchild.getAttribute("ALPHA_REPEAT").ToInt()
 	p.oneshot = effectchild.getAttribute("ONE_SHOT").ToInt()
 	p.handlecenter = effectchild.getAttribute("HANDLE_CENTERED").ToInt()
+	p.groupparticles = effectchild.getAttribute("GROUP_PARTICLES").ToInt()
 	If Not p.animationdirection
 		p.animationdirection = 1
 	End If

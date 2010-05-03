@@ -944,7 +944,7 @@ Type tlBox
 	Field handle:tlVector2 = New tlVector2.Create(0, 0)
 	
 	Field collisionlayer:Int
-	
+		
 	Field _data:Object
 		
 	rem
@@ -1664,6 +1664,56 @@ Type tlBox
 		End If
 	End Method
 	
+	rem
+		bbdoc: Get a poly represting the shadow of the box
+		returns: tList of tlPolygons representing each shadow cast by each line in the box
+		about: This will take a light located at Light:tlVector2 and create a list of tlPolygons representing a shadow cast by each line in the box.
+	end rem
+	Method GetShadowPolys:TList (Light:tlVector2, lType:Int = tlDIRECTIONAL_LIGHT, lengthfactor:Float = 1)
+	
+		Local sedge1:tlVector2
+		Local sedge2:tlVector2
+		Local lv1:tlVector2
+		Local lv2:tlVector2
+		Local shadows:TList = CreateList()
+		Local lastc:Int = 3
+		
+		Select ltype
+			Case tlSPOT_LIGHT
+				lv1 = light.SubtractVector(tformvertices[3].AddVector(world))
+				For Local c:Int = 0 To 3
+					lv2 = light.SubtractVector(tformvertices[c].AddVector(world))
+					If lv2.DotProduct(normals[c]) < 0
+						sedge1 = tformvertices[lastc].AddVector(world).subtractVector(lv1.Scale(lengthfactor))
+						sedge2 = tformvertices[c].AddVector(world).subtractVector(lv2.Scale(lengthfactor))
+						shadows.AddLast(New tlPolygon.CreatePolyWorld([tformvertices[lastc].x + world.x, tformvertices[lastc].y + world.y,  ..
+											  sedge1.x, sedge1.y,  ..
+											  sedge2.x, sedge2.y,  ..
+											  tformvertices[c].x + world.x, tformvertices[c].y + world.y]))
+					End If
+					lv1 = lv2
+					lastc=c
+				Next
+			Case tlDIRECTIONAL_LIGHT
+				light = light.Scale(-1)
+				For Local c:Int = 0 To 3
+					If light.DotProduct(normals[c]) < 0
+						sedge1 = tformvertices[lastc].AddVector(world).subtractVector(light.Scale(lengthfactor))
+						sedge2 = tformvertices[c].AddVector(world).subtractVector(light.Scale(lengthfactor))
+						shadows.AddLast(New tlPolygon.CreatePolyWorld([tformvertices[lastc].x + world.x, tformvertices[lastc].y + world.y,  ..
+											  sedge1.x, sedge1.y,  ..
+											  sedge2.x, sedge2.y,  ..
+											  tformvertices[c].x + world.x, tformvertices[c].y + world.y]))
+					End If
+					lv1 = lv2
+					lastc=c
+				Next
+		End Select
+		
+		Return shadows
+	
+	End Method
+	
 	'internal stuff---------------------------------
 	Method AddQuad(q:tlQuadTreeNode)
 		'tlBoundaries are aware of all the quadtreenodes they exist within, so when they're added to a node, that node is added to the Box's list of nodes.
@@ -2353,6 +2403,46 @@ Type tlPolygon Extends tlBox
 	End Method
 	
 	rem
+		bbdoc: Create a #tlPolygon
+		returns: New #tlPolygon, or Null if verts[] contained the wrong amount.
+		about: Create a new #tlPolygon at the given coordinates with the given array of vertices. The coordinates will represent the center of the polygon, but this
+		can be changed with #SetPolyHandle. The array must contain more then 5 values (2 per vertex) and be an even number or null will be returned. The coordinates of
+		the vertices in the array are arranged like so: [x,y,x,y,x,y .. etc]. You can also assign some data to the boundary as handy way to store some extra info about the boundary.
+	end rem
+	Method CreatePolyWorld:tlPolygon(verts:Float[], layer:Int = tlLAYER_1, Data:Object = Null)
+		If verts.length < 6 Or verts.length Mod 2
+			Return Null
+		Else
+			world = New tlVector2.Create(0, 0)
+			vertices = New tlVector2[verts.length / 2]
+			tformvertices = New tlVector2[verts.length / 2]
+			normals = New tlVector2[verts.length / 2]
+			
+			tl_corner = New tlVector2.Create(0, 0)
+			br_corner = New tlVector2.Create(0, 0)
+			For Local c:Int = 0 To vertices.Length - 1
+				vertices[c] = New tlVector2.Create(verts[c * 2], verts[c * 2 + 1])
+				world.x:+vertices[c].x
+				world.y:+vertices[c].y
+				tformvertices[c] = New tlVector2.Create(0, 0)
+				normals[c] = New tlVector2.Create(0, 0)
+			Next
+			world.x:/vertices.Length
+			world.y:/vertices.Length
+			For Local c:Int = 0 To vertices.Length - 1
+				vertices[c] = vertices[c].subtractVector(world)
+			Next
+			handle.SetPosition(0, 0)
+			collisiontype = tlPOLY_COLLISION
+			tformmatrix.set(Cos(angle) * scale.x, Sin(angle) * scale.y, -Sin(angle) * scale.x, Cos(angle) * scale.y)
+			TForm()
+			collisionlayer = layer
+			_data = data
+		End If
+		Return Self
+	End Method
+	
+	rem
 		bbdoc: Rotate the polygon 
 		about: This will rotate the polygon by the given amount
 	end rem
@@ -2863,6 +2953,13 @@ Type tlPolygon Extends tlBox
 			v1 = v2
 		Next
 		If boundingbox Super.draw(offsetx, offsety, boundingbox)
+	End Method
+	
+	Method DrawShadow(offsetx:Float = 0, offsety:Float = 0)
+		DrawPoly([tformvertices[3].x + world.x - offsetx, tformvertices[3].y + world.y - offsety,  ..
+				 tformvertices[0].x + world.x - offsetx, tformvertices[0].y + world.y - offsety,  ..
+				 tformvertices[1].x + world.x - offsetx, tformvertices[1].y + world.y - offsety,  ..
+				 tformvertices[2].x + world.x - offsetx, tformvertices[2].y + world.y - offsety])
 	End Method
 	
 	'internal stuff---------------------------------
@@ -4047,6 +4144,10 @@ Const tlBOX_COLLISION:Int = 0
 Const tlCIRCLE_COLLISION:Int = 1
 Const tlPOLY_COLLISION:Int = 2
 Const tlLINE_COLLISION:Int = 3
+
+'Types of Light
+Const tlSPOT_LIGHT:Int = 0
+Const tlDIRECTIONAL_LIGHT:Int = 1
 
 'Collision Layer bit Flags
 Const tlLAYER_1:Int = 1
