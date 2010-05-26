@@ -4,7 +4,9 @@ What's new in the TimelineFX Module?
 26.05.10
 
 TimelineFX
+
 - Fixed a bug where emitters containing sub effects were not playing out the end of their graphs properly.
+
 - Fixed a bug with reverse animation not working properly
 
 
