@@ -32,6 +32,8 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.12: 25 May 2010 - Parent effects should now properly play out their graphs right to the end."
+ModuleInfo "History v1.12: 25 May 2010 - Particles that animate in reverse should now work properly"
 ModuleInfo "History v1.11: 03 May 2010 - You can now change the way particles are drawn by grouping them by the emitter that spawns them. Use"
 ModuleInfo "effect.SetGroupParticles(true) to achieve this. You won't notice any difference unless you're using  effects that have sub effects"
 ModuleInfo "however."
@@ -6961,8 +6963,10 @@ Type tlParticle Extends tlEntity
 				parent.removechild(Self)
 				reset()
 			Else
+				emitter.controlparticle(Self)
 				killchildren()
 			End If
+			
 			Return
 		End If
 		
@@ -7574,10 +7578,18 @@ Type tlParticleManager
 					SetColor e.Red, e.Green, e.Blue
 					If e.animating
 						tv = TweenValues(e.oldcurrentframe, e.currentframe, currenttween)
+						If tv < 0
+							tv = e.avatar.frames + tv Mod e.avatar.frames
+							If tv = e.avatar.frames
+								tv = 0
+							End If
+						Else
+							tv = tv Mod e.avatar.frames
+						End If
 					Else
 						tv = e.currentframe
 					End If
-					DrawSprite e.avatar, px, py, Abs(tv) Mod e.avatar.frames
+					DrawSprite e.avatar, px, py, tv
 					'rendercount:+1
 				End If
 			End If
