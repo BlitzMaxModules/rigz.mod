@@ -677,8 +677,8 @@ Type tlQuadTreeNode
 			Else
 				For Local r:tlBox = EachIn objects
 					If r.AreaCheckCount <> parenttree.AreaCheckCount And r.collisionlayer & layer And r <> area
-						If r.tl_corner.x <= area.br_corner.x And r.br_corner.x >= area.tl_corner.x And r.tl_corner.y <= area.br_corner.y And r.br_corner.y >= area.tl_corner.y
-							callback(r, data)
+						If r.BoundingBoxOverlap(area, True)
+							callback(r, Data)
 						End If
 						r.AreaCheckCount = parenttree.AreaCheckCount
 						parenttree.objectsfound:+1
