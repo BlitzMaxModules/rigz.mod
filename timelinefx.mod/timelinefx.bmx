@@ -3857,6 +3857,8 @@ Type tlEmitter Extends tlEntity
 							e.lifetime = currentlife + Rnd(-current_lifevariation, current_lifevariation) * parentEffect.currentlife
 							'-------------------------------
 							'-----Speed---------------------
+							e.speedvec.x = 0
+							e.speedvec.y = 0
 							If Not bypass_speed
 								e.speed = c_velocity.changes[0]
 								e.velvariation = Rnd(-current_speedvariation, current_speedvariation)
@@ -3881,7 +3883,7 @@ Type tlEmitter Extends tlEntity
 								End If
 								e.scalex = sizetemp
 								e.scaley = sizetemp
-								If Not bypass_stretch And e.speed
+								If Not bypass_stretch
 									e.scaley = (c_scalex.changes[0] * e.gsizex * (e.width + (Abs(e.speed) * c_stretch.changes[0] * parenteffect.currentstretch))) / image.width
 									If e.scaley < e.scalex e.scaley = e.scalex
 								End If
@@ -4346,6 +4348,8 @@ Type tlEmitter Extends tlEntity
 							e.lifetime = currentlife + Rnd(-current_lifevariation, current_lifevariation) * parentEffect.currentlife
 							'-------------------------------
 							'-----Speed---------------------
+							e.speedvec.x = 0
+							e.speedvec.y = 0
 							If Not bypass_speed
 								e.speed = c_velocity.changes[0]
 								e.velvariation = Rnd(-current_speedvariation, current_speedvariation)
