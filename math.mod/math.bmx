@@ -83,7 +83,7 @@ Function GetTexSize(w:Int, h:Int, frames:Int, powersof2:Int = True, texwidth:Int
         texheight=h 
         
 		If texwidth Mod w
-	        While area >= texheight * texwidth
+	        While area >= texheight * (Cols * w)
 	        
 	                texheight:+h 
 	                
