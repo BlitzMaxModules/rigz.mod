@@ -468,6 +468,9 @@ Sets the frame offset of the animation.
 <tr><td class=docleft width=1%><a href=#setframes>setframes</a></td><td class=docright>
 Sets the number of frames.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetGroupParticles>SetGroupParticles</a></td><td class=docright>
+Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#sethandlecenter>sethandlecenter</a></td><td class=docright>
 Sets to true to center the handle of the effect.
 </td></tr>
@@ -980,6 +983,10 @@ the end of the line.  By passing it either of the following const they can:</p>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Sets the number of frames.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Currently only relevent to the Timeline Particles editor.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetGroupParticles>
+<tr><td class=doctop colspan=2>Method SetGroupParticles(v:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=sethandlecenter>
 <tr><td class=doctop colspan=2>Method sethandlecenter(v:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Sets to true to center the handle of the effect.</td></tr>
@@ -1406,6 +1413,9 @@ Add a spin attribute node.
 <tr><td class=docleft width=1%><a href=#addspinvariation>addspinvariation</a></td><td class=docright>
 Add a spin variation attribute node.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#addsplatter>addsplatter</a></td><td class=docright>
+Add a splatter overtime attribute node.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#addstretch>addstretch</a></td><td class=docright>
 Add a stretch overtime attribute node.
 </td></tr>
@@ -1454,6 +1464,9 @@ Get the number of times the colour cycles over the lifetime of the particles spa
 <tr><td class=docleft width=1%><a href=#getframe>getframe</a></td><td class=docright>
 Get the animation frame of the tAnimImage used by the emitter.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#getgroupparticles>getgroupparticles</a></td><td class=docright>
+Returns the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#gethandlecenter>gethandlecenter</a></td><td class=docright>
 Get whether the handle of the particles spawned by this emitter are set to the center.
 </td></tr>
@@ -1486,9 +1499,6 @@ Get whether the emitter chooses a random start frame for the particles it spawns
 </td></tr>
 <tr><td class=docleft width=1%><a href=#getsingleparticle>getsingleparticle</a></td><td class=docright>
 Find out if the emitter spawns a single particle.
-</td></tr>
-<tr><td class=docleft width=1%><a href=#getsplatter>getsplatter</a></td><td class=docright>
-Get the radius of the splatter.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#gettweenspawns>gettweenspawns</a></td><td class=docright>
 Get whether particles are being spawned from the old effect coordinates to the new.
@@ -1538,6 +1548,9 @@ Set to the number of times the colour should cycle within the particle lifetime.
 <tr><td class=docleft width=1%><a href=#setframe>setframe</a></td><td class=docright>
 Set the image frame.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#SetGroupParticles>SetGroupParticles</a></td><td class=docright>
+Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#sethandlecenter>sethandlecenter</a></td><td class=docright>
 Set the handle of the particle to its center.
 </td></tr>
@@ -1570,9 +1583,6 @@ Set the particles to spawn with a random frame.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#setsingleparticle>setsingleparticle</a></td><td class=docright>
 Set Single Particle.
-</td></tr>
-<tr><td class=docleft width=1%><a href=#setsplatter>setsplatter</a></td><td class=docright>
-Set the range of splatter.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#settweenspawns>settweenspawns</a></td><td class=docright>
 Set to TRUE for particles to spawn imbetween th effects old and new coordinates.
@@ -1816,6 +1826,13 @@ the base particle height can vary from 100-150. This attribute is ignores if <i>
 <p>This is a <b>Variation Attribute</b> for effecting how much the base spin attribute varies. So if basespin is 50, and the spinvariation is 25 then
 the base particle spin can vary from 25-75 degrees per second.</p></td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=addsplatter>
+<tr><td class=doctop colspan=2>Method addsplatter:tlAttributeNode(f:Float, v:Float)</td></tr>
+<tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Add a splatter overtime attribute node.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright><p>Pass the time in milliseconds (f) and the value (v)</p>
+<p>This will control how close to the point the particle will spawn. Higher values mean the particle will appear randomnly around the point of spawning.</p></td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=addstretch>
 <tr><td class=doctop colspan=2>Method addstretch:tlAttributeNode(f:Float, v:Float)</td></tr>
 <tr><td class=docleft width=1%>Returns</td><td class=docright>Emitter change object.</td></tr>
@@ -1912,6 +1929,10 @@ the tlParticleManager method <a href=#AddPreLoadedEffect>AddPreLoadedEffect</a>.
 <tr><td class=doctop colspan=2>Method getframe:Int()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the animation frame of the tAnimImage used by the emitter.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=getgroupparticles>
+<tr><td class=doctop colspan=2>Method getgroupparticles:Int()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Returns the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=gethandlecenter>
 <tr><td class=doctop colspan=2>Method gethandlecenter:Int()</td></tr>
 <tr><td class=docleft width=1%>Returns</td><td class=docright>Either TRUE or FALSE.</td></tr>
@@ -1965,10 +1986,6 @@ the tlParticleManager method <a href=#AddPreLoadedEffect>AddPreLoadedEffect</a>.
 <tr><td class=doctop colspan=2>Method getsingleparticle:Int()</td></tr>
 <tr><td class=docleft width=1%>Returns</td><td class=docright>Either TRUE or FALSE.</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Find out if the emitter spawns a single particle.</td></tr>
-</table>
-<table class=doc width=100% cellspacing=3 id=getsplatter>
-<tr><td class=doctop colspan=2>Method getsplatter:Int()</td></tr>
-<tr><td class=docleft width=1%>Description</td><td class=docright>Get the radius of the splatter.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=gettweenspawns>
 <tr><td class=doctop colspan=2>Method gettweenspawns:Int()</td></tr>
@@ -2052,6 +2069,10 @@ case of tlANGLE_ALIGN and tlANGLE_SPECIFY, or act as the range of degrees for tl
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the image frame.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>If the image has more then one frame then setting this can determine which frame the particle uses to draw itself.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=SetGroupParticles>
+<tr><td class=doctop colspan=2>Method SetGroupParticles(v:Int)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Sets the current state of whether spawned particles are added to the particle managers pool, or the emitters own pool. True means that.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=sethandlecenter>
 <tr><td class=doctop colspan=2>Method sethandlecenter(v:Int)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the handle of the particle to its center.</td></tr>
@@ -2107,11 +2128,6 @@ by indiepath.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>You can have particles that do not age and will only be spawned once for point emitters, or just for one frame with area, line and ellipse emitters.
 Single particles will remain until they are destroyed and will one behave according the values stored in the first temmiterchange nodes - in otherwords they
 will not change at all over time.</td></tr>
-</table>
-<table class=doc width=100% cellspacing=3 id=setsplatter>
-<tr><td class=doctop colspan=2>Method setsplatter(v:Int)</td></tr>
-<tr><td class=docleft width=1%>Description</td><td class=docright>Set the range of splatter.</td></tr>
-<tr><td class=docleft width=1%>Information</td><td class=docright>Sets the radius of splatter to make particles spawn randomly about its initended coordinates.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=settweenspawns>
 <tr><td class=doctop colspan=2>Method settweenspawns(v:Int)</td></tr>
@@ -2259,6 +2275,7 @@ effects with your app.</p></td></tr>
 Framework brl.max2d
 Import rigz.timelinefx
 Import rigz.tweener
+Import brl.glmax2d
 
 SetGraphicsDriver GLMax2DDriver()
 
@@ -2276,6 +2293,10 @@ Graphics (800, 600, 0)
 'be placed at the center of the screen.
 myparticlemanager.SetScreenSize(GraphicsWidth(), GraphicsHeight())
 myparticlemanager.SetOrigin(GraphicsWidth() / 2, GraphicsHeight() / 2)
+'You can use the following command to control the number of particles spawned globally by the particle manager.
+'This is handy for slower PCs where you want to reduce the number of particles that are drawn overal. A setting of 0.5 would halve the
+'number spawned for example. 1 is the default value.
+myparticlemanager.SetGlobalAmountScale(1)
 
 'This will make one frame equal 33 millisecs long - or 30 updates per second.
 SetUpdateFrequency(30)
@@ -2346,6 +2367,9 @@ Destroy the particle manager.
 <tr><td class=docleft width=1%><a href=#DrawParticles>DrawParticles</a></td><td class=docright>
 Draw all particles currently in use.
 </td></tr>
+<tr><td class=docleft width=1%><a href=#GetGlobalAmountScale>GetGlobalAmountScale</a></td><td class=docright>
+Get the globalamountscale value of the particle manager.
+</td></tr>
 <tr><td class=docleft width=1%><a href=#GetOrigin_X>GetOrigin_X</a></td><td class=docright>
 Get the current x origin of the particle manager.
 </td></tr>
@@ -2372,6 +2396,9 @@ Removes an effect from the particle manager.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetAngle>SetAngle</a></td><td class=docright>
 Set the angle of the particle manager.
+</td></tr>
+<tr><td class=docleft width=1%><a href=#SetGlobalAmountScale>SetGlobalAmountScale</a></td><td class=docright>
+Set the globalamountscale value of the particle manager.
 </td></tr>
 <tr><td class=docleft width=1%><a href=#SetIdleTimeLimit>SetIdleTimeLimit</a></td><td class=docright>
 Set the amount of time before idle effects are deleted from the particle manager.
@@ -2449,6 +2476,11 @@ to avoid any memory leaks.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Draws all pariticles in use and uses the tween value you pass to use render tween in order to smooth out the movement of effects assuming you
 use some kind of tweening code in your app.</td></tr>
 </table>
+<table class=doc width=100% cellspacing=3 id=GetGlobalAmountScale>
+<tr><td class=doctop colspan=2>Method GetGlobalAmountScale:Float()</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Get the globalamountscale value of the particle manager.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>see <a href=#SetGlobalAmountScale>SetGlobalAmountScale</a> for info about setting this value.</td></tr>
+</table>
 <table class=doc width=100% cellspacing=3 id=GetOrigin_X>
 <tr><td class=doctop colspan=2>Method GetOrigin_X:Float()</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Get the current x origin of the particle manager.</td></tr>
@@ -2488,6 +2520,14 @@ use some kind of tweening code in your app.</td></tr>
 <tr><td class=doctop colspan=2>Method SetAngle(v:Float)</td></tr>
 <tr><td class=docleft width=1%>Description</td><td class=docright>Set the angle of the particle manager.</td></tr>
 <tr><td class=docleft width=1%>Information</td><td class=docright>Setting the angle of the particle manager will rotate all of the particles around the origin.</td></tr>
+</table>
+<table class=doc width=100% cellspacing=3 id=SetGlobalAmountScale>
+<tr><td class=doctop colspan=2>Method SetGlobalAmountScale(Value:Float)</td></tr>
+<tr><td class=docleft width=1%>Description</td><td class=docright>Set the globalamountscale value of the particle manager.</td></tr>
+<tr><td class=docleft width=1%>Information</td><td class=docright>Setting this value will scale the amount of the particles spawned by all emitters contained within the particle manager, making it a handy way
+to control globally, the amount of particles that are spawned. This can help improve performance on lower end hardware that struggle to draw
+lots of particles. A value of 1 (the default value) will spawn the default amount for each effect. A value of 0.5 though for example, will spawn
+half the amount of particles of each effect.</td></tr>
 </table>
 <table class=doc width=100% cellspacing=3 id=SetIdleTimeLimit>
 <tr><td class=doctop colspan=2>Method SetIdleTimeLimit(v:Int)</td></tr>
@@ -2552,8 +2592,17 @@ is compiled mode.</td></tr>
 <h2 id=modinfo>Module Information</h2>
 <table width=100%>
 <tr><th width=1%>Author</th><td>Peter J. Rigby</td></tr>
-<tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009</td></tr>
+<tr><th width=1%>Copyright</th><td>Peter J. Rigby 2009-2010</td></tr>
 <tr><th width=1%>Purpose</th><td>To add rich particle effects to games and applications, quickly and easily</td></tr>
+<tr><th width=1%>History v1.13</th><td>20 June 2010 - Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning</td></tr>
+<tr><th width=1%>History v1.13</th><td>20 June 2010 - Added SetGlobalAmountScale to the particle manger, for controlling the amount of particles spawned.</td></tr>
+<tr><th width=1%>History v1.12</th><td>25 May 2010 - Parent effects should now properly play out their graphs right to the end.</td></tr>
+<tr><th width=1%>History v1.12</th><td>25 May 2010 - Particles that animate in reverse should now work properly</td></tr>
+<tr><th width=1%>History v1.11</th><td>03 May 2010 - You can now change the way particles are drawn by grouping them by the emitter that spawns them. Use</td></tr>
+<tr><th width=1%>History v1.11</th><td>03 May 2010 - Fixed a bug where emitters that use the splatter graph are not effected by global zoom properly.</td></tr>
+<tr><th width=1%>History v1.10</th><td>04 April 2010 - Fixed an error on loading effects files with empty folders</td></tr>
+<tr><th width=1%>History v1.09</th><td>29 March 2010 - Added a new attribute - Splatter</td></tr>
+<tr><th width=1%>History v1.09</th><td>29 March 2010 - Fixed a memory leak when effects files are loaded over and over again</td></tr>
 <tr><th width=1%>History v1.09</th><td>13th February 2010 - Particles will now only stretch along their relative velocities.</td></tr>
 <tr><th width=1%>History v1.09</th><td>26th Januray 2010 - Fixed a bug where the wrong frame would be drawn causing array out of bounds error</td></tr>
 <tr><th width=1%>History v1.08</th><td>23rd November 2009 - Improved the way DrawParticles decides whether a particle is on screen to be drawn.</td></tr>

@@ -69,6 +69,8 @@ Type tlConfig Abstract
 		
 		populate()
 		
+		Return True
+		
 	End Method
 	
 	rem

@@ -43,6 +43,7 @@ Type TMax2DDriverEXT Extends TGraphicsDriverEXT
 	Method SetAlpha( alpha# ) Abstract
 	Method SetColor(red:Int, green:Int, blue:Int) Abstract
 	Method SetClsColor(red:Int, green:Int, blue:Int, alpha:Float = 1) Abstract
+	Method GrabPixmap:TPixmap(x:Int, y:Int, w:Int, h:Int) Abstract
 
 End Type
 
@@ -132,6 +133,13 @@ End Rem
 Function SetAlphaEXT(alpha:Float)
 	Assert _max2ddriverext, "Make sure you SetGraphicsDriverEXT and InitEXTGraphics before calling these EXT functions!"
 	_max2ddriverext.SetAlpha alpha
+End Function
+
+Rem
+bbdoc: Grab pixmap
+end rem
+Function GrabPixmapEXT:TPixmap(x:Int, y:Int, width:Int, height:Int)
+	Return _max2ddriverext.GrabPixmap(x, y, width, height)
 End Function
 
 Rem

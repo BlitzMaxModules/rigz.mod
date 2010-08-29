@@ -3,6 +3,7 @@ SuperStrict
 Framework brl.max2d
 Import rigz.timelinefx
 Import rigz.tweener
+Import brl.glmax2d
 
 SetGraphicsDriver GLMax2DDriver()
 
@@ -20,6 +21,10 @@ Graphics (800, 600, 0)
 'be placed at the center of the screen.
 myparticlemanager.SetScreenSize(GraphicsWidth(), GraphicsHeight())
 myparticlemanager.SetOrigin(GraphicsWidth() / 2, GraphicsHeight() / 2)
+'You can use the following command to control the number of particles spawned globally by the particle manager.
+'This is handy for slower PCs where you want to reduce the number of particles that are drawn overal. A setting of 0.5 would halve the
+'number spawned for example. 1 is the default value.
+myparticlemanager.SetGlobalAmountScale(1)
 
 'This will make one frame equal 33 millisecs long - or 30 updates per second.
 SetUpdateFrequency(30)

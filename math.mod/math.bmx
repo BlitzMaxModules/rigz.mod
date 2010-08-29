@@ -106,3 +106,11 @@ end rem
 Function TweenValues:Float(oldValue:Float, value:Float, tween:Float)
 	Return oldValue + (value - oldValue) * tween
 End Function
+
+rem
+	bbdoc: rounds a number to the nearest int
+	returns: Rounded Int
+end rem
+Function Round:Int(v:Double)
+	Return Int(v + (Sgn(v) * 0.5))
+End Function

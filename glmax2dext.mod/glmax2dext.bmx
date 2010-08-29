@@ -101,6 +101,17 @@ Type TGLMax2DDriverEXT Extends TMax2DDriverEXT
 		glClearColor red / 255.0, green / 255.0, blue / 255.0, alpha
 	End Method
 	
+	Method GrabPixmap:TPixmap(x, y, w, h)
+		Local blend:Int = state_blendext
+		DebugLog "EXT Grab"
+		SetBlend SOLIDBLEND
+		Local p:TPixmap=CreatePixmap( w,h,PF_RGBA8888 )
+		glReadPixels x,GraphicsHeight()-h-y,w,h,GL_RGBA,GL_UNSIGNED_BYTE,p.pixels
+		p=YFlipPixmap( p )
+		SetBlendEXT blend
+		Return p
+	End Method
+	
 End Type
 
 Rem

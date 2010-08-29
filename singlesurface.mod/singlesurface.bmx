@@ -223,7 +223,6 @@ Function LoadSpriteEffect:TAnimImage(url:Object, width:Float = 0, height:Float =
 		Local ty:Float
 		Local x_Cells:Int
 		t.importoption = colour
-		DebugLog t.importoption
 		t.u0 = New Float[frames] 
 		t.v0 = New Float[frames]
 		t.u1 = New Float[frames] 

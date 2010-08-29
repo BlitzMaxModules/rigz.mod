@@ -50,8 +50,9 @@ Module rigz.collision
 ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009"
 ModuleInfo "Purpose: Provide a way of testing for collisions between boxes, circles, polygons and lines with the added option of using quadtrees"
-ModuleInfo "Version: 1.0"
+ModuleInfo "Version: 1.01"
 
+ModuleInfo "History: 20.06.10 - Fixed a bug with velocity not being taken into account after querying a quadtree which was causing tunnelling to occurr."
 ModuleInfo "History: 06.01.10 - Initial Release"
 
 Import rigz.vector
@@ -1874,7 +1875,7 @@ Type tlCircle Extends tlBox
 		about: This will perfrom a simple circle to bounding box overlap check on the #tlBox you pass to it.
 	end rem
 	Method BoundingBoxOverlap:Int(rect:tlBox, VelocityCheck:Int = False)
-		If Not rect.BoundingBoxOverlap(Self, velocitycheck) Return False
+		'If Not rect.BoundingBoxOverlap(Self, velocitycheck) Return False
 		If rect.pointinside(world.x, world.y) Return True
 		If LineToCircle(rect.tl_corner.x, rect.tl_corner.y, rect.br_corner.x, rect.tl_corner.y, world.x, world.y, radius) Return True
 		If LineToCircle(rect.br_corner.x, rect.tl_corner.y, rect.br_corner.x, rect.br_corner.y, world.x, world.y, radius) Return True

@@ -1,6 +1,6 @@
 SuperStrict
 
-Import rigz.collision
+Import rsoft.collision
 
 Graphics 1024, 768
 
@@ -45,11 +45,11 @@ While Not KeyDown(KEY_ESCAPE)
 	ray.Normalise()
 	
 	'Query screen space and render all on screen
-	QueryQuadtreeArea(QTree, 0, 0, GraphicsWidth(), GraphicsHeight(), Null, RenderScreen)
+	QueryQuadtreeArea(QTree, 0, 0, GraphicsWidth(), GraphicsHeight(), Null, RenderScreen, [1])
 	
 	'query the quadtree with the ray and run our call back if it hit. Otherwise draw the full length of the ray (300)
 	'we're using the data variable here to pass through the Point to the callback function	
-	If Not QueryQuadtreeRay(qtree, point.x, point.y, ray.x, ray.y, 300, point, RayHandler)
+	If Not QueryQuadtreeRay(qtree, point.x, point.y, ray.x, ray.y, 300, point, RayHandler, [1])
 		SetColor 255, 0, 0
 		DrawLine point.x, point.y, point.x + ray.x * 300, point.y + ray.y * 300
 	End If

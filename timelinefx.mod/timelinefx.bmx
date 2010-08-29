@@ -32,6 +32,8 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.13: 20 June 2010 - Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning"
+ModuleInfo "History v1.13: 20 June 2010 - Added SetGlobalAmountScale to the particle manger, for controlling the amount of particles spawned."
 ModuleInfo "History v1.12: 25 May 2010 - Parent effects should now properly play out their graphs right to the end."
 ModuleInfo "History v1.12: 25 May 2010 - Particles that animate in reverse should now work properly"
 ModuleInfo "History v1.11: 03 May 2010 - You can now change the way particles are drawn by grouping them by the emitter that spawns them. Use"
@@ -1498,7 +1500,6 @@ Type tlEffect Extends tlEntity
 		End If
 		
 	End Method
-
 	Rem
 	bbdoc: Softly kill an effect
 	about: Call this to kill an effect by stopping it from spawning any more particles. This will make the effect slowly die about as any remaining 
@@ -3587,7 +3588,7 @@ Type tlEmitter Extends tlEntity
 		
 		Select parenteffect.PM.updatemode
 			Case tlUPDATE_MODE_COMPILED
-				qty = ((get_amount(parentEffect.currentframe) + Rnd(get_amountvariation(parentEffect.currentframe))) * parentEffect.currentamount) / tp_CURRENT_UPDATE_TIME
+				qty = ((get_amount(parentEffect.currentframe) + Rnd(get_amountvariation(parentEffect.currentframe))) * parentEffect.currentamount * parenteffect.PM.globalamountscale) / tp_CURRENT_UPDATE_TIME
 				If Not singleparticle
 					counter:+qty
 				End If
@@ -4082,7 +4083,7 @@ Type tlEmitter Extends tlEntity
 					counter:-intcounter
 				End If
 			Case tlUPDATE_MODE_INTERPOLATED
-				qty = ((interpolate_amount(parentEffect.age) + Rnd(interpolate_amountvariation(parentEffect.age))) * parentEffect.currentamount) / tp_CURRENT_UPDATE_TIME
+				qty = ((interpolate_amount(parentEffect.age) + Rnd(interpolate_amountvariation(parentEffect.age))) * parentEffect.currentamount * parenteffect.PM.globalamountscale) / tp_CURRENT_UPDATE_TIME
 				If Not singleparticle
 					counter:+qty
 				End If
@@ -7180,6 +7181,8 @@ Type tlParticleManager
 	Field py:Float
 	Field angletweened:Float
 	
+	Field globalamountscale:Float = 1
+	
 	Field camtx:Float
 	Field camty:Float
 	Field camtz:Float
@@ -7408,6 +7411,23 @@ Type tlParticleManager
 	end rem
 	Method GetUpdateMode:Int()
 		Return updatemode
+	End Method
+	Rem
+		bbdoc: Get the globalamountscale value of the particle manager
+		about: see #SetGlobalAmountScale for info about setting this value
+	End Rem
+	Method GetGlobalAmountScale:Float()
+		Return globalamountscale
+	End Method
+	Rem
+		bbdoc: Set the globalamountscale value of the particle manager
+		about: Setting this value will scale the amount of the particles spawned by all emitters contained within the particle manager, making it a handy way
+		to control globally, the amount of particles that are spawned. This can help improve performance on lower end hardware that struggle to draw
+		lots of particles. A value of 1 (the default value) will spawn the default amount for each effect. A value of 0.5 though for example, will spawn
+		half the amount of particles of each effect.
+	End Rem
+	Method SetGlobalAmountScale(Value:Float)
+		globalamountscale = Value
 	End Method
 	
 	Rem

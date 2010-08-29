@@ -1,5 +1,16 @@
 What's new in the TimelineFX Module?
 
+20.06.10
+TimelineFX
+
+- Added SetGlobalAmountScale to the particle manger, for controlling the amount of particles spawned.
+- Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning
+
+Collision.mod
+- Fixed a bug with velocity not being taken into account after querying a quadtree which was causing tunnelling to occurr.
+
+New module
+-config.mod: A small but handy mod for creating config files so that settings can easily be remembered.
 
 26.05.10
 
