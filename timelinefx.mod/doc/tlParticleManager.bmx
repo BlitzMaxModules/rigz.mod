@@ -12,7 +12,7 @@ Local MyEffectsLib:tlEffectsLibrary = LoadEffects("effects/examples.eff")
 'Create an effect and assign it an effect from the library
 Local MyEffect:tlEffect = MyEffectsLib.GetEffect("simple explosion 1")
 'Create the particle manager to manage the particles
-Local MyParticleManager:tlParticleManager = CreateParticleManager()
+Local MyParticleManager:tlParticleManager = CreateParticleManager(, 5)
 
 Graphics (800, 600, 0)
 

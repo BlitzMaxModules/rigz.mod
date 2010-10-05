@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.14: 05 October 2010 - Added effects layers to particle manager to help with z-ordering, see tlParticleManager Docs for more info."
 ModuleInfo "History v1.13: 20 June 2010 - Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning"
 ModuleInfo "History v1.13: 20 June 2010 - Added SetGlobalAmountScale to the particle manger, for controlling the amount of particles spawned."
 ModuleInfo "History v1.12: 25 May 2010 - Parent effects should now properly play out their graphs right to the end."
@@ -336,6 +337,7 @@ Type tlEffect Extends tlEntity
 	Field ellipsearc:Float = 360		'With ellipse effects this sets the degrees of which particles emit around the edge
 	Field ellipseoffset:Int				'This is the offset needed to make arc center at the top of the circle.
 	Field inuse:TList[9]				'This stores particles created by the effect, for drawing purposes only.
+	Field effectlayer:Int				'The layer that the effect resideson in its particle manager
 	
 	Field PM:tlParticleManager			'The particle manager that this effect belongs to
 	
@@ -6934,7 +6936,7 @@ Type tlParticle Extends tlEntity
 	'---------------------------------
 	Field PM:tlParticleManager								'link to the particle manager
 	Field layer:Int											'layer the particle belongs to
-	Field groupparticles:Int										'whether the particle is added the PM pool or kept in the emitter's pool
+	Field groupparticles:Int								'whether the particle is added the PM pool or kept in the emitter's pool
 
 	Rem
 		bbdoc: Updates the particle.
@@ -7141,16 +7143,20 @@ Rem
 	<p>This will place the origin at the top-left of the viewport so effects placed at 0,0 now will be drawn in the top-left corner of the screen in the same way DrawImage
 	would. If however you application uses it's own world coordinate system to postion entities then it should be easy to use #SetOrigin to syncronise the location of any 
 	effects with your app.</p>
+	<p>You can now also define a number of effect layers when creating a particle manager. This enables you to control more easily the order
+	in which effects are drawn. For example, if you create a particle manager with 10 layers, when you use #AddEffect you can specify
+	which layer the effect is added to. Effects on layers 1 will draw on top of layers on layer 0, 2 over 1 etc. The layer index starts from 0, 
+	so if you create 10 layers, their index will range from 0 to 9.</p>
 endrem
 Type tlParticleManager
 
-	Field InUse:TList[9]
+	Field InUse:TList[,]
 	Field UnUsed:TList = CreateList()
 	
 	Field unusedcount:Int
 	Field inusecount:Int
 	
-	Field effects:TList
+	Field effects:TList[]
 	
 	Field Origin_X:Float
 	Field Origin_Y:Float
@@ -7200,6 +7206,8 @@ Type tlParticleManager
 	
 	Field rendercount:Int
 	Field currenttween:Float
+	
+	Field effectlayers:Int
 		
 	Rem
 	bbdoc: Update the Particle Manager
@@ -7208,11 +7216,13 @@ Type tlParticleManager
 	Method Update()
 		If Not paused
 			CURRENT_TIME:+tp_UPDATE_TIME
-			For Local e:tlEffect = EachIn effects
-				e.update()
-				If e.destroyed
-					removeeffect(e)
-				End If
+			For Local el:Int = 0 To effectlayers - 1
+				For Local e:tlEffect = EachIn effects[el]
+					e.update()
+					If e.destroyed
+						removeeffect(e)
+					End If
+				Next
 			Next
 			old_origin_x = origin_x
 			old_origin_y = origin_y
@@ -7223,10 +7233,16 @@ Type tlParticleManager
 	bbdoc: Create a new Particle Manager
 	about: Creates a new particle manager and sets the maximum number of particles. Default maximum is 5000.
 	endrem
-	Method Create:tlParticleManager(Particles:Int = tlPARTICLE_LIMIT)
+	Method Create:tlParticleManager(Particles:Int = tlPARTICLE_LIMIT, Layers:Int = 1)
 		Local p:tlParticle
-		For Local l:Int = 0 To 8
-			InUse[l] = CreateList()
+		InUse = New TList[Layers, 9]
+		effects = New TList[Layers]
+		effectlayers = Layers
+		For Local el:Int = 0 To Layers - 1
+			effects[el] = CreateList()
+			For Local l:Int = 0 To 8
+				InUse[el, l] = CreateList()
+			Next
 		Next
 		For Local c:Int = 1 To particles
 			p = New tlParticle
@@ -7234,8 +7250,6 @@ Type tlParticleManager
 			UnUsed.AddLast p
 		Next
 		unusedcount = Particles
-		effects = CreateList()
-		
 		Return Self
 	End Method
 	Method GrabParticle:tlParticle(effect:tlEffect, pool:Int, layer:Int = 0)
@@ -7246,9 +7260,9 @@ Type tlParticleManager
 				unused.Remove p
 				p.groupparticles = pool
 				If pool
-					effect.inuse[layer].AddLast p
+					effect.InUse[layer].AddLast p
 				Else
-					inuse[layer].AddLast p
+					InUse[effect.effectlayer, layer].AddLast p
 				End If
 				unusedcount:-1
 				inusecount:+1
@@ -7261,23 +7275,21 @@ Type tlParticleManager
 		inusecount:-1
 		unused.AddLast p
 		If Not p.groupparticles
-			inuse[p.layer].Remove p
+			InUse[p.emitter.parentEffect.effectlayer, p.layer].Remove p
 		End If
 	End Method
 	
 	Rem
 	bbdoc: Draw all particles currently in use
 	about: Draws all pariticles in use and uses the tween value you pass to use render tween in order to smooth out the movement of effects assuming you
-	use some kind of tweening code in your app.
+	use some kind of tweening code in your app. You can also specify the effect layer that is drawn, otherwise by default, all layers will be drawn.
 	endrem
-	Method DrawParticles(tween:Float = 1)
+	Method DrawParticles(tween:Float = 1, Layer:Int = -1)
 		'tween origin
 		currenttween = tween
 		camtx = -TweenValues(Old_Origin_X, Origin_X, tween)
 		camty = -TweenValues(Old_Origin_Y, Origin_Y, tween)
 		camtz = TweenValues(Old_Origin_Z, Origin_Z, tween)
-		Local w:Float
-		Local h:Float
 		'record current GFX states
 		Local c_alpha:Float = GetAlpha()
 		Local c_rotation:Float = GetRotation()
@@ -7290,9 +7302,19 @@ Type tlParticleManager
 			angletweened = TweenValues(oldangle, angle, tween)
 			matrix.set(Cos(angletweened), Sin(angletweened), -Sin(angletweened), Cos(angletweened))
 		End If
-		For Local l:Int = 0 To 8
-			For Local e:tlParticle = EachIn InUse[l]
-				DrawParticle(e)
+		Local layers:Int
+		Local startlayer:Int
+		If Layer = -1 Or Layer >= effectlayers
+			layers = effectlayers - 1
+		Else
+			layers = Layer
+			startlayer = Layer
+		End If
+		For Local el:Int = startlayer To layers
+			For Local l:Int = 0 To 8
+				For Local e:tlParticle = EachIn InUse[el, l]
+					DrawParticle(e)
+				Next
 			Next
 		Next
 		DrawEffects()
@@ -7303,8 +7325,10 @@ Type tlParticleManager
 		SetColor c_red, c_green, c_blue
 	End Method
 	Method DrawBoundingBoxes()
-		For Local e:tlEffect = EachIn effects
-			e.DrawBoundingBox()
+		For Local el:Int = 0 To effectlayers - 1
+			For Local e:tlEffect = EachIn effects[el]
+				e.DrawBoundingBox()
+			Next
 		Next
 	End Method
 	Rem
@@ -7447,9 +7471,11 @@ Type tlParticleManager
 		bbdoc: Adds a New effect To the particle manager, and pre loads a given number of frames
 		about: Use this method to add a new effect to the particle and start the effect running from whatever number of frames you pass to it.
 		In most cases the overhead for this will be small, but for extremely heavy effects with many particles you may experience some performance hit.
-		Use this instead of #addeffect if you want to pre load an effect.
+		Use this instead of #addeffect if you want to pre load an effect. If the particle manager has more then one layer, then you can specify
+		which layer the effect is added to. If the layer you pass does not exist then it will default to 0.
 	endrem
-	Method AddPreLoadedEffect(e:tlEffect, frames:Int)
+	Method AddPreLoadedEffect(e:tlEffect, frames:Int, Layer:Int = 0)
+		If Layer >= effectlayers Layer = 0
 		Local temptime:Float = CURRENT_TIME
 		CURRENT_TIME:-frames * tp_UPDATE_TIME
 		e.ChangeDob(CURRENT_TIME)
@@ -7461,35 +7487,41 @@ Type tlParticleManager
 			End If
 		Next
 		CURRENT_TIME = temptime
-		effects.AddLast e
+		e.effectlayer = Layer
+		effects[Layer].AddLast e
 	End Method	
 	Rem
 	bbdoc: Adds a new effect to the particle manager
-	about: Use this method to add new effects to the particle manager which will be updated automatically
+	about: Use this method to add new effects to the particle manager which will be updated automatically. If the particle manager has more 
+	then one layer, then you can specify which layer the effect is added to. If the layer you pass does not exist then it will default to 0.
 	endrem
-	Method addeffect(e:tlEffect)
-		effects.AddLast e
+	Method addeffect(e:tlEffect, Layer:Int = 0)
+		If Layer >= effectlayers Layer = 0
+		e.effectlayer = Layer
+		effects[layer].AddLast e
 	End Method
 	Rem
 	bbdoc: Removes an effect from the particle manager
 	about: Use this method to remove effects from the particle manager. It's best to destroy the effect as well to avoid memory leaks
 	endrem
 	Method removeeffect(e:tlEffect)
-		effects.Remove e
+		effects[e.effectlayer].Remove e
 	End Method
 	Rem
 	bbdoc: Clear all particles in use
 	about: Call this method to empty the list of in use particles and move them to the un used list.
 	endrem
 	Method ClearInUse()
-		For Local l:Int = 0 To 8
-			For Local p:tlParticle = EachIn inuse[l]
-				unused.AddLast p
-				unusedcount:+1
-				inusecount:-1
-				inuse[l].Remove p
-				p.emitter.parentEffect.inuse[p.layer].Remove p
-				p.reset()
+		For Local el:Int = 0 To effectlayers - 1
+			For Local l:Int = 0 To 8
+				For Local p:tlParticle = EachIn InUse[el, l]
+					unused.AddLast p
+					unusedcount:+1
+					inusecount:-1
+					InUse[el, l].Remove p
+					p.emitter.parentEffect.inuse[p.layer].Remove p
+					p.reset()
+				Next
 			Next
 		Next
 	End Method
@@ -7509,19 +7541,23 @@ Type tlParticleManager
 	rendered.
 	endrem
 	Method ClearAll()
-		For Local e:tlEffect = EachIn effects
-			e.destroy()
+		For Local el:Int = 0 To effectlayers - 1
+			For Local e:tlEffect = EachIn effects[el]
+				e.destroy()
+			Next
+			effects[el].Clear()
 		Next
-		effects.Clear()
 	End Method
 	Rem
 	bbdoc: Release single particles
 	about: If there are any singleparticles (see #SetSingleParticle) this will release all of them and allow them to age and die.
 	endrem
 	Method ReleaseParticles()
-		For Local l:Int = 0 To 8
-			For Local p:tlParticle = EachIn inuse[l]
-				p.releasesingleparticle = True
+		For Local el:Int = 0 To effectlayers - 1
+			For Local l:Int = 0 To 8
+				For Local p:tlParticle = EachIn InUse[el, l]
+					p.releasesingleparticle = True
+				Next
 			Next
 		Next
 	End Method
@@ -7541,8 +7577,10 @@ Type tlParticleManager
 	End Function
 	'internal methods-------
 	Method DrawEffects()
-		For Local eff:tlEffect = EachIn Self.effects
-			DrawEffect(eff)
+		For Local el:Int = 0 To effectlayers - 1
+			For Local eff:tlEffect = EachIn Self.effects[el]
+				DrawEffect(eff)
+			Next
 		Next
 	End Method
 	Method DrawEffect(effect:tlEffect)
@@ -7624,10 +7662,10 @@ End Type
 Rem
 	bbdoc: Create a new particle manager
 	returns: A new tlParticleManager
-	about: Particle manager maintain a list of effects. See #tlParticleManager.
+	about: Particle manager maintains a list of effects. See #tlParticleManager.
 endrem
-Function CreateParticleManager:tlParticleManager(Particles:Int = tlPARTICLE_LIMIT)
-	Local pm:tlParticleManager = New tlParticleManager.Create(particles)
+Function CreateParticleManager:tlParticleManager(Particles:Int = tlPARTICLE_LIMIT, Layers:Int = 1)
+	Local pm:tlParticleManager = New tlParticleManager.Create(particles, Layers)
 	Return pm
 End Function
 Rem
