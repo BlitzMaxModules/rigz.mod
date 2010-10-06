@@ -3652,6 +3652,7 @@ Type tlEmitter Extends tlEntity
 							e.emitter = Self
 							e.parent = Self
 							e.PM = parentEffect.PM
+							e.effectlayer = parentEffect.effectlayer
 							'-------------------------------
 							e.dob = e.PM.CURRENT_TIME
 							If parentEffect.traverseedge And parentEffect.class = tlLINE_EFFECT
@@ -4066,6 +4067,7 @@ Type tlEmitter Extends tlEntity
 								Local neweff:tlEffect = CopyCompiledEffect(eff, parentEffect.PM)
 								neweff.parent = e
 								neweff.parentEmitter = Self
+								neweff.effectlayer = e.effectlayer
 								e.addchild(neweff)
 							Next
 							parentEffect.tlParticlesCreated = True
@@ -4143,6 +4145,7 @@ Type tlEmitter Extends tlEntity
 							e.emitter = Self
 							e.parent = Self
 							e.PM = parentEffect.PM
+							e.effectlayer = parentEffect.effectlayer
 							'-------------------------------
 							e.dob = e.PM.CURRENT_TIME
 							If parentEffect.traverseedge And parentEffect.class = tlLINE_EFFECT
@@ -4558,6 +4561,7 @@ Type tlEmitter Extends tlEntity
 								Local neweff:tlEffect = CopyEffect(eff, parentEffect.PM)
 								neweff.parent = e
 								neweff.parentEmitter = Self
+								neweff.effectlayer = e.effectlayer
 								e.addchild(neweff)
 							Next
 							parentEffect.tlParticlesCreated = True
@@ -6937,6 +6941,7 @@ Type tlParticle Extends tlEntity
 	Field PM:tlParticleManager								'link to the particle manager
 	Field layer:Int											'layer the particle belongs to
 	Field groupparticles:Int								'whether the particle is added the PM pool or kept in the emitter's pool
+	Field effectlayer:Int
 
 	Rem
 		bbdoc: Updates the particle.
@@ -7275,7 +7280,7 @@ Type tlParticleManager
 		inusecount:-1
 		unused.AddLast p
 		If Not p.groupparticles
-			InUse[p.emitter.parentEffect.effectlayer, p.layer].Remove p
+			InUse[p.effectlayer, p.layer].Remove p
 		End If
 	End Method
 	
@@ -7547,6 +7552,17 @@ Type tlParticleManager
 			Next
 			effects[el].Clear()
 		Next
+	End Method
+	Rem
+		bbdoc: Remove all effects and particles from a specific layer
+		about: If you want to remove all effects and particles from a specific layer in the particle manager then use this command. Every effect will instantly stop being
+		rendered.
+	endrem
+	Method ClearLayer(Layer:Int)
+		For Local e:tlEffect = EachIn effects[Layer]
+			e.destroy()
+		Next
+		effects[Layer].Clear()
 	End Method
 	Rem
 	bbdoc: Release single particles
