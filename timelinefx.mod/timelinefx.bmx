@@ -1323,11 +1323,17 @@ Type tlEffect Extends tlEntity
 	Rem
 		bbdoc: Stop the effect from timing out and be automatically removed
 		about: By default, if the effect has no particles, it will timeout and destroy itself after a certain amount of time as dictated by
-		the particle manager it belongs. Call this method on the method to stop the process from happening. Bear in mind that if you do this
-		you will have to destroy the effect yoursefl, either by calling Destroy, Hardkill ir Softkill.
+		the particle manager it belongs to. Call this method to stop the process from happening. Bear in mind that if you do this
+		you will have to destroy the effect yourself, either by calling Destroy, Hardkill ir Softkill. This method propergates to all subeffects
+		as well. For best results this method should called when the effect is created before it starts spawning particles.
 	end rem	
 	Method DoNotTimeout(v:Int = True)
 		doesnottimeout = v
+		For Local e:tlEmitter = EachIn children
+			For Local eff:tlEffect = EachIn e.effects
+				eff.DoNotTimeout(v)
+			Next
+		Next
 	End Method
 	
 	Rem
