@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.14: 07 October 2010 - Added new effect method, DoNotTimeout() which stops effects from timingout and destroying themselves"
 ModuleInfo "History v1.14: 05 October 2010 - Added effects layers to particle manager to help with z-ordering, see tlParticleManager Docs for more info."
 ModuleInfo "History v1.13: 20 June 2010 - Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning"
 ModuleInfo "History v1.13: 20 June 2010 - Added SetGlobalAmountScale to the particle manger, for controlling the amount of particles spawned."
@@ -338,6 +339,7 @@ Type tlEffect Extends tlEntity
 	Field ellipseoffset:Int				'This is the offset needed to make arc center at the top of the circle.
 	Field inuse:TList[9]				'This stores particles created by the effect, for drawing purposes only.
 	Field effectlayer:Int				'The layer that the effect resideson in its particle manager
+	Field doesnottimeout:Int			'Whether the effect never timeouts automatically
 	
 	Field PM:tlParticleManager			'The particle manager that this effect belongs to
 	
@@ -1076,7 +1078,7 @@ Type tlEffect Extends tlEntity
 			Next
 		Next
 	End Method
-	
+		
 	Rem
 	bbdoc: Get class
 	returns: The current class of the effect - tlAREA_EFFECT, tlLINE_EFFECT, tlELLIPSE_EFFECT or tlPOINT_EFFECT
@@ -1318,11 +1320,14 @@ Type tlEffect Extends tlEntity
 	Method GetEmitter:tlEmitter(name:String)
 		Return tlEmitter(directory.ValueForKey(Upper(name)))
 	End Method
-	Method ChangeDob(_DoB:Float)
-		dob = _DoB
-		For Local e:tlEmitter = EachIn children
-			e.ChangeDob(_DoB)
-		Next
+	Rem
+		bbdoc: Stop the effect from timing out and be automatically removed
+		about: By default, if the effect has no particles, it will timeout and destroy itself after a certain amount of time as dictated by
+		the particle manager it belongs. Call this method on the method to stop the process from happening. Bear in mind that if you do this
+		you will have to destroy the effect yoursefl, either by calling Destroy, Hardkill ir Softkill.
+	end rem	
+	Method DoNotTimeout(v:Int = True)
+		doesnottimeout = v
 	End Method
 	
 	Rem
@@ -1388,7 +1393,7 @@ Type tlEffect Extends tlEntity
 			handley = 0
 		End If
 		
-		If hasparticles()
+		If HasParticles() Or doesnottimeout
 			idletime = 0
 		Else
 			idletime:+1
@@ -2317,6 +2322,13 @@ Type tlEffect Extends tlEntity
 		Else
 			Return c_globalz.changes[c_globalz.lastframe]
 		End If
+	End Method
+
+	Method ChangeDob(_DoB:Float)
+		dob = _DoB
+		For Local e:tlEmitter = EachIn children
+			e.ChangeDob(_DoB)
+		Next
 	End Method
 End Type
 Rem
