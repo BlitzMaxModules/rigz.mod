@@ -4375,11 +4375,11 @@ Type tlEmitter Extends tlEntity
 							e.speedvec.x = 0
 							e.speedvec.y = 0
 							If Not bypass_speed
-								e.speed = c_velocity.changes[0]
+								e.speed = interpolate_velocity(0, e.lifetime)
 								e.velvariation = Rnd(-current_speedvariation, current_speedvariation)
 								e.basespeed = (current_speed + e.velvariation) * parentEffect.currentvelocity
 								e.velseed = Rnd(0, 1.0)
-								e.speed = c_velocity.changes[0] * e.basespeed * c_globalvelocity.changes[0]
+								e.speed = interpolate_velocity(0, e.lifetime) * e.basespeed * interpolate_globalvelocity(parentEffect.age)
 							Else
 								e.speed = 0
 							End If
@@ -4388,7 +4388,7 @@ Type tlEmitter Extends tlEntity
 							e.gsizex = parentEffect.currentsizex
 							e.gsizey = parentEffect.currentsizey
 							If uniform
-								scaletemp = c_scalex.changes[0]
+								scaletemp = interpolate_scalex(0, e.lifetime)
 								e.scalevariationx = Rnd(current_sizexvariation)
 								e.width = e.scalevariationx + current_sizex
 								If scaletemp
@@ -4399,7 +4399,7 @@ Type tlEmitter Extends tlEntity
 								e.scalex = sizetemp
 								e.scaley = sizetemp
 								If Not bypass_stretch And e.speed
-									e.scaley = (c_scalex.changes[0] * e.gsizex * (e.width + (Abs(e.speed) * c_stretch.changes[0] * parenteffect.currentstretch))) / image.width
+									e.scaley = (interpolate_scalex(0, e.lifetime) * e.gsizex * (e.width + (Abs(e.speed) * interpolate_stretch(0, e.lifetime) * parentEffect.currentstretch))) / image.width
 									If e.scaley < e.scalex e.scaley = e.scalex
 								End If
 								e.AABB_MaxWidth = AABB_ParticleMaxWidth
@@ -4408,7 +4408,7 @@ Type tlEmitter Extends tlEntity
 								e.AABB_MinHeight = e.AABB_MinWidth
 							Else
 								'width
-								scaletemp = c_scalex.changes[0]
+								scaletemp = interpolate_scalex(0, e.lifetime)
 								e.scalevariationx = Rnd(current_sizexvariation)
 								e.width = e.scalevariationx + current_sizex
 								If scaletemp
@@ -4418,7 +4418,7 @@ Type tlEmitter Extends tlEntity
 								End If
 								e.scalex = sizetemp
 								'height
-								scaletemp = c_scaley.changes[0]
+								scaletemp = interpolate_scaley(0, e.lifetime)
 								e.scalevariationy = Rnd(current_sizeyvariation)
 								e.height = e.scalevariationy + current_sizey
 								If scaletemp
@@ -4428,7 +4428,7 @@ Type tlEmitter Extends tlEntity
 								End If
 								e.scaley = sizetemp
 								If Not bypass_stretch And e.speed
-									e.scaley = (c_scaley.changes[0] * e.gsizey * (e.height + (Abs(e.speed) * c_stretch.changes[0] * parenteffect.currentstretch))) / image.height
+									e.scaley = (interpolate_scaley(0, e.lifetime) * e.gsizey * (e.height + (Abs(e.speed) * interpolate_stretch(0, e.lifetime) * parentEffect.currentstretch))) / image.height
 									If e.scaley < e.scalex e.scaley = e.scalex
 								End If
 								e.AABB_MaxWidth = AABB_ParticleMaxWidth
@@ -4503,10 +4503,10 @@ Type tlEmitter Extends tlEntity
 								End If
 								If Not bypass_directionvariation
 									e.directionvariaion = current_directionvariation
-									dv = e.directionvariaion * c_directionvariationot.changes[0]
-									e.direction = e.emissionangle + c_direction.changes[0] + Rnd(-dv, dv)
+									dv = e.directionvariaion * interpolate_directionvariationot(0, e.lifetime)
+									e.direction = e.emissionangle + interpolate_direction(0, e.lifetime) + Rnd(-dv, dv)
 								Else
-									e.direction = e.emissionangle + c_direction.changes[0]
+									e.direction = e.emissionangle + interpolate_direction(0, e.lifetime)
 								End If
 							End If
 							'-------------------------------
@@ -4516,7 +4516,7 @@ Type tlEmitter Extends tlEntity
 							End If
 							'-----Weight---------------------
 							If Not bypass_weight
-								e.weight = c_weight.changes[0]
+								e.weight = interpolate_weight(0, e.lifetime)
 								e.weightvariation = Rnd(-current_weightvariation, current_weightvariation)
 								e.baseweight = (current_weight + e.weightvariation) * parentEffect.currentweight
 							End If
@@ -4555,18 +4555,18 @@ Type tlEmitter Extends tlEntity
 								e.green = randomise_g(e, randomage)
 								e.blue = randomise_b(e, randomage)
 							Else
-								e.red = c_r.changes[0]
-								e.green = c_g.changes[0]
-								e.blue = c_b.changes[0]
+								e.red = interpolate_r(0, e.lifetime)
+								e.green = interpolate_g(0, e.lifetime)
+								e.blue = interpolate_b(0, e.lifetime)
 							End If
-							e.alpha = c_alpha.changes[0] * parenteffect.currentalpha
+							e.alpha = interpolate_alpha(0, e.lifetime) * parentEffect.currentalpha
 							'-------------------------------
 							'-----blend mode-----------------
 							e.blendmode = blendmode
 							'-----Animation and framerate----
 							e.animating = animate
 							e.animateonce = once
-							e.framerate = c_framerate.changes[0]
+							e.framerate = interpolate_framerate(0, e.lifetime)
 							If randomstartframe
 								e.currentframe = Rnd(e.avatar.frames)
 							Else
@@ -8198,7 +8198,9 @@ Function LoadEffects:tlEffectsLibrary(filename:String, compile:Int = True)
 		Select effectschild.getName()
 			Case "EFFECT"
 				Local effect:tlEffect = loadeffectxmltree(effectschild, sprites)
-				If compile effect.compile_all()
+				If compile
+					effect.compile_all()
+				End If
 				effects.addeffect effect
 				effect.directory = CreateMap()
 				effect.AddEffect(effect)

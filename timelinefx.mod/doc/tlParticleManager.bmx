@@ -8,7 +8,7 @@ Import brl.glmax2d
 SetGraphicsDriver GLMax2DDriver()
 
 'Load the effects library
-Local MyEffectsLib:tlEffectsLibrary = LoadEffects("effects/examples.eff")
+Local MyEffectsLib:tlEffectsLibrary = LoadEffects("effects/examples.eff", False)
 'Create an effect and assign it an effect from the library
 Local MyEffect:tlEffect = MyEffectsLib.GetEffect("simple explosion 1")
 'Create the particle manager to manage the particles
@@ -24,7 +24,9 @@ myparticlemanager.SetOrigin(GraphicsWidth() / 2, GraphicsHeight() / 2)
 'You can use the following command to control the number of particles spawned globally by the particle manager.
 'This is handy for slower PCs where you want to reduce the number of particles that are drawn overal. A setting of 0.5 would halve the
 'number spawned for example. 1 is the default value.
-myparticlemanager.SetGlobalAmountScale(1)
+MyParticleManager.SetGlobalAmountScale(1)
+
+MyParticleManager.SetUpdateMode(tlUPDATE_MODE_INTERPOLATED)
 
 'This will make one frame equal 33 millisecs long - or 30 updates per second.
 SetUpdateFrequency(30)
