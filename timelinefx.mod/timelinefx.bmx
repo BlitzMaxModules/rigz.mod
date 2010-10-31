@@ -32,6 +32,7 @@ ModuleInfo "Author: Peter J. Rigby"
 ModuleInfo "Copyright: Peter J. Rigby 2009-2010"
 ModuleInfo "Purpose: To add rich particle effects to games and applications, quickly and easily"
 
+ModuleInfo "History v1.15: 30 October 2010 - Fixed a bug with interpolated mode and loading effects with compile flag set to false"
 ModuleInfo "History v1.14: 07 October 2010 - Added new effect method, DoNotTimeout() which stops effects from timingout and destroying themselves"
 ModuleInfo "History v1.14: 05 October 2010 - Added effects layers to particle manager to help with z-ordering, see tlParticleManager Docs for more info."
 ModuleInfo "History v1.13: 20 June 2010 - Fixed a bug with stretch causing recycled particles to stretch way out of shaped on spawning"
@@ -8173,14 +8174,20 @@ Function LoadEffects:tlEffectsLibrary(filename:String, compile:Int = True)
 						Local Sprite:TAnimImage
 						Local importoption:String = shape.getAttribute("IMPORT_OPTION")
 						If Not importoption importoption = IMAGE_PASSTHROUGH
+						Local radius:Float = shape.getAttribute("MAX_RADIUS").ToFloat()
+						Local findradius:Int
+						If radius
+							findradius = False
+						End If
 						If shapestream
-							Sprite = LoadSpriteEffect(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt(), True, importoption)
+							Sprite = LoadSpriteEffect(shapestream, shape.getAttribute("WIDTH").ToFloat(), shape.getAttribute("HEIGHT").ToFloat(), shape.getAttribute("FRAMES").ToInt(), findradius, importoption)
 						End If
 						'						End If
 						If sprite
 							sprite.largeindex = shape.getAttribute("INDEX").toint()
 							sprite.url = shape.getAttribute("URL")
-							sprite.name = StripDir(sprite.url)
+							Sprite.name = StripDir(Sprite.url)
+							If radius Sprite.Max_Radius = radius
 							sprites.AddLast sprite
 						Else
 							DebugLog "ERROR - Could not load " + StripDir(shape.getAttribute("URL"))

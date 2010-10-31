@@ -169,7 +169,7 @@ Function LoadSprite:TAnimImage(url:Object, width:Float = 0, height:Float = 0, fr
 		If String(url)
 			s.url = url.ToString()
 		End If
-		s.FindImageMax()
+		If FindRadius s.FindImageMax()
 		Return s
 	Else
 		Return Null
@@ -211,7 +211,7 @@ Function LoadSpriteEffect:TAnimImage(url:Object, width:Float = 0, height:Float =
 		If String(url)
 			s.url = url.ToString()
 		End If
-		s.FindImageMax()
+		If FindRadius s.FindImageMax()
 		Return s
 	Else
 		Return Null
