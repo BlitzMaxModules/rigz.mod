@@ -122,6 +122,7 @@ Type tTweener
 	End Rem
 	Method SetUpdateFrequency(Value:Double)
 		UpdateFrequency = Value
+		UpdateTime = 1000 / UpdateFrequency
 	End Method
 	Rem
 		bbdoc: Get the UpdateTime value in this tTweener object.

@@ -114,3 +114,14 @@ end rem
 Function Round:Int(v:Double)
 	Return Int(v + (Sgn(v) * 0.5))
 End Function
+
+Rem 
+	bbdoc: Round up to the nearest power of 2
+end rem
+Function GetNearestPowerOf2:Int(n:Int)
+	Local t:Int = 1
+	While t<n
+		t:*2
+	Wend
+	Return t
+End Function
