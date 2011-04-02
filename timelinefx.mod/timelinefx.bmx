@@ -4627,6 +4627,7 @@ Type tlEmitter Extends tlEntity
 					Else
 						If Not bypass_weight And Not parenteffect.bypass_weight Or e.direction
 							If e.oldwx <> e.wx And e.oldwy <> e.wy
+								DebugStop
 								If e.relative
 									e.angle = GetDirection(e.oldx, e.oldy, e.x, e.y)
 								Else
